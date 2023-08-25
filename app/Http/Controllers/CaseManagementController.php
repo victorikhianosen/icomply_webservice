@@ -162,59 +162,6 @@ class CaseManagementController extends Controller
         ]);
     }
 
-    // public function closeCase(Request $request, $id)
-    // {
-    //     $input = $request->all();
-    //     $validator = Validator::make($input, [
-    //         'reason_for_close' => 'required|regex:/^[a-zA-Z\s\-]+$/',
-    //     ]);
-
-
-    //     $url =  'http://127.0.0.1:8000/api/case/closecase/' . $id;
-    //     $response = Http::withHeaders([
-    //         'Content-Type' => 'application/json'
-    //     ])->post($url, [
-    //         'reason_for_close' => $request->reason_for_close,
-    //     ]);
-
-
-    //     if ($validator->fails()) {
-    //         return response()->json(['errors' => $validator->errors()], 400);
-    //     }
-
-    //     $caseid = CaseManagement::find($id);
-    //     $casecheck = CaseManagement::where('case_status_id', '=', 2)
-    //         ->find($id);
-
-    //     if (!$caseid) {
-    //         return response()->json(['message' => 'Case not found'], 404);
-    //     }
-    //     if ($casecheck) {
-    //         return response()->json(['message' => 'Case has already been closed'], 404);
-    //     }
-
-    //     $caseid->update([
-    //         'case_status_id' => 2,
-    //         'reason_for_close' => $request->reason_for_close,
-    //         'supervisor_name' => Auth()->user()->full_name
-    //     ]);
-
-    //     $link = 'http://127.0.0.1:8000/case-details/';
-    //     $email_info = [
-    //         'title' => 'Notification Mail',
-    //         'body' => 'this is to notify you that a case was closed',
-    //         'name' => 'User who closed the case:' . ' ' . $caseid->user->full_name,
-    //         'reason' => 'Reason For Close:' . ' ' . $request->reason_for_close,
-    //         'id' => 'Case ID:' . ' ' . $id,
-    //         'link' => $link . $id
-    //     ];
-    //     Mail::to($caseid->user->email)->send(new CaseMail($email_info));
-    //     return response()->json([
-    //         'message' => 'Case has been closed successfully',
-    //         'user' => $caseid,
-    //         'response' => $response
-    //     ]);
-    // }
 
     public function closeCase(Request $request, $id)
     {
@@ -277,17 +224,6 @@ class CaseManagementController extends Controller
     }
 
     public function getEverything(Request $request)  {
-
-
-        // try {
-        //     $response = DB::select('select * from case_management');
-        //     var_dump($response);
-        //     return response()->json($response);
-        // } catch (\Throwable $th) {
-        //     //throw $th;
-        //     return response()->json(['message'=>'An error occurred',
-        // 'data'=> $th->getMessage()]);
-        // }
 
         $query = $request->input('query');
 

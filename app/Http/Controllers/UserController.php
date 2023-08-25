@@ -40,14 +40,7 @@ class UserController extends Controller
             $success['token'] =  $token;
             $success['full_name'] =  $authUser->full_name;
 
-            // $url = 'http://127.0.0.1:8000/api/users/login/';
-            // Http::post($url);
-            // $request = Request::create('/api/users/login');
-            // $resp = Route::dispatch($request);
-            // $respbody = json_decode($resp->getContent());
-            // dd($respbody);
-
-            // return redirect()->intended('api/case-details/');
+            
         } else {
             return back()->with(['email' => 'Invalid credentials']);
         }
