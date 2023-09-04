@@ -260,34 +260,17 @@ class CaseManagementController extends Controller
         return response()->json($case);
     }
 
-    public function sendMail(Request $request)
-    {
-        $mail = $request->header('email');
-
-        $email_info = [
-            'title' => 'Notification Mail',
-            'body' => 'This is to notify you that a case was just created',
-            'link' => 'http://127.0.0.1:8000/case-details/' 
-        ];
-       $mail= explode(',', $mail);
-        $users = collect($mail)->toArray();
-        
-        foreach ($users as $user) {
-            Mail::to($user)->send(new SendMail($email_info));
-        }
-
-        return response()->json([
-            'message' => 'email has been sent!.',
-            $users
-        ]);
-    }
-
-
 
 
     //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
     public function query(Request $request)
     {
+        $email_info = [
+            'title' => 'Notification Mail',
+            'body' => 'This is to notify you that a case was just created',
+            'link' => 'http://127.0.0.1:8000/case-details/'
+        ];
+
         $serverName = "localhost";
         $connectionOptions = array(
             "dbname" => "casedb",
@@ -314,6 +297,30 @@ class CaseManagementController extends Controller
 
             // Close the connection
             $conn = null;
+
+
+            if (preg_match('/VALUES\s*\(\s*\'(\d+)\'/', $tsql, $matches)) {
+                $number = $matches[1];
+                $recipients = CaseManagement::select('assigned_user', 'supervisor_id')->where('id', $number)->first();
+                $supervisor_id = json_decode($recipients->supervisor_id, true);
+
+                $recipientsId = [];
+                if (isset($recipients->supervisor_id)) {
+                    $recipientsId[] = $recipients->assigned_user;
+                }
+                if (isset($supervisor_id["id"])) {
+                    $recipientsId = array_merge($recipientsId, $supervisor_id["id"]);
+                }
+
+                $emails = User::whereIn('id', $recipientsId)->pluck('email');
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new SendMail($email_info));
+                }
+                return response()->json([
+                    $result,
+                    'message' => 'Case Was Successfully Created, Emails sent!.'
+                ]);
+            }
 
             return response()->json([
                 $result,
