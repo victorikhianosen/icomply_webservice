@@ -23,6 +23,12 @@ Route::post('/login', [UserController::class, 'login']);
 //API ROUTE HANDLING QUERY TO DATABASE
 Route::post('/send-request', [CaseManagementController::class, 'query']);
 
+// API ROUTE HANDLING EMAILS
+Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
+
+
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/make-supervisor',  [UserController::class, 'makeSupervisor']);
     Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);

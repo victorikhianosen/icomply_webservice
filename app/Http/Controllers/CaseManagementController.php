@@ -179,8 +179,7 @@ class CaseManagementController extends Controller
 
         if ($case->case_status_id == 2) {
             $checkErr = 'Case has already been closed';
-        return response()->json(['checkErr'=>$checkErr]);
-           
+            return response()->json(['checkErr' => $checkErr]);
         }
 
         $case->update([
@@ -201,10 +200,10 @@ class CaseManagementController extends Controller
         ];
 
 
-        if ($case->case_status_id !== 2 || $case) {
-            Mail::to($case->user->email)->send(new CaseMail($email_info));
-        }
-        return response()->json(['message'=>'Case has been closed!']);
+        // if ($case->case_status_id !== 2 || $case) {
+        //     Mail::to($case->user->email)->send(new CaseMail($email_info));
+        // }
+        return response()->json(['message' => 'Case has been closed!']);
     }
 
     public function showCaseById(Request $request)
@@ -216,14 +215,14 @@ class CaseManagementController extends Controller
         $case = CaseManagement::find($request->id);
         if (is_null($case)) {
             $errorMessage = "Case not found!";
-             return back()->with('this_error', $errorMessage);
+            return back()->with('this_error', $errorMessage);
         }
 
-        return redirect('/case-details/'.$request->id);
-        
+        return redirect('/case-details/' . $request->id);
     }
 
-    public function getEverything(Request $request)  {
+    public function getEverything(Request $request)
+    {
 
         $query = $request->input('query');
 
@@ -238,7 +237,7 @@ class CaseManagementController extends Controller
 
                 // $paginatedResults = collect($results)->paginate($perPage, ['*'], 'page', $page);
 
-                return  response()->json($results) ;
+                return  response()->json($results);
             } else {
                 DB::statement($query);
                 return response()->json(['message' => 'Query executed successfully']);
@@ -246,7 +245,6 @@ class CaseManagementController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
-
     }
 
 
@@ -256,13 +254,38 @@ class CaseManagementController extends Controller
         $case = CaseManagement::find($id);
         if (is_null($case)) {
             $errorMessage = "Case does not exist!";
-             return response()->json([$errorMessage]);
+            return response()->json([$errorMessage]);
         }
-        
+
         return response()->json($case);
     }
 
-//THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
+    public function sendMail(Request $request)
+    {
+        $mail = $request->header('email');
+
+        $email_info = [
+            'title' => 'Notification Mail',
+            'body' => 'This is to notify you that a case was just created',
+            'link' => 'http://127.0.0.1:8000/case-details/' 
+        ];
+       $mail= explode(',', $mail);
+        $users = collect($mail)->toArray();
+        
+        foreach ($users as $user) {
+            Mail::to($user)->send(new SendMail($email_info));
+        }
+
+        return response()->json([
+            'message' => 'email has been sent!.',
+            $users
+        ]);
+    }
+
+
+
+
+    //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
     public function query(Request $request)
     {
         $serverName = "localhost";
@@ -292,7 +315,10 @@ class CaseManagementController extends Controller
             // Close the connection
             $conn = null;
 
-            return response()->json($result);
+            return response()->json([
+                $result,
+                'message' => 'Query Execution Was Successful.'
+            ]);
         } catch (PDOException  $e) {
             echo "Error: " . $e->getMessage();
         }

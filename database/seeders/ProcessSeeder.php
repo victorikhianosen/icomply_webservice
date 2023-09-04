@@ -95,15 +95,7 @@ class ProcessSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
-
-            [
-                'process_id' => '436',
-                'name' => 'Dual control not observed',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-
-        ];
+  ];
         DB::table('process')->insert($data);
 
     }

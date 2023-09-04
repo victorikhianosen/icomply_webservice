@@ -14,6 +14,19 @@
     <div class="row justify-content-center">
         <div class="col-sm-10 m-3 table-responsive">
             <h4 class="text-center m-3">Case Details</h4>
+            @php
+            use Illuminate\Support\Facades\Http;
+            
+            $response = Http::withHeaders([
+            'Accept'=> 'application/json',
+            'Authorization'=> 'Bearer 52|4vvaQbX3sFsf5k7OYoN6GSpQbzk9e3RfxJHFpiQy',
+            ])
+            ->get('http://127.0.0.1:8000/api/case/statuslist?case_status_id=2');
+            
+            return $case= $response;
+                
+            
+            @endphp
             <table class="table table-hover table-striped">
                 <thead class="table-dark ">
                     <tr>

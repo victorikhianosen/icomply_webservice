@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class DepartmentSeeder extends Seeder
+class DataSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,379 +16,262 @@ class DepartmentSeeder extends Seeder
      */
     public function run()
     {
-        $data = [
+
+        DB::table('process')->insert([
+
+            // Add more data rows here
             [
-                'id' => '40',
-                'name' => 'OPERATIONS',
+                'process_id' => '279',
+                'name' => 'Dual control not observed',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
 
             [
-                'id' => '45',
-                'name' => 'FINANCIAL CONTROL',
+                'process_id' => '279',
+                'name' => 'No cash officer Sign off on supply slip ',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Instruction not signature verified',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Cash Analysis',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Wrong Classification	',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Wrong Account	',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Tellers stamp not ok or not in line with the tellers 	',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Self-check register not signed by tellers and updated',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Instrument not sv',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Alteration in customers instruction',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'No deposit printed for cash lodgement',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Stale date on instrument',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Tellers till not balanced with the system',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'process_id' => '279',
+                'name' => 'Cash wrapper not stamped',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
 
             [
-                'id' => '50',
-                'name' => 'INFORMATION SECURITY',
+                'process_id' => '279',
+                'name' => 'Counter cheque issued not registered	',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
 
             [
-                'id' => '55',
-                'name' => 'RISK MANAGEMENT',
+                'process_id' => '279',
+                'name' => 'Details of Beneficiary not received',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
 
             [
-                'id' => '72',
-                'name' => 'FOREIGN OPERATIONS',
+                'process_id' => '279',
+                'name' => 'attendance not maintained or updated ',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-                
-            ],
-
-                [
-
-                'id' => '42',
-                'name' => 'DOMESTIC OPERATIONS',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-                ],
-
-[
-            'id' => '43',
-            'name' => 'BUSINESS BANKING',
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),],
-
-                [
-
-                'id' => '46',
-                'name' => 'INTERNAL AUDIT',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-                ],
-
-                [
-
-                'id' => '48',
-                'name' => 'FINANCIAL CONTROL',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-                ],
-
-                [
-
-                'id' => '53',
-                'name' => 'PUBLIC SECTOR',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-                ],
-
-                [
-            'id' => '51',
-            'name' => 'RETAIL BANKING',
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-                ],
-
-                [
-
-                'id' => '54',
-                'name' => 'INFORMATION SECURITY',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-                ],
-                [
-
-                'id' => '56',
-                'name' => 'SHARIAH AUDIT',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-                ],
-
-                [
-
-                'id' => '58',
-                'name' => 'SHARIAH DEPARTMENT',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-                ],
-
-            [
-
-                'id' => '59',
-                'name' => 'TRANSFORMATION',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            
-            [
-
-                'id' => '60',
-                'name' => 'APPLICATION DEVELOPMENT',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            
-            [
-
-                'id' => '62',
-                'name' => 'CONTACT CENTER',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '63',
-                'name' => 'MD\'S\ DIRECTORATE',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '66',
-                'name' => 'E-BUSINESS',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '67',
-                'name' => 'MARKETING',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '68',
-                'name' => 'PRIVATE BANKING',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '69',
-                'name' => 'OPERATIONS-NASS',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '71',
-                'name' => 'CUSTOMER SERVICE',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '74',
-                'name' => 'OPERATIONS-KANO',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '77',
-                'name' => 'HUMAN RESOURCES',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '78',
-                'name' => 'CORPORATE SERVICES',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
-            ],
-            [
-
-                'id' => '95',
-                'name' => 'TREASURY',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '94',
-                'name' => 'INFORMATION TECHNONOLOGY',
+                'process_id' => '279',
+                'name' => 'Deposit receipt printout not signed by the customer	',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '92',
-                'name' => 'DEVELOPMENT FINANCE',
+                'process_id' => '279',
+                'name' => 'Instruction not timestamped',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '91',
-                'name' => 'OPERATIONS-LAGOS',
+                'process_id' => '279',
+                'name' => 'No cash analysis on exchange ticket',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '89',
-                'name' => 'Head office',
+                'process_id' => '279',
+                'name' => 'Wrong date on time stamp machine',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '87',
-                'name' => 'LEGAL',
+                'process_id' => '279',
+                'name' => 'Payment to unauthorized signatory',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '104',
-                'name' => 'BUISNESS BANKING GROUP',
+                'process_id' => '279',
+                'name' => 'Unauthorized Transaction',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+            ],
 
+            //
+            [
+                'process_id' => '279',
+                'name' => 'Unauthorized Transaction',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
             ],
 
             [
-
-                'id' => '102',
-                'name' => 'AGRIC BUSINESS',
+                'process_id' => '279',
+                'name' => 'Amount Mismatch',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '101',
-                'name' => 'BUSINESS DEVELOPMENT',
+                'process_id' => '279',
+                'name' => 'Cheque paid but not confirmed.',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '100',
-                'name' => 'CORPORATE TREASURY',
+                'process_id' => '279',
+                'name' => 'Amount Mismatch',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '99',
-                'name' => 'INTERNATIONAL OPERATIONS',
+                'process_id' => '279',
+                'name' => 'No deposit receipt printed for cash lodgement',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '98',
-                'name' => 'E-BANKING OPERATIONS',
+                'process_id' => '279',
+                'name' => 'UV light not functional	',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '97',
-                'name' => 'ED BUSINESS DEVELOPMENT, DIRECTORATE',
+                'process_id' => '279',
+                'name' => 'Not within TAT/ticket missing',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '96',
-                'name' => 'TREASURY OPERATIONS',
+                'process_id' => '279',
+                'name' => 'Wrong/no filing',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '105',
-                'name' => 'MARKETING COMMUNICATIONS',
+                'process_id' => '279',
+                'name' => 'Value date set up error',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '107',
-                'name' => 'TAJMALL',
+                'process_id' => '279',
+                'name' => 'No cash analysis',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '44',
-                'name' => 'COMPLIANCE',
+                'process_id' => '279',
+                'name' => 'boxed cash not in vault',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
-
             ],
 
             [
-
-                'id' => '1',
-                'name' => 'INTERNAL CONTROL',
+                'process_id' => '279',
+                'name' => 'Amount wrongly posted',
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
+            ],
 
-            ],	
+            [
+                'process_id' => '279',
+                'name' => 'Triplicate Cash Exchange Ticket not properly distributed',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
 
-            
+            [
+                'process_id' => '279',
+                'name' => 'Loss of Income',
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+					
 
-        ];
-        DB::table('department')->insert($data);
+        ]);
+           
 
+  
     }
 }

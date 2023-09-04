@@ -42,6 +42,15 @@ Route::get('/case-details/{id}', function ($id) {
     return view('case-details', ['id' => $id]);
 })->middleware('auth');
 
+Route::get('/test-case/{id}', function ($id) {
+    return view('test-case', ['id' => $id]);
+})->middleware('auth');
+
+
+// Route::get('/docu', function () {
+//     return view('documentation');
+// });
+Route::get('/docu', [App\Http\Controllers\CaseManagementController::class, 'getDocumentation']);
 
 
     // Route::get('/case-details/{id}', [\App\Http\Controllers\CaseManagementController::class, 'getCaseDetails']);

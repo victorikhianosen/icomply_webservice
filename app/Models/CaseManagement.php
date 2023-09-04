@@ -28,6 +28,11 @@ class CaseManagement extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function assigned_user()
+    {
+        return $this->belongsTo(User::class, 'assigned_user');
+    }
+
     public function priority()
     {
         return $this->belongsTo(PriorityLevel::class, 'priority_level_id');

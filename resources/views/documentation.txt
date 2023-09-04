@@ -1,0 +1,132 @@
+register a user {
+    request method:POST
+    api:http://127.0.0.1:8000/api/register
+    params:full_name , email, phone_number ,branch_code , company_code,password
+}
+
+login a user {
+    request method:POST
+    api:http://127.0.0.1:8000/api/login
+    params:email , password
+}
+
+Make user a supervisor {
+    request method:POST
+    api:http://127.0.0.1:8000/api/users/make-supervisor
+    params: email
+
+}
+
+Create a case {
+    request method:POST
+    api:http://127.0.0.1:8000/api/case/createcase
+    params: priority_level_id ,description ,users[]
+
+    {
+    "priority_level_id": "2",
+    "description": "This is the description.",
+    "users": ["user1", "user2"]
+}
+    
+    }
+
+Fetch case assigned to a user{
+    request method:GET
+    api:http://127.0.0.1:8000/api/users/get/usercase
+    params:email
+}
+
+Fetch all case{
+    request method:GET
+    api:http://127.0.0.1:8000/api/case/allcase
+
+}
+
+Fetch case by priority {
+    request method:GET
+    api:http://127.0.0.1:8000/api/case/prioritylist
+    params:priority_level_id
+
+}
+
+Fetch case by status {
+    request method:GET
+    api:http://127.0.0.1:8000/api/case/statuslist
+    params:case_status_id
+
+}
+
+Close a case by id{
+    request method:POST
+    api:http://127.0.0.1:8000/api/case/closecase
+    params:reason_for_close
+
+}
+
+Fetch a case by id{
+    request method:GET
+    api:http://127.0.0.1:8000/api/send/case
+    params:id
+
+}
+
+
+FOR THE NEW API : https://6e8d-102-89-23-58.ngrok-free.app/api/send-request
+
+USERS TABLE:
+id,full_name , email, phone_number,branch_code, company_code,is_supervisor, password,created_at
+
+PROCESS TABLE:
+id, name, process_id, created_at.
+
+PROCESS_CATEGORY TABLE:
+id, name, created_at.
+
+STAFF TABLE:
+id, name, department_id,email, created_at
+
+PRIORITY_LEVEL TABLE
+id, name, slug, description, created_at.
+
+DEPARTMENT TABLE:
+id,name,email, created_at
+
+CASE_STATUS TABLE:
+id,name,description, slug, created_at.
+
+CASE_MANAGEMENT TABLE:
+id, user_id,case_status_id,priority_level,description,reason_for_close, supervisor_id(jsonb data type), created_at, staff_responsible, case_action,department_id,process_id,proces_categoryid.
+
+
+To CREATE ALERT{
+
+ example: sql  = INSERT INTO alert (name, case_status_id,created_at ,description,alert_action,department_id,process_id,user_id,mail_to)
+     VALUES ('ALERT7615', '1', '2023-08-28 17:10:00','today alert','please attend to this','50','49','9','{"email":"lebechiuchey@gmail.com"}'); 
+     
+}
+
+ TO CREATE CASE 
+
+ {  
+  example: sql =  INSERT INTO case_management(user_id, case_status_id,created_at, priority_level_id,description,staff_responsible,case_action,department_id,alert_id,process_id,process_categoryid)
+ VALUES ('8', '1', '2023-08-28 15:52:00','1','case description','55','please treat as urgent','60','{"id":"10"}','40','311');
+ }
+
+
+ TO CREATE STAFF 
+ {  
+  example: sql =  insert into staff (id,name, email, department_id,created_at)
+  values('41','goodstaff','good@gmail.com','56','2023-08-28 16:47:00')
+ }
+
+ TO CREATE PROCESS 
+ {  
+  example: sql =  INSERT INTO process(name, process_id,created_at)
+   VALUES ('Kyc not done', '311', '2023-08-28 15:52:00');
+ }
+
+ TO CREATE PROCESS CATEGORY
+ {  
+  example: sql =  INSERT INTO process_category(id,name,created_at) 
+  VALUES ('311','ACCOUNT OPENING DOCUMENTATION',  '2023-08-28 17:45:00');
+ }

@@ -17,6 +17,8 @@ class ProcessCategorySeeder extends Seeder
     public function run()
     {
         $data = [
+
+            
             [
                 'id' => '305',
                 'name' => 'DOMICILIARY OUTFLOW PROCESSING',
@@ -44,9 +46,13 @@ class ProcessCategorySeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            
+           
+           
 
         ];
         DB::table('process_category')->insert($data);
 
+        
     }
 }
