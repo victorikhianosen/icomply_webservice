@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\CaseMail;
+use App\Mail\CloseMail;
 use App\Mail\SendMail;
 use App\Models\CaseManagement;
 use App\Models\CaseStatus;
@@ -260,75 +261,6 @@ class CaseManagementController extends Controller
         return response()->json($case);
     }
 
-    // public function sendMail(Request $request)
-    // {
-    //     $email_info = [
-    //         'title' => 'Notification Mail',
-    //         'body' => 'This is to notify you that a case was just created',
-    //         'link' => 'http://127.0.0.1:8000/case-details/'
-    //     ];
-
-    //     $serverName = "localhost";
-    //     $connectionOptions = array(
-    //         "dbname" => "casedb",
-    //         "user" => "postgres",
-    //         "password" => "leonard",
-    //         "host" => $serverName,
-    //         "driver" => "pdo_pgsql"
-    //     );
-
-    //     try {
-    //         $conn = new PDO("pgsql:host={$connectionOptions['host']};dbname={$connectionOptions['dbname']}", $connectionOptions['user'], $connectionOptions['password']);
-    //         // Set PDO attributes if needed
-    //         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    //         $tsql = $request->header('sql');
-
-    //         $stmt = $conn->prepare($tsql);
-    //         $stmt->execute();
-
-    //         $result = array();
-    //         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    //             $result[] = $row;
-    //         }
-
-    //         // Close the connection
-    //         $conn = null;
-
-    //         $rowId = [];
-
-    //         foreach ($result as $item) {
-    //             $rowId[] = $item['id'];
-    //         }
-
-    //         $recipients = CaseManagement::select('assigned_user', 'supervisor_id')->where('id', $rowId)->first();
-    //         $supervisor_id = json_decode($recipients->supervisor_id, true);
-
-    //         $recipientsId = [];
-    //         if (isset($recipients->assigned_user)) {
-    //             $recipientsId[] = $recipients->assigned_user;
-    //         }
-    //         if (isset($supervisor_id["id"])) {
-    //             $recipientsId = array_merge($recipientsId, $supervisor_id["id"]);
-    //         }
-
-    //         $emails = User::whereIn('id', $recipientsId)->pluck('email');
-    //         foreach ($emails as $email) {
-    //             Mail::to($email)->send(new SendMail($email_info));
-    //         }
-    //         return response()->json([
-    //             'message' => 'Case Was Successfully Created, Emails sent!.'
-    //         ]);
-           
-
-    //         return response()->json([
-    //             $result,
-    //             'message' => 'Query Execution Was Successful.'
-    //         ]);
-    //     } catch (PDOException  $e) {
-    //         echo "Error: " . $e->getMessage();
-    //     }
-    // }
 
 
     //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
@@ -368,8 +300,8 @@ class CaseManagementController extends Controller
             // Close the connection
             $conn = null;
 
-            $Insertpattern = '/INSERT\s+INTO\s+case_management/i';
-            if (preg_match($Insertpattern,$tsql)) {
+            $insertpattern = '/INSERT\s+INTO\s+case_management/i';
+            if (preg_match($insertpattern, $tsql)) {
                 $rowId = [];
 
                 foreach ($result as $item) {
@@ -395,15 +327,14 @@ class CaseManagementController extends Controller
                     'message' => 'Case Was Successfully Created, Emails sent!.'
                 ]);
             }
-            
 
-           
-            $Updatepattern = '/UPDATE\s+case_management\s+SET\s+\w+\s*=\s*[\'"]?([^\'"]+)[\'"]?\s+WHERE\s+id\s*=\s*(\d+)/i';
 
-                if (preg_match($Updatepattern, $tsql, $matches)) {
 
-                
-                    $UpdatedRowId = $matches[2];
+            $updatepattern = '/UPDATE\s+case_management\s+SET\s+assigned_user_response[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+
+            if (preg_match($updatepattern, $tsql, $matches)) {
+
+                $UpdatedRowId = $matches[1];
                 $recipients = CaseManagement::select('supervisor_id','user_id','assigned_user', 'assigned_user_response')->where('id', $UpdatedRowId)->first();
                 $supervisor_id = json_decode($recipients->supervisor_id, true);
 
@@ -423,15 +354,51 @@ class CaseManagementController extends Controller
                     'response'=>$recipients->assigned_user_response,
                     'link' => 'http://127.0.0.1:8000/case-details/'. $UpdatedRowId
                 ];
-
                 foreach ($emails as $email) {
                     Mail::to($email)->send(new SendMail($email_info));
                 }
                 return response()->json([
                     'message' => 'Case Was Successfully Updated, Emails sent!.'
                 ]);
-        
-                }           
+            };
+
+
+            $closepattern = '/UPDATE\s+case_management\s+SET\s+case_status_id[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+
+
+            if (preg_match($closepattern, $tsql, $matches)) {
+                $id = $matches[1];
+
+                $recipients = CaseManagement::select('supervisor_id', 'user_id', 'assigned_user', 'reason_for_close')->where('id', $id)->first();
+                $supervisor_id = json_decode($recipients->supervisor_id, true);
+
+                $recipientsId = [];
+                if (isset($recipients->user_id)) {
+                    $recipientsId[] = $recipients->user_id;
+                }
+                if (isset($recipients->assigned_user)) {
+                    $recipientsId[] = $recipients->assigned_user;
+                }
+                if (isset($supervisor_id["id"])) {
+                    $recipientsId = array_merge($recipientsId, $supervisor_id["id"]);
+                }
+                $emails = User::whereIn('id', $recipientsId)->pluck('email');
+                $creator = $recipients->user_id;
+                $close_case = [
+                    'title' => 'Notification Mail',
+                    'body' => 'This is to notify you that a case was closed',
+                    'creator_id' => $creator,
+                    'reason_for_close' => $recipients->reason_for_close,
+                    'link' => 'http://127.0.0.1:8000/case-details/' . $id
+                ];
+
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new CloseMail($close_case));
+                }
+                return response()->json([
+                    'message' => 'Case Closed Successfully!.'
+                ]);
+            }           
 
 
             return response()->json([
