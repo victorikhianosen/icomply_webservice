@@ -12,15 +12,15 @@ use Illuminate\Queue\SerializesModels;
 class CaseMail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $email_info;
+    public $case_notification;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($email_info)
+    public function __construct($case_notification)
     {
-        return $this->email_info = $email_info;
+        return $this->case_notification = $case_notification;
     }
 
     /**
