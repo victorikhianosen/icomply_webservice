@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Mail\CaseMail;
 use App\Mail\CloseMail;
 use App\Mail\SendMail;
+use App\Models\Alert;
 use App\Models\CaseManagement;
 use App\Models\CaseStatus;
+use App\Models\Department;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -16,6 +18,7 @@ use Illuminate\Contracts\Session\Session;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Nette\Utils\Random;
 use PDO;
 use PDOException;
 
@@ -222,32 +225,6 @@ class CaseManagementController extends Controller
         return redirect('/case-details/' . $request->id);
     }
 
-    public function getEverything(Request $request)
-    {
-
-        $query = $request->input('query');
-
-        try {
-            // Check if the query starts with SELECT (case-insensitive)
-            if (preg_match('/^\s*select/i', $query)) {
-                $results = DB::select($query);
-
-                // Paginate the results
-                // $perPage = $request->input('per_page', 10); // Number of results per page
-                // $page = $request->input('page', 1); // Current page
-
-                // $paginatedResults = collect($results)->paginate($perPage, ['*'], 'page', $page);
-
-                return  response()->json($results);
-            } else {
-                DB::statement($query);
-                return response()->json(['message' => 'Query executed successfully']);
-            }
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
 
 
     public function getCaseDetails($id)
@@ -308,8 +285,10 @@ class CaseManagementController extends Controller
                     $rowId[] = $item['id'];
                 }
 
-                $recipients = CaseManagement::select('assigned_user', 'supervisor_id')->where('id', $rowId)->first();
+                $recipients = CaseManagement::select('assigned_user', 'supervisor_id','department_id')->where('id', $rowId)->first();
+
                 $supervisor_id = json_decode($recipients->supervisor_id, true);
+                $case = $recipients->department_id;
 
                 $recipientsId = [];
                 if (isset($recipients->assigned_user)) {
@@ -318,8 +297,23 @@ class CaseManagementController extends Controller
                 if (isset($supervisor_id["id"])) {
                     $recipientsId = array_merge($recipientsId, $supervisor_id["id"]);
                 }
-
+                $randomNumber = random_int(5, 1000000000);
                 $emails = User::whereIn('id', $recipientsId)->pluck('email');
+                $department = Department::find($case);
+                return $department->id;
+                // $deptarr[]=$department->email;
+                // $allmail []= array_merge($emails, $deptarr);
+
+                // Alert::create([
+                //     'mail_to' => $allmail,
+                //     'case_status_id' => $case->case_status_id,
+                //     'description' => $case->description,
+                //     'department_id' => $case->department_id,
+                //     'process_id'=>$case->process_id ,
+                //     'alert_action'=>$case->case_action ,
+                //     'name'=>'ALERT'.$randomNumber,
+                //     'user_id'=>$case->user_id
+                // ]);
                 foreach ($emails as $email) {
                     Mail::to($email)->send(new CaseMail($case_notification));
                 }

@@ -18,4 +18,9 @@ class ProcessCategory extends Model
     {
         return $this->hasMany(Process::class);
     }
+
+    public function exception_category()
+    {
+        return $this->belongsTo(ExceptionCategory::class, 'exception_category_id');
+    }
 }

@@ -7,11 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Alert extends Model
 {
+    protected $fillable = [
+        'id',
+        'user_id',
+        'case_status_id',
+        'process_id',
+        'description',
+        'alert_action',
+        'name',
+        'department_id',
+        'mail_to',
+    ];
+    protected $casts = [
+        'mail_to' => 'array',
+    ];
+    protected $table = 'alert';
     use HasFactory;
 
-    public function case()
+    public function department()
     {
-        return $this->belongsTo(CaseManagement::class);
+        return $this->belongsTo(Department::class,'department_id');
     }
 
     public function status()
@@ -21,11 +36,26 @@ class Alert extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'user_id');
     }
 
     public function process()
     {
-        return $this->belongsTo(Process::class);
+        return $this->belongsTo(Process::class,'process_id');
+    }
+
+    public function exception_category()
+    {
+        return $this->belongsTo(ExceptionCategory::class, 'exception_category_id');
+    }
+
+    public function exception_status()
+    {
+        return $this->belongsTo(ExceptionProcessStatus::class, 'exception_process_status_id');
+    }
+
+    public function alert_group()
+    {
+        return $this->belongsTo(AlertGroup::class, 'alert_group_id');
     }
 }

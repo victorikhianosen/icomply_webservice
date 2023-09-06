@@ -12,15 +12,18 @@ class CaseManagement extends Model
 
 
     protected $fillable = [
-        'id',
+
         'user_id',
         'case_status_id',
         'priority_level_id',
         'description',
-        'supervisor_name',
-        'reason_for_close',
-        'narration',
-        'mail_to'
+        'supervisor_id',
+        'case_action',
+        'assigned',
+        'mail_to',
+        'process_categoryid',
+        'process_id',
+        'department_id'
     ];
 
     public function user()
