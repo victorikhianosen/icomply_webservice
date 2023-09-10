@@ -15,28 +15,82 @@ class NewerDataSeeder extends Seeder
      */
     public function run()
     {
-       
+
+
         $data7 = [
             [
-                'id' => '21',
-                'name' => 'Automated Transactional Alerts',
-                'code' => 'trans',
-                'description'=> 'Automated Transactional Alerts'
+                'id' => '1',
+                'name' => 'Bank Wide',
+                'slug' => 'bank',
+            ],
+
+            [
+                'id' => '2',
+                'name' => 'Account',
+                'slug' => 'account',
+
             ],
             [
-                'id' => '1',
-                'name' => 'Case Manager Exception Processes',
-                'code' => 'non-trans',
-                'description' => 'Case Manager Exception Processes'
+                'id' => '4',
+                'name' => 'Branch Wide',
+                'slug' => 'branch',
 
             ],
 
-           
+            [
+                'id' => '22',
+                'name' => 'AML',
+                'slug' => 'aml',
+
+            ],
+
+            [
+                'id' => '23',
+                'name' => 'Compliance',
+                'slug' => 'compliance',
+
+            ],
+
+            [
+                'id' => '24',
+                'name' => 'Case Manager',
+                'slug' => 'case-manager',
+
+            ],
+
+            [
+                'id' => '61',
+                'name' => 'Transaction Scoring',
+                'slug' => 'transaction-scoring',
+
+            ],
+
+            [
+                'id' => '41',
+                'name' => 'Customer Risk Scoring',
+                'slug' => 'customer-risk-scoring',
+
+            ],
+            [
+                'id' => '25',
+                'name' => 'User Statistics',
+                'slug' => 'user',
+
+            ],
             // Add more records as needed
         ];
+        
+        $data8=[
+            [
+                'name' => 'policy',
 
-        DB::table('exception_category')->insert($data7);
+            ],
+             [
+                'name' => 'procedure',
 
-      
+            ],
+        ];
+
+        DB::table('document_type')->insert($data8);
     }
 }

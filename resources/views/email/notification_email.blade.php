@@ -12,8 +12,13 @@
     <h1>{{ $case_notification['title']}}</h1>
     <p>{{ $case_notification['body'] }}</p>
     
-    <p>View this case <a href="">{{ $case_notification['link'] }}</a> </p>
+    @isset($case_notification['link'])
+        <p>View this case <a href="">{{ $case_notification['link'] }}</a> </p>
+    @endisset 
     
+    @isset($creator_id)
+        <p>Responder Id: {{ $email_info['responder_id'] }} </p>
+    @endisset
 
 
 </body>

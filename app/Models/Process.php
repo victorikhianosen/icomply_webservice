@@ -12,7 +12,19 @@ class Process extends Model
     protected $fillable = [
         'id',
         'name',
-        'process_id'
+        'process_id',
+        'user_id',
+        'second_line_owner',
+        'first_line_owner',
+        'frequency',
+        'status',
+        'branch_code',
+        'alert_group_id',
+        'narration'
+    ];
+
+    protected $casts = [
+        'mail_to' => 'array',
     ];
     protected $table = 'process';
 
