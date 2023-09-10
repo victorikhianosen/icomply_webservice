@@ -4,14 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Mail\CaseMail;
 use App\Mail\CloseMail;
+use App\Mail\DocumentMail;
 use App\Mail\ExceptionMail;
 use App\Mail\SendMail;
+use App\Mail\SystemMail;
 use App\Models\Alert;
 use App\Models\AlertGroup;
 use App\Models\CaseManagement;
 use App\Models\CaseStatus;
 use App\Models\Department;
+use App\Models\Document;
 use App\Models\Process;
+use App\Models\System;
+use App\Models\SystemAllocation;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -281,7 +286,7 @@ class CaseManagementController extends Controller
             // Close the connection
             $conn = null;
 
-            // <----------------------  CASE_MANAGEMENT ---------------------------->
+            // <----------------------CREATE CASE_MANAGEMENT ---------------------------->
 
             $insertpattern = '/INSERT\s+INTO\s+case_management/i';
             if (preg_match($insertpattern, $tsql)) {
@@ -439,7 +444,8 @@ class CaseManagementController extends Controller
                 ]);
             }
 
-            //< --------------   DOCUMENT ----------------------->
+
+            //< --------------CREATE DOCUMENT ----------------------->
 
             $insertprocess = '/INSERT\s+INTO\s+document/i';
             if (preg_match($insertprocess, $tsql)) {
@@ -449,7 +455,7 @@ class CaseManagementController extends Controller
                     $rowId[] = $item['id'];
                 }
 
-                $recipients=Process::find($rowId)->first();
+                $recipients=Document::find($rowId)->first();
                 
                     $recipientsId[] = $recipients->first_owner_id;
                 $recipientsId[] = $recipients->second_owner_id;
@@ -457,58 +463,179 @@ class CaseManagementController extends Controller
 
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
 
-                $process_notification = [
-                    'title' => 'Exception Process Notification',
-                    'newprocess' => 'This is to notify you that an exception process was created',
+                $document_notification = [
+                    'title' => 'New Document Notification',
+                    'document' => 'This is to notify you that a new document was created',
                     'creator_id' => $recipients->user_id,
+                    'id'=>$rowId,
                     'link'=>'',
                 ];
                 foreach ($emails as $email) {
-                    Mail::to($email)->send(new ExceptionMail($process_notification));
+                    Mail::to($email)->send(new DocumentMail($document_notification));
                 }
                 return response()->json([
-                    'message' => 'Process Was Successfully Created!.'
+                    'message' => 'Document Was Successfully Created!.'
                 ]);
             }
 
-            $update_process_status = '/UPDATE\s+doc\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+            //----------------------------UPDATE DOCUMENT STATUS-------------------->
+
+            $update_process_status = '/UPDATE\s+document\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
 
             if (preg_match($update_process_status, $tsql, $matches)) {
 
                 $UpdatedRowId = $matches[1];
-                $recipients = Process::find($UpdatedRowId)->first();
-                $alert_dept = AlertGroup::find($recipients->alert_group_id)->first();
+                $recipients = Document::find($UpdatedRowId)->first();
 
                 $recipientsId[] = $recipients->first_line_owner;
                 $recipientsId[] = $recipients->second_line_owner;
                 $recipientsId[] = $recipients->user_id;
-                $deptarr[] = $alert_dept->email;
+                $recipientsId[] = $recipients->approver_id;
+
+                $randomNumber = random_int(5, 10000000000);
 
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
-                $allmail[] = array_merge($emails, $deptarr);
-                $email_info = [
-                    'title' => 'Notification Mail',
-                    'body' => 'This is to notify you that a case was just responded to',
-                    'responder_id' => $responder,
-                    'response' => $recipients->assigned_user_response,
-                    'link' => 'http://127.0.0.1:8000/case-details/' . $UpdatedRowId
+                $document_notification = [
+                    'Update_title' => 'Document Approved',
+                    'update_document' => 'This is to notify you that a document id '.$UpdatedRowId .'was just appeoved',
+                    'approver_id' => $recipients->approver_id,
+                    'link' => ''
                 ];
                 Alert::create([
-                    'mail_to' => $allmail,
-                    'case_status_id' => $recipients->case_status_id,
+                    'mail_to' => $emails,
                     'description' => $recipients->description,
-                    'department_id' => $recipients->department_id,
                     'process_id' => $recipients->process_id,
-                    'alert_action' => $recipients->case_action,
+                    'alert_action' => $recipients->status,
                     'name' => 'ALERT' . $randomNumber,
                     'user_id' => $recipients->user_id
                 ]);
 
-                foreach ($allmail as $email) {
-                    Mail::to($email)->send(new SendMail($email_info));
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new DocumentMail($document_notification));
                 }
                 return response()->json([
-                    'message' => 'Response Sent!.'
+                    'message' => 'Document Updated!.'
+                ]);
+            };
+
+            //<-------------------------- CREATE SYSTEM ---------------------------->
+            $insertsystem = '/INSERT\s+INTO\s+system/i';
+            if (preg_match($insertsystem, $tsql)) {
+                $rowId = [];
+
+                foreach ($result as $item) {
+                    $rowId[] = $item['id'];
+                }
+
+                $recipients = System::find($rowId)->first();
+
+                $recipientsId[] = $recipients->owner_1;
+                $recipientsId[] = $recipients->owner_2;
+                $recipientsId[] = $recipients->approver_id;
+
+                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+                $randomNumber = random_int(5, 10000000000);
+
+                Alert::create([
+                    'mail_to' => $emails,
+                    'description' => $recipients->additional_comment,
+                    'process_id' => $recipients->process_id,
+                    'alert_action' => $recipients->additional_comment,
+                    'name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->approver_id
+                ]);
+
+                $system = [
+                    'systemtitle' => 'New System Notification',
+                    'system' => 'This is to notify you that a new system was added',
+                    'approver_id' => $recipients->approver_id,
+                    'link' => '',
+                ];
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new SystemMail($system));
+                }
+                return response()->json([
+                    'message' => 'System Was Successfully Created!.'
+                ]);
+            }
+
+            //---------------------CREATE SYSTEM ALLOCATION --------------------------->
+
+            $system_all = '/INSERT\s+INTO\s+system_allocation/i';
+            if (preg_match($system_all, $tsql)) {
+                $rowId = [];
+
+                foreach ($result as $item) {
+                    $rowId[] = $item['id'];
+                }
+
+                $recipients = SystemAllocation::find($rowId)->first();
+
+                $recipientsId[] = $recipients->user_id;
+                $recipientsId[] = $recipients->responsible_id;
+                $recipientsId[] = $recipients->approver_id;
+
+                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+                $randomNumber = random_int(5, 10000000000);
+
+                Alert::create([
+                    'mail_to' => $emails,
+                    'description' => $recipients->description,
+                    'alert_action' => $recipients->description,
+                    'name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->user_id
+                ]);
+
+                $system = [
+                    'allocate_title' => 'New System Allocation',
+                    'allocate' => 'This Is To Notify You That a New System Was Allocated',
+                    'allocator' => $recipients->user_id,
+                    'link' => '',
+                ];
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new SystemMail($system));
+                }
+                return response()->json([
+                    'message' => 'System Allocation Was Successful!.'
+                ]);
+            }
+
+            //<----------------------SYSTEM ALLOCATION UPDATE----------------------->
+            $update_system_all = '/UPDATE\s+system_allocation\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+
+            if (preg_match($update_system_all, $tsql, $matches)) {
+
+                $UpdatedRowId = $matches[1];
+                $recipients = SystemAllocation::find($UpdatedRowId)->first();
+
+                $recipientsId[] = $recipients->user_id;
+                $recipientsId[] = $recipients->responsible_id;
+                $recipientsId[] = $recipients->approver_id;
+
+
+                $randomNumber = random_int(5, 10000000000);
+
+                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+                Alert::create([
+                    'mail_to' => $emails,
+                    'description' => $recipients->description,
+                    'alert_action' => $recipients->description,
+                    'name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->approver_id
+                ]);
+
+                $system = [
+                    'update_allocate_title' => 'System Allocation Notification',
+                    'update_allocate' => 'This is to notify you that system id '. $UpdatedRowId.' that was allocated has been approved',
+                    'allocator' => $recipients->user_id,
+                    'link' => '',
+                ];
+
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new SystemMail($system));
+                }
+                return response()->json([
+                    'message' => 'System Allocation Approved!.'
                 ]);
             };
 

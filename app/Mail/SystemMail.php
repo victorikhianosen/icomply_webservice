@@ -9,20 +9,18 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class ExceptionMail extends Mailable
+class SystemMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $process_notification;
-
+public $system;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($process_notification)
+    public function __construct($system)
     {
-        return $this->process_notification = $process_notification;
+        return $this->system = $system;
     }
 
     /**
@@ -30,13 +28,9 @@ class ExceptionMail extends Mailable
      *
      * @return \Illuminate\Mail\Mailables\Envelope
      */
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array
-     */
+
     public function build()
     {
-        return $this->subject('Exception Process Notification ')->view('email.process_email');
+        return $this->subject('Confirmation Mail')->view('email.system');
     }
 }
