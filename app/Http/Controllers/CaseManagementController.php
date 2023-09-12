@@ -477,15 +477,7 @@ class CaseManagementController extends Controller
                 $recipientsId[] = $recipients->user_id;
                 $randomNumber = random_int(5, 10000000000);
 
-                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
-                $id = $rowId[0];
-                $document_notification = [
-                    'title' => 'New Process Notification',
-                    'document' => 'This is to notify you that a process was created',
-                    'creator_id' => $recipients->user_id,
-                    'id' => $id,
-                    'link' => '',
-                ];
+                $id = $rowId[0];                
                 $status = $recipients->state;
                 if ($status == 'active') {
                     $status = 1;
@@ -493,8 +485,19 @@ class CaseManagementController extends Controller
                     $status = 2;
                 }
 
-                $alertid = Alert::create([
-                    'mail_to' => $emails,
+
+
+                $document_notification = [
+                    'title' => 'New Process Notification',
+                    'document' => 'This is to notify you that a process was created',
+                    'creator_id' => $recipients->user_id,
+                    'id' => $id,
+                    'link' => '',
+                ];
+                $emails_ = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+
+                Alert::create([
+                    'mail_to' => $emails_,
                     'status_id' => $status,
                     'alert_description' => $recipients->narration,
                     'exception_process_id' => $recipients->process_id,
@@ -503,7 +506,8 @@ class CaseManagementController extends Controller
                     'alert_name' => 'ALERT' . $randomNumber,
                     'user_id' => $recipients->user_id,
                 ]);
-                foreach ($emails as $email) {
+
+                foreach ($emails_ as $email) {
                     Mail::to($email)->send(new DocumentMail($document_notification));
                 }
                 return response()->json([
@@ -526,16 +530,35 @@ class CaseManagementController extends Controller
                 $recipientsId[] = $recipients->first_owner_id;
                 $recipientsId[] = $recipients->second_owner_id;
                 $recipientsId[] = $recipients->user_id;
+                $randomNumber = random_int(5, 10000000000);
 
-                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
-
+                $id = $rowId[0];  
                 $document_notification = [
                     'title' => 'New Document Notification',
                     'document' => 'This is to notify you that a new document was created',
                     'creator_id' => $recipients->user_id,
-                    'id' => $rowId,
+                    'id' => $id,
                     'link' => '',
                 ];
+                $status = $recipients->status;
+                if ($status == 'approved') {
+                    $status = 1;
+                } else {
+                    $status = 2;
+                }
+                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+
+                $alertid = Alert::create([
+                    'mail_to' => $emails,
+                    'status_id' => $status,
+                    'alert_description' => $recipients->narration,
+                    'exception_process_id' => $recipients->process_id,
+                    'alert_action' => $document_notification['document'],
+                    'alert_subject' => $document_notification['document'],
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->user_id,
+                ]);
+
                 foreach ($emails as $email) {
                     Mail::to($email)->send(new DocumentMail($document_notification));
                 }
@@ -545,8 +568,9 @@ class CaseManagementController extends Controller
             }
 
             //----------------------------UPDATE DOCUMENT STATUS-------------------->
-
             $update_document_status = '/UPDATE\s+ctl_document\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+
+            // $update_document_status = '/update\s+ctl_document\s+set\s+status[^;]*where\s+id\s*=\s*(\d+);/i';
 
             if (preg_match($update_document_status, $tsql, $matches)) {
 
@@ -584,46 +608,7 @@ class CaseManagementController extends Controller
                 ]);
             };
 
-            //<-------------------------- CREATE SYSTEM ---------------------------->
-            $insertsystem = '/INSERT\s+INTO\s+ctl_system/i';
-            if (preg_match($insertsystem, $tsql)) {
-                $rowId = [];
-
-                foreach ($result as $item) {
-                    $rowId[] = $item['id'];
-                }
-
-                $recipients = System::find($rowId)->first();
-
-                $recipientsId[] = $recipients->owner_1;
-                $recipientsId[] = $recipients->owner_2;
-                $recipientsId[] = $recipients->approver_id;
-
-                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
-                $randomNumber = random_int(5, 10000000000);
-
-                Alert::create([
-                    'mail_to' => $emails,
-                    'description' => $recipients->additional_comment,
-                    'process_id' => $recipients->process_id,
-                    'alert_action' => $recipients->additional_comment,
-                    'name' => 'ALERT' . $randomNumber,
-                    'user_id' => $recipients->approver_id
-                ]);
-
-                $system = [
-                    'systemtitle' => 'New System Notification',
-                    'system' => 'This is to notify you that a new system was added',
-                    'approver_id' => $recipients->approver_id,
-                    'link' => '',
-                ];
-                foreach ($emails as $email) {
-                    Mail::to($email)->send(new SystemMail($system));
-                }
-                return response()->json([
-                    'message' => 'System Was Successfully Created!.'
-                ]);
-            }
+        
 
             //---------------------CREATE SYSTEM ALLOCATION --------------------------->
 
@@ -644,13 +629,7 @@ class CaseManagementController extends Controller
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
                 $randomNumber = random_int(5, 10000000000);
 
-                Alert::create([
-                    'mail_to' => $emails,
-                    'description' => $recipients->description,
-                    'alert_action' => $recipients->description,
-                    'name' => 'ALERT' . $randomNumber,
-                    'user_id' => $recipients->user_id
-                ]);
+               
 
                 $system = [
                     'allocate_title' => 'New System Allocation',
@@ -658,6 +637,14 @@ class CaseManagementController extends Controller
                     'allocator' => $recipients->user_id,
                     'link' => '',
                 ];
+
+                Alert::create([
+                    'mail_to' => $emails,
+                    'alert_description' => $recipients->description,
+                    'alert_action' => $system['allocate'],
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->user_id
+                ]);
                 foreach ($emails as $email) {
                     Mail::to($email)->send(new SystemMail($system));
                 }
@@ -672,21 +659,21 @@ class CaseManagementController extends Controller
             if (preg_match($update_system_all, $tsql, $matches)) {
 
                 $UpdatedRowId = $matches[1];
-                $recipients = SystemAllocation::find($UpdatedRowId)->first();
+                $recipients = SystemAllocation::find($UpdatedRowId);
 
                 $recipientsId[] = $recipients->user_id;
                 $recipientsId[] = $recipients->responsible_id;
                 $recipientsId[] = $recipients->approver_id;
 
-
                 $randomNumber = random_int(5, 10000000000);
 
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+               
                 Alert::create([
                     'mail_to' => $emails,
-                    'description' => $recipients->description,
+                    'alert_description' => $recipients->description,
                     'alert_action' => $recipients->description,
-                    'name' => 'ALERT' . $randomNumber,
+                    'alert_name' => 'ALERT' . $randomNumber,
                     'user_id' => $recipients->approver_id
                 ]);
 
@@ -701,9 +688,50 @@ class CaseManagementController extends Controller
                     Mail::to($email)->send(new SystemMail($system));
                 }
                 return response()->json([
-                    'message' => 'System Allocation Approved!.'
+                    'message' => 'System Allocation Approved!.....'
                 ]);
             };
+
+            //<-------------------------- CREATE SYSTEM ---------------------------->
+            $insertsystem = '/INSERT\s+INTO\s+ctl_system/i';
+            if (preg_match($insertsystem, $tsql)) {
+                $rowId = [];
+
+                foreach ($result as $item) {
+                    $rowId[] = $item['id'];
+                }
+
+                $recipients = System::find($rowId)->first();
+
+                $recipientsId[] = $recipients->owner_1;
+                $recipientsId[] = $recipients->owner_2;
+                $recipientsId[] = $recipients->approver_id;
+
+                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+                $randomNumber = random_int(5, 10000000000);
+
+                Alert::create([
+                    'mail_to' => $emails,
+                    'alert_description' => $recipients->additional_comment,
+                    'process_id' => $recipients->process_id,
+                    'alert_action' => $recipients->additional_comment,
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->approver_id
+                ]);
+
+                $system = [
+                    'systemtitle' => 'New System Notification',
+                    'system' => 'This is to notify you that a new system was added',
+                    'approver_id' => $recipients->approver_id,
+                    'link' => '',
+                ];
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new SystemMail($system));
+                }
+                return response()->json([
+                    'message' => 'System Was Successfully Created!.'
+                ]);
+            }
 
             return response()->json([
                 $result,

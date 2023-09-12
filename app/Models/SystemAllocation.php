@@ -32,6 +32,6 @@ class SystemAllocation extends Model
 
     public function system_cat()
     {
-        return $this->belongsTo(User::class, 'category_id');
+        return $this->belongsTo(SystemCategory::class, 'category_id');
     }
 }
