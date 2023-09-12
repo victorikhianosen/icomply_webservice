@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProcessCategory extends Model
 {
     use HasFactory;
-    protected $table = 'process_category';
+    protected $table = 'exception_process_type';
     protected $fillable = [
         'id',
         'name',

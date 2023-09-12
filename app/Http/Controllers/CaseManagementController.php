@@ -258,15 +258,15 @@ class CaseManagementController extends Controller
             'link' => 'http://127.0.0.1:8000/case-details/'
         ];
 
-        
+
         $serverName = "localhost";
         $connectionOptions = array(
-                "dbname" => "casedb",
-                "user" => "postgres",
-                "password" => "leonard",
-                "host" => $serverName,
-                "driver" => "pdo_pgsql"
-            );
+            "dbname" => "casedb",
+            "user" => "postgres",
+            "password" => "leonard",
+            "host" => $serverName,
+            "driver" => "pdo_pgsql"
+        );
 
         try {
             $conn = new PDO("pgsql:host={$connectionOptions['host']};dbname={$connectionOptions['dbname']}", $connectionOptions['user'], $connectionOptions['password']);
@@ -298,8 +298,9 @@ class CaseManagementController extends Controller
 
                 $recipients = CaseManagement::find($rowId)->first();
 
+
                 $supervisor_id = json_decode($recipients->supervisor_id, true);
-                
+
 
                 $recipientsId = [];
                 if (isset($recipients->assigned_user)) {
@@ -310,22 +311,26 @@ class CaseManagementController extends Controller
                 }
                 $randomNumber = random_int(5, 10000000000);
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
-                
-                
+
+
                 $department = Department::find($recipients->department_id);
-                
-                $deptarr[]=$department->email;
-                $allmail []= array_merge($emails, $deptarr);
-            
-                Alert::create([
+
+                $deptarr[] = $department->email;
+                $allmail[] = array_merge($emails, $deptarr);
+
+                $alertid = Alert::create([
                     'mail_to' => $allmail,
-                    'case_status_id' => $recipients->case_status_id,
-                    'description' => $recipients->description,
-                    'department_id' => $recipients->department_id,
-                    'process_id'=> $recipients->process_id ,
-                    'alert_action'=> $recipients->case_action ,
-                    'name'=>'ALERT'.$randomNumber,
-                    'user_id'=> $recipients->user_id
+                    'status_id' => $recipients->case_status_id,
+                    'alert_description' => $recipients->description,
+                    'team_id' => $recipients->department_id,
+                    'exception_process_id' => $recipients->process_id,
+                    'alert_action' => $recipients->case_action,
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->user_id,
+                ]);
+
+                $recipients->update([
+                    'alert_id' => $alertid->id
                 ]);
                 foreach ($allmail as $email) {
                     Mail::to($email)->send(new CaseMail($case_notification));
@@ -360,26 +365,30 @@ class CaseManagementController extends Controller
 
                 $deptarr[] = $department->email;
                 $allmail[] = array_merge($emails, $deptarr);
-            
-                 $responder = $recipients->assigned_user;
+
+                $responder = $recipients->assigned_user;
                 $email_info = [
                     'title' => 'Notification Mail',
                     'body' => 'This is to notify you that a case was just responded to',
-                    'responder_id'=> $responder,
-                    'response'=>$recipients->assigned_user_response,
-                    'link' => 'http://127.0.0.1:8000/case-details/'. $UpdatedRowId
+                    'responder_id' => $responder,
+                    'response' => $recipients->assigned_user_response,
+                    'link' => 'http://127.0.0.1:8000/case-details/' . $UpdatedRowId
                 ];
-                Alert::create([
+                $alertid = Alert::create([
                     'mail_to' => $allmail,
-                    'case_status_id' => $recipients->case_status_id,
-                    'description' => $recipients->description,
-                    'department_id' => $recipients->department_id,
-                    'process_id' => $recipients->process_id,
+                    'status_id' => $recipients->case_status_id,
+                    'alert_description' => $recipients->description,
+                    'team_id' => $recipients->department_id,
+                    'exception_process_id' => $recipients->process_id,
                     'alert_action' => $recipients->case_action,
-                    'name' => 'ALERT' . $randomNumber,
-                    'user_id' => $recipients->user_id
+                    'alert_subject' => $email_info['body'],
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->assigned_user,
                 ]);
-                
+
+                $recipients->update([
+                    'alert_id' => $alertid->id
+                ]);
                 foreach ($allmail as $email) {
                     Mail::to($email)->send(new SendMail($email_info));
                 }
@@ -389,7 +398,7 @@ class CaseManagementController extends Controller
             };
 
 
-            $closepattern ='/UPDATE\s+case_management\s+SET\s+case_status_id\s*=\s*2[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+            $closepattern = '/UPDATE\s+case_management\s+SET\s+case_status_id\s*=\s*2[^;]*WHERE\s+id\s*=\s*(\d+);/i';
 
             if (preg_match($closepattern, $tsql, $matches)) {
                 $id = $matches[1];
@@ -405,11 +414,11 @@ class CaseManagementController extends Controller
                     $recipientsId[] = $recipients->assigned_user;
                 }
                 if (isset($supervisor_id["id"])) {
-                    $super[]= $supervisor_id["id"];
+                    $super[] = $supervisor_id["id"];
                     $recipientsId = array_merge($recipientsId, $super);
                 }
-                
-                
+
+
                 $creator = $recipients->user_id;
                 $close_case = [
                     'title' => 'Notification Mail',
@@ -426,15 +435,21 @@ class CaseManagementController extends Controller
 
                 $deptarr[] = $department->email;
                 $allmail[] = array_merge($emails, $deptarr);
-                Alert::create([
+
+                $alertid = Alert::create([
                     'mail_to' => $allmail,
-                    'case_status_id' => $recipients->case_status_id,
-                    'description' => $recipients->description,
-                    'department_id' => $recipients->department_id,
-                    'process_id' => $recipients->process_id,
+                    'status_id' => $recipients->case_status_id,
+                    'alert_description' => $recipients->description,
+                    'team_id' => $recipients->department_id,
+                    'exception_process_id' => $recipients->process_id,
                     'alert_action' => $recipients->case_action,
-                    'name' => 'ALERT' . $randomNumber,
-                    'user_id' => $recipients->user_id
+                    'alert_subject' => $close_case['body'],
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->user_id,
+                ]);
+
+                $recipients->update([
+                    'alert_id' => $alertid->id
                 ]);
                 foreach ($allmail as $email) {
                     Mail::to($email)->send(new CaseMail($close_case));
@@ -445,9 +460,8 @@ class CaseManagementController extends Controller
             }
 
 
-            //< --------------CREATE DOCUMENT ----------------------->
-
-            $insertprocess = '/INSERT\s+INTO\s+document/i';
+            //<-------------------PROCESS---------------------------->
+            $insertprocess = '/INSERT\s+INTO\s+exception_process/i';
             if (preg_match($insertprocess, $tsql)) {
                 $rowId = [];
 
@@ -455,9 +469,61 @@ class CaseManagementController extends Controller
                     $rowId[] = $item['id'];
                 }
 
-                $recipients=Document::find($rowId)->first();
-                
-                    $recipientsId[] = $recipients->first_owner_id;
+                $recipients = Process::find($rowId)->first();
+
+
+                $recipientsId[] = $recipients->first_owner_id;
+                $recipientsId[] = $recipients->second_owner_id;
+                $recipientsId[] = $recipients->user_id;
+                $randomNumber = random_int(5, 10000000000);
+
+                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+                $id = $rowId[0];
+                $document_notification = [
+                    'title' => 'New Process Notification',
+                    'document' => 'This is to notify you that a process was created',
+                    'creator_id' => $recipients->user_id,
+                    'id' => $id,
+                    'link' => '',
+                ];
+                $status = $recipients->state;
+                if ($status == 'active') {
+                    $status = 1;
+                } else {
+                    $status = 2;
+                }
+
+                $alertid = Alert::create([
+                    'mail_to' => $emails,
+                    'status_id' => $status,
+                    'alert_description' => $recipients->narration,
+                    'exception_process_id' => $recipients->process_id,
+                    'alert_action' => $document_notification['document'],
+                    'alert_subject' => $document_notification['document'],
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->user_id,
+                ]);
+                foreach ($emails as $email) {
+                    Mail::to($email)->send(new DocumentMail($document_notification));
+                }
+                return response()->json([
+                    'message' => 'Process Was Successfully Created!.'
+                ]);
+            }
+
+            //< --------------CREATE DOCUMENT ----------------------->
+
+            $insertdocument = '/INSERT\s+INTO\s+ctl_document/i';
+            if (preg_match($insertdocument, $tsql)) {
+                $rowId = [];
+
+                foreach ($result as $item) {
+                    $rowId[] = $item['id'];
+                }
+
+                $recipients = Document::find($rowId)->first();
+
+                $recipientsId[] = $recipients->first_owner_id;
                 $recipientsId[] = $recipients->second_owner_id;
                 $recipientsId[] = $recipients->user_id;
 
@@ -467,8 +533,8 @@ class CaseManagementController extends Controller
                     'title' => 'New Document Notification',
                     'document' => 'This is to notify you that a new document was created',
                     'creator_id' => $recipients->user_id,
-                    'id'=>$rowId,
-                    'link'=>'',
+                    'id' => $rowId,
+                    'link' => '',
                 ];
                 foreach ($emails as $email) {
                     Mail::to($email)->send(new DocumentMail($document_notification));
@@ -480,9 +546,9 @@ class CaseManagementController extends Controller
 
             //----------------------------UPDATE DOCUMENT STATUS-------------------->
 
-            $update_process_status = '/UPDATE\s+document\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+            $update_document_status = '/UPDATE\s+ctl_document\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
 
-            if (preg_match($update_process_status, $tsql, $matches)) {
+            if (preg_match($update_document_status, $tsql, $matches)) {
 
                 $UpdatedRowId = $matches[1];
                 $recipients = Document::find($UpdatedRowId)->first();
@@ -497,7 +563,7 @@ class CaseManagementController extends Controller
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
                 $document_notification = [
                     'Update_title' => 'Document Approved',
-                    'update_document' => 'This is to notify you that a document id '.$UpdatedRowId .'was just appeoved',
+                    'update_document' => 'This is to notify you that a document id ' . $UpdatedRowId . 'was just appeoved',
                     'approver_id' => $recipients->approver_id,
                     'link' => ''
                 ];
@@ -519,7 +585,7 @@ class CaseManagementController extends Controller
             };
 
             //<-------------------------- CREATE SYSTEM ---------------------------->
-            $insertsystem = '/INSERT\s+INTO\s+system/i';
+            $insertsystem = '/INSERT\s+INTO\s+ctl_system/i';
             if (preg_match($insertsystem, $tsql)) {
                 $rowId = [];
 
@@ -561,7 +627,7 @@ class CaseManagementController extends Controller
 
             //---------------------CREATE SYSTEM ALLOCATION --------------------------->
 
-            $system_all = '/INSERT\s+INTO\s+system_allocation/i';
+            $system_all = '/INSERT\s+INTO\s+ctl_system_allocation/i';
             if (preg_match($system_all, $tsql)) {
                 $rowId = [];
 
@@ -601,7 +667,7 @@ class CaseManagementController extends Controller
             }
 
             //<----------------------SYSTEM ALLOCATION UPDATE----------------------->
-            $update_system_all = '/UPDATE\s+system_allocation\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
+            $update_system_all = '/UPDATE\s+ctl_system_allocation\s+SET\s+status[^;]*WHERE\s+id\s*=\s*(\d+);/i';
 
             if (preg_match($update_system_all, $tsql, $matches)) {
 
@@ -626,7 +692,7 @@ class CaseManagementController extends Controller
 
                 $system = [
                     'update_allocate_title' => 'System Allocation Notification',
-                    'update_allocate' => 'This is to notify you that system id '. $UpdatedRowId.' that was allocated has been approved',
+                    'update_allocate' => 'This is to notify you that system id ' . $UpdatedRowId . ' that was allocated has been approved',
                     'allocator' => $recipients->user_id,
                     'link' => '',
                 ];

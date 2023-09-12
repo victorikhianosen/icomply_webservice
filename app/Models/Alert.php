@@ -10,12 +10,12 @@ class Alert extends Model
     protected $fillable = [
         'id',
         'user_id',
-        'case_status_id',
-        'process_id',
+        'status_id',
+        'exception_process_id',
         'description',
         'alert_action',
-        'name',
-        'department_id',
+        'alert_name',
+        'team_id',
         'mail_to',
     ];
     protected $casts = [

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SystemAllocation extends Model
 {
     use HasFactory;
-    protected $table = 'system_allocation';
+    protected $table = 'ctl_system_allocation';
 
     public function user()
     {

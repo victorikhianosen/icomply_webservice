@@ -26,7 +26,7 @@
     @endisset
 
     @isset($document_notification['id'])
-    <p>{{ $document_notification['id'] }}</p>
+    <p>Process Id: {{ $document_notification['id'] }}</p>
     @endisset
 
     @isset($document_notification['link'])

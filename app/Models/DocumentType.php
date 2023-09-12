@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class DocumentType extends Model
 {
     use HasFactory;
-    protected $table = 'document_type';
+    protected $table = 'ctl_document_type';
 
     public function document()
     {

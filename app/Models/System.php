@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class System extends Model
 {
     use HasFactory;
-    protected $table = 'system';
+    protected $table = 'ctl_system';
 
     public function system()
     {

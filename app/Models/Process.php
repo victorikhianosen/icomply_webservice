@@ -14,19 +14,19 @@ class Process extends Model
         'name',
         'process_id',
         'user_id',
-        'second_line_owner',
-        'first_line_owner',
+        'second_owner_id',
+        'first_owner_id',
         'frequency',
         'status',
         'branch_code',
         'alert_group_id',
-        'narration'
+        'narration','approver_id'
     ];
 
     protected $casts = [
         'mail_to' => 'array',
     ];
-    protected $table = 'process';
+    protected $table = 'exception_process';
 
     public function process_category()
     {

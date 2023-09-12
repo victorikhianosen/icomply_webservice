@@ -9,7 +9,7 @@ class AlertGroup extends Model
 {
     use HasFactory;
     
-    protected $table = 'alert_group';
+    protected $table = 'ctl_alert_group';
 
     public function alert()
     {
