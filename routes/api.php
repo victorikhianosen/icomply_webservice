@@ -42,3 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/send/case/{id}', [CaseManagementController::class, 'getCaseDetails'])->name('send-case-id');
 
 });
+
+Route::get('/test',function(){
+    return 'Testing complete';
+});
