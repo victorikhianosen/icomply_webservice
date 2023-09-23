@@ -24,4 +24,4 @@ jobs:
           username: ${{secrets.USERNAME}}
           port: ${{ secrets.PORT }}
           password: ${{secrets.PASSWORD}}
-          script: "cd /var/www/html/icomply_webservice && ./.scripts/deploy.sh"
+          script: "cd /var/www/icomply_webservice && ./.scripts/deploy.sh"
