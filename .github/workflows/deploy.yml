@@ -21,7 +21,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: gbemi
+          username: ${{secrets.USERNAME}}
           port: ${{ secrets.PORT }}
-          password: Amore123_
+          password: ${{secrets.PASSWORD}}
           script: "cd /var/www/html/icomply_webservice && ./.scripts/deploy.sh"
