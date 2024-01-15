@@ -17,13 +17,15 @@ class CaseManagement extends Model
         'case_status_id',
         'priority_level_id',
         'description',
-        'supervisor_id',
         'case_action',
         'assigned',
         'mail_to',
         'process_categoryid',
         'process_id',
-        'department_id'
+        'department_id',
+        'supervisor_1',
+        'supervisor_2',
+        'supervisor_3'
     ];
 
     public function user()

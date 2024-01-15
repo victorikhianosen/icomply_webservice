@@ -16,11 +16,16 @@ class Kernel extends ConsoleKernel
 
     protected $commands = [
         \App\Console\Commands\StartInsertListener::class,
+        Commands\CbnApi::class,
+        Commands\DeleteExpiredFiles::class,
+       
     ];
 
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('pgsql:listen')->everyMinute();
+        //  $schedule->command('pgsql:listen')->everyMinute();
+        $schedule->command('files:delete-expired')->everyMinute();
+
     }
 
     /**

@@ -22,16 +22,18 @@ Route::post('/login', [UserController::class, 'login']);
 
 //API ROUTE HANDLING QUERY TO DATABASE
 Route::post('/send-request', [CaseManagementController::class, 'query']);
+//API ROUTE HANDLING DOWNLOAD
+Route::get('/download/{filename}/{userId}', [CaseManagementController::class, 'downloadFile']);
 
 // API ROUTE HANDLING EMAILS
 Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
+Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
 
 
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/make-supervisor',  [UserController::class, 'makeSupervisor']);
-    Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
     Route::get('/case/statuslist',  [CaseManagementController::class, 'showCaseByStatus']);
     Route::get('/case/prioritylist',  [CaseManagementController::class, 'showCaseByPriority']);
     Route::get('/users/get/usercase', [UserController::class, 'getUserCase']);
@@ -40,5 +42,4 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::get('/case/details/{id}', [CaseManagementController::class, 'getCaseDetails'])->name('case-details');
     Route::get('/send-case-id', [CaseManagementController::class, 'showCaseById'])->name('send-case-id');
     Route::get('/send/case/{id}', [CaseManagementController::class, 'getCaseDetails'])->name('send-case-id');
-
 });
