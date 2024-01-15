@@ -8,39 +8,40 @@ use Illuminate\Database\Eloquent\Model;
 class CaseManagement extends Model
 {
     use HasFactory;
-    protected $table = 'case_management';
+    public $timestamps = false;
 
+    protected $table = 'cases';
 
     protected $fillable = [
-
+        'response_note',
         'user_id',
-        'case_status_id',
-        'priority_level_id',
-        'description',
-        'case_action',
-        'assigned',
+        'status_id',
+        'exception_process_id',
+        'cases_description',
+        'cases_action',
+        'status_id',
+        'team_id',
         'mail_to',
-        'process_categoryid',
-        'process_id',
-        'department_id',
-        'supervisor_1',
-        'supervisor_2',
-        'supervisor_3'
+        'alert_id',
+        'staff_id',
+        'exception_log_id',
+        'responses'
     ];
+
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function assigned_user()
+    public function staff()
     {
-        return $this->belongsTo(User::class, 'assigned_user');
+        return $this->belongsTo(Staff::class, 'staff_id');
     }
 
-    public function priority()
+    public function rating()
     {
-        return $this->belongsTo(PriorityLevel::class, 'priority_level_id');
+        return $this->belongsTo(PriorityLevel::class, 'rating_id');
     }
 
     public function status()
@@ -50,11 +51,6 @@ class CaseManagement extends Model
 
     public function alert()
     {
-        return $this->belongsTo(Alert::class,'alert_id');
-    }
-
-    public function department()
-    {
-        return $this->belongsTo(Department::class, 'department_id');
+        return $this->belongsTo(Alert::class, 'alert_id');
     }
 }

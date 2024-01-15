@@ -23,9 +23,7 @@ class Process extends Model
         'narration','approver_id'
     ];
 
-    protected $casts = [
-        'mail_to' => 'array',
-    ];
+   
     protected $table = 'exception_process';
 
     public function process_category()

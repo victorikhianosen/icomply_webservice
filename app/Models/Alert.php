@@ -7,41 +7,45 @@ use Illuminate\Database\Eloquent\Model;
 
 class Alert extends Model
 {
+    public $timestamps = false;
     protected $fillable = [
         'id',
         'user_id',
         'status_id',
         'exception_process_id',
-        'description',
+        'alert_description',
         'alert_action',
         'alert_name',
         'team_id',
         'mail_to',
+        'email',
+        'rule_id',
+        'alert_frequency_id'
     ];
-    protected $casts = [
-        'mail_to' => 'array',
-    ];
+
     protected $table = 'alert';
-    use HasFactory;
+    protected $casts = [
+        'mail_to' => 'array'
+    ];
 
     public function department()
     {
-        return $this->belongsTo(Department::class,'department_id');
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function status()
     {
-        return $this->belongsTo(CaseStatus::class,'case_status_id');
+        return $this->belongsTo(CaseStatus::class, 'case_status_id');
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function process()
     {
-        return $this->belongsTo(Process::class,'process_id');
+        return $this->belongsTo(Process::class, 'process_id');
     }
 
     public function exception_category()

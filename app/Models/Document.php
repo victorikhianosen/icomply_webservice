@@ -20,6 +20,8 @@ class Document extends Model
         'process_id',
         'first_owner_id',
         'second_owner_id',
+        'user_id',
+        'source_file'
     ];
     public function user()
     {
