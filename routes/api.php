@@ -29,6 +29,8 @@ Route::get('/download/{filename}/{userId}', [CaseManagementController::class, 'd
 Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
 Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
+Route::post('/apex-auth',  [CaseManagementController::class, 'auth_user']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/make-supervisor',  [UserController::class, 'makeSupervisor']);

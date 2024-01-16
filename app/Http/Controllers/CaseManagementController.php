@@ -1215,4 +1215,28 @@ class CaseManagementController extends Controller
             // Log::info($download);
         }
     }
+    public function auth_user(){
+        $request = Request::capture();
+        
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+        $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post('https://apex.oracle.com/pls/apex/biggy/auth/ad', [
+                'username' => $request->input('username'),
+                'password' => $request->input('password'),
+            ]);
+
+        if ($response->successful()) {
+            return $response->body();
+        } else {
+            return 'Request failed: ' . $response->status();
+        }
+    }
 }
