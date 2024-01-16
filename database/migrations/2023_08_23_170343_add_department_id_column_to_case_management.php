@@ -22,8 +22,8 @@ return new class extends Migration
             ->references('id')->on('process')->onDelete('cascade');
             $table->foreign('department_id')
             ->references('id')->on('department')->onDelete('cascade');
-            $table->foreign('alert_id')
-            ->references('id')->on('alert')->onDelete('cascade');
+            // $table->foreign('alert_id')
+            // ->references('id')->on('alert')->onDelete('cascade');
 
         });
     }
