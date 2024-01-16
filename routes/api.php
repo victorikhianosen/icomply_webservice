@@ -41,7 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/case/createcase', [CaseManagementController::class, 'createCase']);
     // Route::get('/case/details/{id}', [CaseManagementController::class, 'getCaseDetails'])->name('case-details');
     Route::get('/send-case-id', [CaseManagementController::class, 'showCaseById'])->name('send-case-id');
-    Route::get('/send/case/{id}', [CaseManagementController::class, 'getCaseDetails'])->name('send-case-id');
+    Route::get('/send/case/{id}', [CaseManagementController::class, 'getCaseDetails']);
 });
 
 Route::get('/test',function(){
