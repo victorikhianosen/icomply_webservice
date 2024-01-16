@@ -1216,27 +1216,60 @@ class CaseManagementController extends Controller
         }
     }
     public function auth_user(){
-        $request = Request::capture();
-        
-        $validator = Validator::make($request->all(), [
-            'username' => 'required',
-            'password' => 'required',
-        ]);
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
-        }
-        $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post('https://apex.oracle.com/pls/apex/biggy/auth/ad', [
-                'username' => $request->input('username'),
-                'password' => $request->input('password'),
-            ]);
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        // Validate the input
+        $errors = [];
 
-        if ($response->successful()) {
-            return $response->body();
-        } else {
-            return 'Request failed: ' . $response->status();
+        if (empty($username)) {
+            $errors[] = 'Username is required.';
         }
+
+        if (empty($password)) {
+            $errors[] = 'Password is required.';
+        }
+
+        if (!empty($errors)) {
+            $response = array('errors' => $errors);
+            return json_encode($response);
+            
+        }
+        // Create an array with the user input
+        $data = array(
+            'username' => $username,
+            'password' => $password
+        );
+
+        // Convert the data to JSON
+        $data_string = json_encode($data);
+
+        // Initialize cURL
+        $curl = curl_init();
+
+        // Set cURL options
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://apex.oracle.com/pls/apex/biggy/auth/ad',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $data_string,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json'
+            ),
+        ));
+
+        // Execute the cURL request
+        $response = curl_exec($curl);
+
+        // Close the cURL session
+        curl_close($curl);
+
+        // Output the response
+        return $response;
     }
 }
