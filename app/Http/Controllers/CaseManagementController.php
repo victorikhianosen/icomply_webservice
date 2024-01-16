@@ -1230,8 +1230,8 @@ class CaseManagementController extends Controller
             $data = json_decode($json, true);
         } else {
             // Retrieve the username and password from the request
-            $username = isset($_POST['username']) ? $_POST['username'] : '';
-            $password = isset($_POST['password']) ? $_POST['password'] : '';
+            $username = isset($_REQUEST['username']) ? $_REQUEST['username'] : '';
+            $password = isset($_REQUEST['password']) ? $_REQUEST['password'] : '';
 
             // Create an array with the user input
             $data = array(
