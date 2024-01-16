@@ -735,39 +735,34 @@ class CaseManagementController extends Controller
                 }
 
                 $view = view('email.document_email', compact('document_notification'))->render();
+                $alertid = Alert::create([
+                    'mail_to' => $emails,
+                    'status_id' => $this->setNullIfEmpty($status),
+                    'alert_description' => $this->setNullIfEmpty($recipients->narration),
+                    'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
+                    'alert_action' => $this->setNullIfEmpty($document_notification['document']),
+                    'alert_subject' => $this->setNullIfEmpty($document_notification['document']),
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $this->setNullIfEmpty($recipients->user_id),
+                    'created_at' => $formattedDate,
+                    'email' => $view
 
+                ]);
 
-                if (!$file) {
-                    // Handle the case when the file input is not present or empty
-                    return response()->json(['error' => 'No file provided.'], 400);
-                }
+               
                 if (isset($file)) {
+                    if (!$file) {
+                        // Handle the case when the file input is not present or empty
+                        return response()->json(['error' => 'No file provided.'], 400);
+                    }
                     if ($validator->fails()) {
                         // If validation fails, return the validation errors
                         return response()->json(['errors' => $validator->errors()], 400);
                     }
                     $new_file = $file->store('allfiles');
                     if ($new_file) {
-                        $alertid = Alert::create([
-                            'mail_to' => $emails,
-                            'status_id' => $this->setNullIfEmpty($status),
-                            'alert_description' => $this->setNullIfEmpty($recipients->narration),
-                            'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
-                            'alert_action' => $this->setNullIfEmpty($document_notification['document']),
-                            'alert_subject' => $this->setNullIfEmpty($document_notification['document']),
-                            'alert_name' => 'ALERT' . $randomNumber,
-                            'user_id' => $this->setNullIfEmpty($recipients->user_id),
-                            'created_at' => $formattedDate,
-                            'email' => $view
 
-                        ]);
-
-                        if (!empty($emails)) {
-                            # code...
-                            foreach ($emails as $email) {
-                                Mail::to($email)->send(new DocumentMail($document_notification));
-                            }
-                        }
+                        
                         $file_name = basename($new_file);
                         $original_name = $file->getClientOriginalName();
                         $file->move(public_path('allfiles'), $file_name);
@@ -775,12 +770,29 @@ class CaseManagementController extends Controller
                         $recipients->source_file = $imageUrl;
                         $recipients->file_name = $original_name;
                         $recipients->save();
+                        
                     }
-                    return response()->json([
-                        'message' =>'Document Created successfully',
-                        'file_url' =>  $imageUrl,
-                    ]);
+                    
                 }
+                if (!empty($emails)) {
+                    # code...
+                    foreach ($emails as $email) {
+                        Mail::to($email)->send(new DocumentMail($document_notification));
+                    }
+                }
+               
+                $response = [
+                    'message' => 'Document Created successfully',
+                ];
+
+                if (isset($imageUrl)) {
+                    $response['fileUrl'] = $imageUrl;
+                }
+                $response = array_filter($response, function ($value) {
+                    return !empty($value);
+                });
+
+                return response()->json($response);
             }
 
             //----------------------------UPDATE DOCUMENT STATUS-------------------->
