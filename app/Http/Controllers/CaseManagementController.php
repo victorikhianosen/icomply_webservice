@@ -320,6 +320,8 @@ class CaseManagementController extends Controller
 
             //all crud operation
             $tsql = $request->input('sql');
+            $file = $request->file('file');
+
 
             //file size validation
             $upload_file_size = '2048';
@@ -329,8 +331,8 @@ class CaseManagementController extends Controller
             $messages = [
                 'file.max' => 'The file size should not exceed 2MB.',
             ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            $file = $request->file('file');
+            $validator = Validator::make(['file' => $file], $rules, $messages);
+
 
             //read only and download
             $dsql = $request->input('dsql');
@@ -734,27 +736,11 @@ class CaseManagementController extends Controller
 
                 $view = view('email.document_email', compact('document_notification'))->render();
 
-                $alertid = Alert::create([
-                    'mail_to' => $emails,
-                    'status_id' => $this->setNullIfEmpty($status),
-                    'alert_description' => $this->setNullIfEmpty($recipients->narration),
-                    'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
-                    'alert_action' => $this->setNullIfEmpty($document_notification['document']),
-                    'alert_subject' => $this->setNullIfEmpty($document_notification['document']),
-                    'alert_name' => 'ALERT' . $randomNumber,
-                    'user_id' => $this->setNullIfEmpty($recipients->user_id),
-                    'created_at' => $formattedDate,
-                    'email' => $view
 
-                ]);
-
-                if (!empty($emails)) {
-                    # code...
-                    foreach ($emails as $email) {
-                        Mail::to($email)->send(new DocumentMail($document_notification));
-                    }
+                if (!$file) {
+                    // Handle the case when the file input is not present or empty
+                    return response()->json(['error' => 'No file provided.'], 400);
                 }
-
                 if (isset($file)) {
                     if ($validator->fails()) {
                         // If validation fails, return the validation errors
@@ -762,6 +748,26 @@ class CaseManagementController extends Controller
                     }
                     $new_file = $file->store('allfiles');
                     if ($new_file) {
+                        $alertid = Alert::create([
+                            'mail_to' => $emails,
+                            'status_id' => $this->setNullIfEmpty($status),
+                            'alert_description' => $this->setNullIfEmpty($recipients->narration),
+                            'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
+                            'alert_action' => $this->setNullIfEmpty($document_notification['document']),
+                            'alert_subject' => $this->setNullIfEmpty($document_notification['document']),
+                            'alert_name' => 'ALERT' . $randomNumber,
+                            'user_id' => $this->setNullIfEmpty($recipients->user_id),
+                            'created_at' => $formattedDate,
+                            'email' => $view
+
+                        ]);
+
+                        if (!empty($emails)) {
+                            # code...
+                            foreach ($emails as $email) {
+                                Mail::to($email)->send(new DocumentMail($document_notification));
+                            }
+                        }
                         $file_name = basename($new_file);
                         $original_name = $file->getClientOriginalName();
                         $file->move(public_path('allfiles'), $file_name);
@@ -771,13 +777,10 @@ class CaseManagementController extends Controller
                         $recipients->save();
                     }
                     return response()->json([
-                        'file' =>  $imageUrl,
+                        'message' =>'Document Created successfully',
+                        'file_url' =>  $imageUrl,
                     ]);
                 }
-
-                return response()->json([
-                    'Successful!'
-                ]);
             }
 
             //----------------------------UPDATE DOCUMENT STATUS-------------------->
