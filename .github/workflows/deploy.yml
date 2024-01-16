@@ -5,10 +5,10 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - icomply_sterling
   pull_request:
     branches:
-      - main
+      - icomply_sterling
 
 # Authenticate to the the server via ssh
 # and run our deployment script
