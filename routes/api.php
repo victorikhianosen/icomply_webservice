@@ -25,7 +25,7 @@ Route::post('/send-request', [CaseManagementController::class, 'query']);
 //API ROUTE HANDLING DOWNLOAD
 Route::get('/download/{filename}/{userId}', [CaseManagementController::class, 'downloadFile']);
 
-// API ROUTE HANDLING EMAILS
+// API ROUTE HANDLING EMAILS 
 Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
 Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
