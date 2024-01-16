@@ -1217,16 +1217,37 @@ class CaseManagementController extends Controller
     }
     public function auth_user(){
 
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+        $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+
+        // Initialize the data variable
+        $data = [];
+
+        if ($contentType === "application/json") {
+            // Get the JSON body from the request
+            $json = file_get_contents('php://input');
+
+            // Decode the JSON body
+            $data = json_decode($json, true);
+        } else {
+            // Retrieve the username and password from the request
+            $username = isset($_POST['username']) ? $_POST['username'] : '';
+            $password = isset($_POST['password']) ? $_POST['password'] : '';
+
+            // Create an array with the user input
+            $data = array(
+                    'username' => $username,
+                    'password' => $password
+                );
+        }
+
         // Validate the input
         $errors = [];
 
-        if (empty($username)) {
+        if (empty($data['username'])) {
             $errors[] = 'Username is required.';
         }
 
-        if (empty($password)) {
+        if (empty($data['password'])) {
             $errors[] = 'Password is required.';
         }
 
@@ -1235,11 +1256,6 @@ class CaseManagementController extends Controller
             return json_encode($response);
             
         }
-        // Create an array with the user input
-        $data = array(
-            'username' => $username,
-            'password' => $password
-        );
 
         // Convert the data to JSON
         $data_string = json_encode($data);
@@ -1259,7 +1275,8 @@ class CaseManagementController extends Controller
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data_string,
             CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
+                'Content-Type: application/json',
+                'Content-Length: ' . strlen($data_string) // Set the Content-Length header
             ),
         ));
 
