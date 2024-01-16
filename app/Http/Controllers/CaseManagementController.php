@@ -434,12 +434,12 @@ class CaseManagementController extends Controller
                     'alert_id' => $alertid->id
                 ]);
 
-                // if (!empty($allmail)) {
-                //     # code...
-                //     foreach ($allmail as $email) {
-                //         Mail::to($email)->send(new CaseMail($case_notification));
-                //     }
-                // }
+                if (!empty($allmail)) {
+                    # code...
+                    foreach ($allmail as $email) {
+                        Mail::to($email)->send(new CaseMail($case_notification));
+                    }
+                }
 
                 return response()->json([
                     'message' => 'Case Was Successfully Created!.'

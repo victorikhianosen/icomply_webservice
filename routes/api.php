@@ -30,8 +30,6 @@ Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
 Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
 
-
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/make-supervisor',  [UserController::class, 'makeSupervisor']);
     Route::get('/case/statuslist',  [CaseManagementController::class, 'showCaseByStatus']);
