@@ -10,7 +10,7 @@ class CaseManagement extends Model
     use HasFactory;
     public $timestamps = false;
 
-    protected $table = 'cases';
+    protected $table = 'cases_table';
 
     protected $fillable = [
         'response_note',
@@ -25,7 +25,9 @@ class CaseManagement extends Model
         'alert_id',
         'staff_id',
         'exception_log_id',
-        'responses'
+        'responses',
+        'created_at',
+        'title'
     ];
 
 

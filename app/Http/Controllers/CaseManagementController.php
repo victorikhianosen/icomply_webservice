@@ -41,6 +41,7 @@ use App\Rules\UniqueArray;
 use Carbon\Carbon;
 use Carbon\PHPStan\Macro;
 use DateTime;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -433,7 +434,8 @@ class CaseManagementController extends Controller
                 ]);
 
                 $recipients->update([
-                    'alert_id' => $alertid->id
+                    'alert_id' => $alertid->id,
+                    'created_at'=>date('Y-m-d')
                 ]);
 
                 if (!empty($allmail)) {
@@ -749,7 +751,7 @@ class CaseManagementController extends Controller
 
                 ]);
 
-               
+
                 if (isset($file)) {
                     if (!$file) {
                         // Handle the case when the file input is not present or empty
@@ -762,7 +764,7 @@ class CaseManagementController extends Controller
                     $new_file = $file->store('allfiles');
                     if ($new_file) {
 
-                        
+
                         $file_name = basename($new_file);
                         $original_name = $file->getClientOriginalName();
                         $file->move(public_path('allfiles'), $file_name);
@@ -770,9 +772,7 @@ class CaseManagementController extends Controller
                         $recipients->source_file = $imageUrl;
                         $recipients->file_name = $original_name;
                         $recipients->save();
-                        
                     }
-                    
                 }
                 if (!empty($emails)) {
                     # code...
@@ -780,7 +780,7 @@ class CaseManagementController extends Controller
                         Mail::to($email)->send(new DocumentMail($document_notification));
                     }
                 }
-               
+
                 $response = [
                     'message' => 'Document Created successfully',
                 ];
@@ -1107,8 +1107,8 @@ class CaseManagementController extends Controller
                 DownloadRecordsJob::dispatch($dsql, $nv_download_name, $reference_id, $download->id, $link);
 
                 return response()->json([
-                    'message' => 'Request is being processed',
-                    $link
+                    'message' => 'Your Download is being processed'
+
                 ]);
             } else if (isset($dsql) && !preg_match($select_dsql, $dsql)) {
                 return response()->json([
@@ -1215,7 +1215,8 @@ class CaseManagementController extends Controller
             // Log::info($download);
         }
     }
-    public function auth_user(){
+    public function auth_user()
+    {
 
         $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
@@ -1235,9 +1236,9 @@ class CaseManagementController extends Controller
 
             // Create an array with the user input
             $data = array(
-                    'username' => $username,
-                    'password' => $password
-                );
+                'username' => $username,
+                'password' => $password
+            );
         }
 
         // Validate the input
@@ -1254,7 +1255,6 @@ class CaseManagementController extends Controller
         if (!empty($errors)) {
             $response = array('errors' => $errors);
             return json_encode($response);
-            
         }
 
         // Convert the data to JSON
@@ -1288,5 +1288,13 @@ class CaseManagementController extends Controller
 
         // Output the response
         return $response;
+    }
+    public function auth_test(Request $request)
+    {
+    //    $request->all();
+    //     $response = Http::get('https://apex.oracle.com/pls/apex/biggy/auth/ad',['username'=>$request['username']]);
+        // return $response;
+        return
+        date('Y-m-d H:i:s');;
     }
 }
