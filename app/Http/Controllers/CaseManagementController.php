@@ -381,7 +381,7 @@ class CaseManagementController extends Controller
 
             // <----------------------CREATE CASE_MANAGEMENT ---------------------------->
 
-            $insertpattern = '/INSERT\s+INTO\s+cases/i';
+            $insertpattern = '/INSERT\s+INTO\s+cases_management/i';
             if (preg_match($insertpattern, $tsql)) {
                 $rowId = [];
 
