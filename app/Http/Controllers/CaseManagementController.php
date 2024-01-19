@@ -20,6 +20,7 @@ use App\Mail\SystemMail;
 use App\Models\Alert;
 use App\Models\AlertGroup;
 use App\Models\CaseManagement;
+use App\Models\CaseManagement2;
 use App\Models\CaseStatus;
 use App\Models\Department;
 use App\Models\Document;
@@ -346,6 +347,7 @@ class CaseManagementController extends Controller
             if (isset($tsql)) {
                 $stmt = $conn->prepare($tsql);
                 $stmt->execute();
+                
                 // Continue with processing the result if needed              
             }
 
@@ -365,6 +367,7 @@ class CaseManagementController extends Controller
             $result = array();
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $result[] = $row;
+               
             }
 
             // Close the connection
@@ -378,10 +381,80 @@ class CaseManagementController extends Controller
             );
 
 
-
             // <----------------------CREATE CASE_MANAGEMENT ---------------------------->
+            $insertpattern_for_case_mgt = '/INSERT\s+INTO\s+case_management/i';
+            if (preg_match($insertpattern_for_case_mgt, $tsql)) {
+                $rowId = [];
+                foreach ($result as $item) {
+                    $rowId[] = $item['id'];
+                }
+                if (empty($rowId)) {
+                    return response()->json(['error' => 'Returning id not included in your query!']);
+                }
+                $recipients = CaseManagement2::find($rowId)->first();
+                $recipients->created_at=$formattedDate;
+                $recipientsId = [];
+                if (isset($recipients->assigned_user)) {
+                    $recipientsId[] = $recipients->assigned_user;
+                }
+                if (isset($recipients->user_id)) {
+                    $recipientsId[] = $recipients->user_id;
+                }
+                if (isset($supervisor_1)) {
+                    $recipientsId[] =   $recipients->$supervisor_1;
+                }
+                if (isset($supervisor_2)) {
+                    $recipientsId[] =  $recipients->$supervisor_2;
+                }
+                if (isset($supervisor_3)) {
+                    $recipientsId[] =  $recipients->$supervisor_3;
+                }
+                $randomNumber = random_int(5, 10000000000);
+                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+                $department = Department::find($recipients->department_id);
+                $deptarr = [];
+                $allmail = [];
+                if (isset($department->email)&& !empty($department->email)) {
+                    $deptarr[] = $department->email;
+                }
+                if (isset($emails,$deptarr) && !empty($emails)) {
+                    $allmail[] = array_merge($emails, $deptarr);
+                } else {
+                    $allmail[] = $emails;
+                }
+                $view = view('email.notification_email', compact('case_notification'))->render();
 
-            $insertpattern = '/INSERT\s+INTO\s+cases_management/i';
+                $alertid = Alert::create([
+                    'mail_to' => $allmail,
+                    'status_id' => $recipients->case_status_id,
+                    'alert_description' => $recipients->description,
+                    'team_id' => $recipients->department_id,
+                    'exception_process_id' => $recipients->process_id,
+                    'alert_action' => $recipients->case_action,
+                    'alert_subject' => $case_notification['body'],
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->assigned_user,
+                    'email' => $view
+                ]);
+                $recipients->alert_id = $alertid->id;
+                $recipients->save();
+
+                $recipients->update([
+                    'alert_id' => $alertid->id
+                ]);
+               if (!empty($allmail)) {
+                    foreach ($allmail as $email) {
+                        Mail::to($email)->send(new CaseMail($case_notification));
+                    }
+               } 
+                return response()->json([
+                    'message' => 'Case Was Successfully Created!.'
+                ]);
+            }
+
+            // <----------------------CREATE CASES ---------------------------->
+
+            $insertpattern = '/INSERT\s+INTO\s+cases/i';
             if (preg_match($insertpattern, $tsql)) {
                 $rowId = [];
 
@@ -664,6 +737,10 @@ class CaseManagementController extends Controller
                     $emails_ = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
                 }
                 $view = view('email.document_email', compact('document_notification'))->render();
+                if (!isset($emails_)) {
+                    # code...
+                    $emails_=Null;
+                }
 
                 Alert::create([
                     'mail_to' => $emails_,
