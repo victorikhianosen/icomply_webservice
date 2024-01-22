@@ -30,7 +30,10 @@ class CaseManagement2 extends Model
         'alert_id',
         'title',
         'event_date',
-        'response_note'
+        'response_note',
+        'attachment',
+        'attachment_filename',
+
     ];
 
     public function user()

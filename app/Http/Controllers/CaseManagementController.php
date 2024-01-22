@@ -26,6 +26,7 @@ use App\Models\Department;
 use App\Models\Document;
 use App\Models\DownLoadNotifier;
 use App\Models\DownLoadQueue;
+use App\Models\ExceptionsLogs;
 use App\Models\Nv_Download as ModelsNv_Download;
 use App\Models\Nv_DownloadStatus;
 use App\Models\Process;
@@ -374,7 +375,7 @@ class CaseManagementController extends Controller
             $conn = null;
 
 
-            $formattedDate = date('Y-m-d H:i:s');
+            $formattedDate = date('Y-m-d H:i');
             $randomNumber = random_int(
                 5,
                 10000000000
@@ -401,13 +402,13 @@ class CaseManagementController extends Controller
                     $recipientsId[] = $recipients->user_id;
                 }
                 if (isset($supervisor_1)) {
-                    $recipientsId[] =   $recipients->$supervisor_1;
+                    $recipientsId[] =   $recipients->supervisor_1;
                 }
                 if (isset($supervisor_2)) {
-                    $recipientsId[] =  $recipients->$supervisor_2;
+                    $recipientsId[] =  $recipients->supervisor_2;
                 }
                 if (isset($supervisor_3)) {
-                    $recipientsId[] =  $recipients->$supervisor_3;
+                    $recipientsId[] =  $recipients->supervisor_3;
                 }
                 $randomNumber = random_int(5, 10000000000);
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
@@ -437,11 +438,36 @@ class CaseManagementController extends Controller
                     'email' => $view
                 ]);
                 $recipients->alert_id = $alertid->id;
-                $recipients->save();
 
                 $recipients->update([
                     'alert_id' => $alertid->id
                 ]);
+
+                $exceptions_logs=ExceptionsLogs::create([
+                    'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
+                    'cases_description' => $this->setNullIfEmpty($recipients->description),
+                    'team_id' => $this->setNullIfEmpty($recipients->department_id),
+                    'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
+                    'cases_action' => $this->setNullIfEmpty($recipients->case_action),
+                    'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
+                    'user_id' => $this->setNullIfEmpty($recipients->user_id),
+                    'direct_supervisor'=> $this->setNullIfEmpty($recipients->supervisor_1),
+                    'group_head' => $this->setNullIfEmpty($recipients->supervisor_2),
+                    'divisional_head'=>$this->setNullIfEmpty($recipients->supervisor_3),
+                    'title'=> $this->setNullIfEmpty($recipients->title),
+                    'created_at'=>$formattedDate,
+                    'response_note'=>$this->setNullIfEmpty($recipients->response_note),
+                    'attachment'=>$this->setNullIfEmpty($recipients->attachment),
+                    'attachment_filename' => $this->setNullIfEmpty($recipients->attachment_filename),
+
+                ]);
+                
+                $recipients->exception_log_id=$exceptions_logs->id;
+                $exceptions_logs->exceptions_logs_id = $exceptions_logs->id;
+                $exceptions_logs->save();
+                $recipients->save();
+
+
                if (!empty($allmail)) {
                     foreach ($allmail as $email) {
                         Mail::to($email)->send(new CaseMail($case_notification));
