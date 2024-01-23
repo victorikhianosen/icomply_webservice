@@ -40,6 +40,7 @@ class ExceptionsLogs extends Model
         'exceptions_logs_id',
         'category_id',
         'rule_id',
-        'process_id'
+        'process_id',
+        'tran_id'
     ];
 }

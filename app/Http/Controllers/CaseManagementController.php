@@ -437,8 +437,6 @@ class CaseManagementController extends Controller
                     'user_id' => $recipients->assigned_user,
                     'email' => $view
                 ]);
-                $recipients->alert_id = $alertid->id;
-
                 
 
                 $exceptions_logs=ExceptionsLogs::create([
@@ -447,22 +445,23 @@ class CaseManagementController extends Controller
                     'team_id' => $this->setNullIfEmpty($recipients->department_id),
                     'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
                     'exception_process_id' => $this->setNullIfEmpty($recipients->exception_process_id),
-
                     'cases_action' => $this->setNullIfEmpty($recipients->case_action),
-                    'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
+                    'staff_id' => $this->setNullIfEmpty($recipients->assigned_user),
                     'user_id' => $this->setNullIfEmpty($recipients->user_id),
                     'direct_supervisor'=> $this->setNullIfEmpty($recipients->supervisor_1),
                     'group_head' => $this->setNullIfEmpty($recipients->supervisor_2),
                     'divisional_head'=>$this->setNullIfEmpty($recipients->supervisor_3),
                     'title'=> $this->setNullIfEmpty($recipients->title),
                     'created_at'=>$formattedDate,
-                    'response_note'=>$this->setNullIfEmpty($recipients->response_note),
+                    'response_note'=>$this->setNullIfEmpty($recipients->assigned_user_response),
                     'attachment'=>$this->setNullIfEmpty($recipients->attachment),
                     'rating_id'=>$this->setNullIfEmpty($recipients->priority_level_id),
                     'category_id' => $this->setNullIfEmpty($recipients->process_categoryid),
                     'event_date' => $this->setNullIfEmpty($recipients->event_date),
                     'process_id'=>$this->setNullIfEmpty($recipients->process_id),
                     'attachment_filename' => $this->setNullIfEmpty($recipients->attachment_filename),
+                    'tran_id' => $this->setNullIfEmpty($recipients->tran_id),
+                    // 'transaction_id'
 
                 ]);
                 $recipients->update([
