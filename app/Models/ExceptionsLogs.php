@@ -13,7 +13,7 @@ class ExceptionsLogs extends Model
     protected $fillable = [
         'response_note',
         'user_id',
-        'case_status_id',
+        'status_id',
         'exception_process_id',
         'transaction_id',
         'cases_action',
@@ -37,6 +37,9 @@ class ExceptionsLogs extends Model
         'divisional_head',
         'closed_remarks',
         'cases_description',
-        'exceptions_logs_id'
+        'exceptions_logs_id',
+        'category_id',
+        'rule_id',
+        'process_id'
     ];
 }

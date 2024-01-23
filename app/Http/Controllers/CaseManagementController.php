@@ -439,15 +439,15 @@ class CaseManagementController extends Controller
                 ]);
                 $recipients->alert_id = $alertid->id;
 
-                $recipients->update([
-                    'alert_id' => $alertid->id
-                ]);
+                
 
                 $exceptions_logs=ExceptionsLogs::create([
                     'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                     'cases_description' => $this->setNullIfEmpty($recipients->description),
                     'team_id' => $this->setNullIfEmpty($recipients->department_id),
                     'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
+                    'exception_process_id' => $this->setNullIfEmpty($recipients->exception_process_id),
+
                     'cases_action' => $this->setNullIfEmpty($recipients->case_action),
                     'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
                     'user_id' => $this->setNullIfEmpty($recipients->user_id),
@@ -458,14 +458,24 @@ class CaseManagementController extends Controller
                     'created_at'=>$formattedDate,
                     'response_note'=>$this->setNullIfEmpty($recipients->response_note),
                     'attachment'=>$this->setNullIfEmpty($recipients->attachment),
+                    'rating_id'=>$this->setNullIfEmpty($recipients->priority_level_id),
+                    'category_id' => $this->setNullIfEmpty($recipients->process_categoryid),
+                    'event_date' => $this->setNullIfEmpty($recipients->event_date),
+                    'process_id'=>$this->setNullIfEmpty($recipients->process_id),
                     'attachment_filename' => $this->setNullIfEmpty($recipients->attachment_filename),
 
                 ]);
-                
-                $recipients->exception_log_id=$exceptions_logs->id;
-                $exceptions_logs->exceptions_logs_id = $exceptions_logs->id;
-                $exceptions_logs->save();
-                $recipients->save();
+                $recipients->update([
+                    'alert_id' => $alertid->id,
+                    'exception_log_id'=> $exceptions_logs->id
+                ]);
+                $exceptions_logs->update([
+                    'exceptions_logs_id' => $exceptions_logs->id
+                ]);
+                // $recipients->exception_log_id=$exceptions_logs->id;
+                // $exceptions_logs->exceptions_logs_id = $exceptions_logs->id;
+                // $exceptions_logs->save();
+                // $recipients->save();
 
 
                if (!empty($allmail)) {

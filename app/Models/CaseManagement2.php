@@ -33,6 +33,7 @@ class CaseManagement2 extends Model
         'response_note',
         'attachment',
         'attachment_filename',
+        'process_id'
 
     ];
 
