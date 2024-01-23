@@ -1,3 +1,5 @@
 window.axios = require("axios");
 
-import "./bootstrap";
+// import "./bootstrap";
+require("./bootstrap");
+

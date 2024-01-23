@@ -20,7 +20,9 @@ class Alert extends Model
         'mail_to',
         'email',
         'rule_id',
-        'alert_frequency_id'
+        'alert_frequency_id',
+        'exception_category_id',
+        'exception_category_alert_id'
     ];
 
     protected $table = 'alert';
