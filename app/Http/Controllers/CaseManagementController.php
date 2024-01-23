@@ -348,7 +348,7 @@ class CaseManagementController extends Controller
             if (isset($tsql)) {
                 $stmt = $conn->prepare($tsql);
                 $stmt->execute();
-                
+
                 // Continue with processing the result if needed              
             }
 
@@ -368,7 +368,6 @@ class CaseManagementController extends Controller
             $result = array();
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $result[] = $row;
-               
             }
 
             // Close the connection
@@ -393,10 +392,13 @@ class CaseManagementController extends Controller
                     return response()->json(['error' => 'Returning id not included in your query!']);
                 }
                 $recipients = CaseManagement2::find($rowId)->first();
-                $recipients->created_at=$formattedDate;
+                $recipients->created_at = $formattedDate;
                 $recipientsId = [];
                 if (isset($recipients->assigned_user)) {
-                    $recipientsId[] = $recipients->assigned_user;
+                    if ($staff = Staff::where('id', $recipients->assigned_user)->get()) {
+                        $recipientsId[] = $recipients->assigned_user;
+
+                    }
                 }
                 if (isset($recipients->user_id)) {
                     $recipientsId[] = $recipients->user_id;
@@ -410,15 +412,18 @@ class CaseManagementController extends Controller
                 if (isset($supervisor_3)) {
                     $recipientsId[] =  $recipients->supervisor_3;
                 }
+                if (isset($customer_id)) {
+                    $recipientsId[] =  $recipients->customer_id;
+                }
                 $randomNumber = random_int(5, 10000000000);
                 $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
                 $department = Department::find($recipients->department_id);
                 $deptarr = [];
                 $allmail = [];
-                if (isset($department->email)&& !empty($department->email)) {
+                if (isset($department->email) && !empty($department->email)) {
                     $deptarr[] = $department->email;
                 }
-                if (isset($emails,$deptarr) && !empty($emails)) {
+                if (isset($emails, $deptarr) && !empty($emails)) {
                     $allmail[] = array_merge($emails, $deptarr);
                 } else {
                     $allmail[] = $emails;
@@ -437,9 +442,9 @@ class CaseManagementController extends Controller
                     'user_id' => $recipients->assigned_user,
                     'email' => $view
                 ]);
-                
 
-                $exceptions_logs=ExceptionsLogs::create([
+
+                $exceptions_logs = ExceptionsLogs::create([
                     'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                     'cases_description' => $this->setNullIfEmpty($recipients->description),
                     'team_id' => $this->setNullIfEmpty($recipients->department_id),
@@ -448,25 +453,26 @@ class CaseManagementController extends Controller
                     'cases_action' => $this->setNullIfEmpty($recipients->case_action),
                     'staff_id' => $this->setNullIfEmpty($recipients->assigned_user),
                     'user_id' => $this->setNullIfEmpty($recipients->user_id),
-                    'direct_supervisor'=> $this->setNullIfEmpty($recipients->supervisor_1),
+                    'direct_supervisor' => $this->setNullIfEmpty($recipients->supervisor_1),
                     'group_head' => $this->setNullIfEmpty($recipients->supervisor_2),
-                    'divisional_head'=>$this->setNullIfEmpty($recipients->supervisor_3),
-                    'title'=> $this->setNullIfEmpty($recipients->title),
-                    'created_at'=>$formattedDate,
-                    'response_note'=>$this->setNullIfEmpty($recipients->assigned_user_response),
-                    'attachment'=>$this->setNullIfEmpty($recipients->attachment),
-                    'rating_id'=>$this->setNullIfEmpty($recipients->priority_level_id),
+                    'divisional_head' => $this->setNullIfEmpty($recipients->supervisor_3),
+                    'title' => $this->setNullIfEmpty($recipients->title),
+                    'created_at' => $formattedDate,
+                    'response_note' => $this->setNullIfEmpty($recipients->assigned_user_response),
+                    'attachment' => $this->setNullIfEmpty($recipients->attachment),
+                    'rating_id' => $this->setNullIfEmpty($recipients->priority_level_id),
                     'category_id' => $this->setNullIfEmpty($recipients->process_categoryid),
                     'event_date' => $this->setNullIfEmpty($recipients->event_date),
-                    'process_id'=>$this->setNullIfEmpty($recipients->process_id),
+                    'process_id' => $this->setNullIfEmpty($recipients->process_id),
                     'attachment_filename' => $this->setNullIfEmpty($recipients->attachment_filename),
                     'tran_id' => $this->setNullIfEmpty($recipients->tran_id),
+                    'customer_id' => $this->setNullIfEmpty($recipients->customer_id),
                     // 'transaction_id'
 
                 ]);
                 $recipients->update([
                     'alert_id' => $alertid->id,
-                    'exception_log_id'=> $exceptions_logs->id
+                    'exception_log_id' => $exceptions_logs->id
                 ]);
                 $exceptions_logs->update([
                     'exceptions_logs_id' => $exceptions_logs->id,
@@ -478,11 +484,11 @@ class CaseManagementController extends Controller
                 // $recipients->save();
 
 
-               if (!empty($allmail)) {
+                if (!empty($allmail)) {
                     foreach ($allmail as $email) {
                         Mail::to($email)->send(new CaseMail($case_notification));
                     }
-               } 
+                }
                 return response()->json([
                     'message' => 'Case Was Successfully Created!.'
                 ]);
@@ -544,7 +550,7 @@ class CaseManagementController extends Controller
 
                 $recipients->update([
                     'alert_id' => $alertid->id,
-                    'created_at'=>date('Y-m-d')
+                    'created_at' => date('Y-m-d')
                 ]);
 
                 if (!empty($allmail)) {
@@ -775,7 +781,7 @@ class CaseManagementController extends Controller
                 $view = view('email.document_email', compact('document_notification'))->render();
                 if (!isset($emails_)) {
                     # code...
-                    $emails_=Null;
+                    $emails_ = Null;
                 }
 
                 Alert::create([
@@ -1404,10 +1410,10 @@ class CaseManagementController extends Controller
     }
     public function auth_test(Request $request)
     {
-    //    $request->all();
-    //     $response = Http::get('https://apex.oracle.com/pls/apex/biggy/auth/ad',['username'=>$request['username']]);
+        //    $request->all();
+        //     $response = Http::get('https://apex.oracle.com/pls/apex/biggy/auth/ad',['username'=>$request['username']]);
         // return $response;
         return
-        date('Y-m-d H:i:s');;
+            date('Y-m-d H:i:s');;
     }
 }
