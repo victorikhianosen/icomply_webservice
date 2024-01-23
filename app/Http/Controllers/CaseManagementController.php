@@ -470,7 +470,8 @@ class CaseManagementController extends Controller
                     'exception_log_id'=> $exceptions_logs->id
                 ]);
                 $exceptions_logs->update([
-                    'exceptions_logs_id' => $exceptions_logs->id
+                    'exceptions_logs_id' => $exceptions_logs->id,
+                    'alert_id' => $alertid->id,
                 ]);
                 // $recipients->exception_log_id=$exceptions_logs->id;
                 // $exceptions_logs->exceptions_logs_id = $exceptions_logs->id;
