@@ -22,7 +22,8 @@ class Alert extends Model
         'rule_id',
         'alert_frequency_id',
         'exception_category_id',
-        'exception_category_alert_id'
+        'exception_category_alert_id',
+        'assigned_user_response'
     ];
 
     protected $table = 'alert';

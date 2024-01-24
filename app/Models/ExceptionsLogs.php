@@ -41,6 +41,7 @@ class ExceptionsLogs extends Model
         'category_id',
         'rule_id',
         'process_id',
-        'tran_id'
+        'tran_id',
+        'updated_at'
     ];
 }
