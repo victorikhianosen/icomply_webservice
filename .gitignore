@@ -4,6 +4,15 @@
 /public/storage
 /storage/*.key
 /vendor
+!vendor/autoload_classmap.php
+!vendor/autoload_files.php
+!vendor/autoload_psr4.php
+!vendor/autoload_static.php
+!vendor/ClassLoader.php
+!vendor/installed.json
+!vendor/installed.php
+!vendor/installedVersions.php
+!vendor/LICENSE
 .env
 .env.backup
 .env.production
