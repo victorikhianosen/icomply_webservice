@@ -9,15 +9,15 @@
 </head>
 
 <body>
-    <h1>{{ $close_case['title']}}</h1>
-    <p>{{ $close_case['body'] }}</p>
+    <h1>{{ $case_notification['title']}}</h1>
+    <p>{{ $case_notification['body'] }}</p>
     
-    @isset($close_case['link'])
-        <p>View this case <a href="">{{ $close_case['link'] }}</a> </p>
+    @isset($case_notification['link'])
+        <p>View this case <a href="">{{ $case_notification['link'] }}</a> </p>
     @endisset 
     
     @isset($creator_id)
-        <p>Responder Id: {{ $close_case['creator_id'] }} </p>
+        <p>Responder Id: {{ $case_notification['creator_id'] }} </p>
     @endisset
 
 
