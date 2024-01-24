@@ -674,7 +674,7 @@ class CaseManagementController extends Controller
 
                 $lowercaseTsql = strtolower($tsql);
                 $searchTerm = 'case_status_id';
-                if (strpos($lowercaseTsql, $searchTerm) == true && $matches[1]==2 ) {
+                if (strpos($lowercaseTsql, $searchTerm) == true && $matches[1] == 2) {
                     $id = $matches[4];
                     $recipients = CaseManagement2::find($id);
                     $recipients->user_id;
@@ -728,7 +728,7 @@ class CaseManagementController extends Controller
                         'reason_for_close' => $recipients->case_action,
                         'link' => 'http://127.0.0.1:8000/case-details/'
                     ];
-                    $view = view('email.notification_email', compact('close_case'))->render();
+                    $view = view('email.close_email', compact('close_case'))->render();
 
                     $deptarr = [];
                     $allmail = [];
@@ -766,16 +766,16 @@ class CaseManagementController extends Controller
                     $exceptions_logs->update([
                         'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                         'updated_at' => $formattedDate,
-                        'case_id'=>$recipients->id
+                        'case_id' => $recipients->id
                         // 'transaction_id'
 
                     ]);
 
                     if (!empty($allmail)) {
                         # code...
-                        // foreach ($allmail as $email) {
-                        //     Mail::to($email)->send(new CaseMail($close_case));
-                        // }
+                        foreach ($allmail as $email) {
+                            Mail::to($email)->send(new CaseMail($close_case));
+                        }
                     }
 
                     return response()->json([
