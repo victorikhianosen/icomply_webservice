@@ -34,7 +34,17 @@ class CaseManagement2 extends Model
         'attachment',
         'attachment_filename',
         'process_id',
-        'responses'
+        'responses',
+        'case_id',
+        'DAYS_OVERDUE',
+        'SINCE',
+        'RATING',
+        'STATUS',
+        'RATING_STYLE',
+        'BTN_STYLE'
+
+
+
 
     ];
 
@@ -60,7 +70,7 @@ class CaseManagement2 extends Model
 
     public function alert()
     {
-        return $this->belongsTo(Alert::class,'alert_id');
+        return $this->belongsTo(Alert::class, 'alert_id');
     }
 
     public function department()
