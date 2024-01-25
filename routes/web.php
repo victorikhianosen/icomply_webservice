@@ -18,33 +18,41 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/casemail', function () {
-    return view('cases_mail');
+Route::get('/opencase', function () {
+    return view('create_case_mail');
+});
+
+Route::get('/updatecase', function () {
+    return view('respond_to_case_mail');
+});
+
+Route::get('/closecase', function () {
+    return view('close_case_mail');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/showcase', function () {
-    return view('getcase');
-})->name('showcase');
+// Route::get('/showcase', function () {
+//     return view('getcase');
+// })->name('showcase');
 
 
-Route::post('/close-this-case/{id}', [App\Http\Controllers\CaseManagementController::class, 'close_Case'])->name('close-this-case');
+// Route::post('/close-this-case/{id}', [App\Http\Controllers\CaseManagementController::class, 'close_Case'])->name('close-this-case');
 
-Route::get('/closecase', function () {
-    return view('closecase');
-})->name('closecase');
+// Route::get('/closecase', function () {
+//     return view('closecase');
+// })->name('closecase');
 
 Route::get('/userlogin', function () {
     return view('userlogin');
 })->name('userlogin');
 
 
-Route::get('/case-details/{id}', function ($id) {
-    return view('case-details', ['id' => $id]);
-})->middleware('auth');
+// Route::get('/case-details/{id}', function ($id) {
+//     return view('case-details', ['id' => $id]);
+// })->middleware('auth');
 
 Route::get('/test-case/{id}', function ($id) {
     return view('test-case', ['id' => $id]);

@@ -21,4 +21,8 @@ class Staff extends Model
     {
         return $this->belongsTo(Department::class, 'department');
     }
+    public function cases()
+    {
+        return $this->hasMany(CaseManagement2::class);
+    }
 }

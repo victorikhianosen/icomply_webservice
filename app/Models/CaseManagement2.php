@@ -36,12 +36,8 @@ class CaseManagement2 extends Model
         'process_id',
         'responses',
         'case_id',
-        'DAYS_OVERDUE',
-        'SINCE',
-        'RATING',
-        'STATUS',
-        'RATING_STYLE',
-        'BTN_STYLE'
+        'ids',
+        'assigned_user_response'
 
 
 
@@ -51,6 +47,11 @@ class CaseManagement2 extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function staff()
+    {
+        return $this->belongsTo(Staff::class, 'assigned_user');
     }
 
     public function assigned_user()

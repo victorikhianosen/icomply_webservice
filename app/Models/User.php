@@ -17,14 +17,20 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+    protected $table = 'users';
+
     protected $fillable = [
-        'full_name',
+        'lastname',
         'email',
         'password',
-        'phone_number',
-        'branch_code',
+        'phone',
+        'status',
         'company_code',
-        'is_supervisor'
+        'is_supervisor',
+        'app_id',
+        'firstname',
+        'roles',
+        'team_id'
     ];
 
     /**
@@ -46,7 +52,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function case()
+    public function cases()
     {
         return $this->hasMany(CaseManagement::class);
     }

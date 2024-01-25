@@ -9,4 +9,9 @@ class CaseStatus extends Model
 {
     use HasFactory;
     protected $table = 'case_status';
+    
+     public function cases()
+    {
+        return $this->hasMany(CaseManagement2::class);
+    }
 }
