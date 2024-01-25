@@ -393,6 +393,7 @@ class CaseManagementController extends Controller
 
                         ///get supervisor ids
                         $recipientsId = [];
+                        $other_emails=[];
                         if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                             $recipientsId[] =   $recipients->supervisor_1;
                         }
@@ -446,6 +447,7 @@ class CaseManagementController extends Controller
                             'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                             'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
                         ]);
+                        // return $alertid->alert_name;
                         // 
                         // return  $recipients->assigned_user ? $recipients->assigned_user->name : 'N/A';
                         $update_case = [
@@ -457,7 +459,7 @@ class CaseManagementController extends Controller
                             'case_action' => $this->setNullIfEmpty($recipients->case_action),
                             'user_email' => $this->setNullIfEmpty($recipients->user->email),
                             'response' => $this->setNullIfEmpty($response_msg),
-                            'responder_name' => $recipients->staff->staff_name,
+                            'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
                             // 'responder_email' => $recipients->assigned_user->email,
 
                         ];
@@ -664,12 +666,14 @@ class CaseManagementController extends Controller
                 ]);
 
                 $case_notification = [
-                    'title' => 'Notification Mail',
-                    'body' => 'This is to notify you that a case was just created',
-                    'link' => '',
-                    'alert_id' => $alertid->id,
-                    'event_date' => $this->setNullIfEmpty($recipients->event_date),
-
+                    'event_date' => $this->setNullIfEmpty($recipients->event_data),
+                    'alert_name' => $this->setNullIfEmpty($alertid->alert_name),
+                    'title' => $this->setNullIfEmpty($recipients->title),
+                    'rating_name' => $this->setNullIfEmpty($recipients->priority->name),
+                    'status_name' => $this->setNullIfEmpty($recipients->status->name),
+                    'case_action' => $this->setNullIfEmpty($recipients->case_action),
+                    'user_email' => $this->setNullIfEmpty($recipients->user->email),
+                    'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
 
                 ];
 
