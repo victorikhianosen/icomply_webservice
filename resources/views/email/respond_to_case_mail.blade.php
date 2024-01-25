@@ -57,7 +57,7 @@
                     <div>
                         <div class="text-end">
                             <tr>
-                                <td>Event Date</td>
+                                <td><b>Event Date</b></td>
                                 <td> @isset($update_case['event_data'])
                                     {{ $update_case['event_data'] }}
                                     @else
@@ -68,15 +68,15 @@
                         </div>
 
                         <tr>
-                            <td>ID</td>
-                            <td>@isset($update_case['event_data'])
-                            {{ $update_case['event_data'] }}
+                            <td><b>ID</b></td>
+                            <td>@isset($update_case['alert_name'])
+                            {{ $update_case['alert_name'] }}
                             @else
                             NULL
                             @endisset </td>
                         </tr>
                         <tr>
-                            <td>Title</td>
+                            <td><b>Title</b></td>
                             <td>@isset($update_case['title'])
                             {{ $update_case['title'] }}
                             @else
@@ -84,7 +84,7 @@
                             @endisset </td>
                         </tr>
                         <tr>
-                            <td>Rating</td>
+                            <td><b>Rating</b></td>
                             <td>@isset($update_case['rating_name'])
                             {{ $update_case['rating_name'] }}
                             @else
@@ -92,7 +92,7 @@
                             @endisset</td>
                         </tr>
                         <tr>
-                            <td>Status</td>
+                            <td><b>Status</b></td>
                             <td>@isset($update_case['status_name'])
                             {{ $update_case['status_name'] }}
                             @else
@@ -100,7 +100,7 @@
                             @endisset</td>
                         </tr>
                         <tr>
-                            <td>Action</td>
+                            <td><b>Action</b></td>
                             <td>@isset($update_case['case_action'])
                             {{ $update_case['case_action'] }}
                             @else
@@ -108,7 +108,7 @@
                             @endisset</td>
                         </tr>
                         <tr>
-                            <td>Response message</td>
+                            <td><b>Response message</b></td>
                             <td>@isset($update_case['response'])
                                 {{ $update_case['response'] }}
                                 @else

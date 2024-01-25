@@ -14,6 +14,7 @@ use Illuminate\Http\UploadedFile;
 use App\Mail\CaseMail;
 use App\Mail\CloseCaseMail;
 use App\Mail\CloseMail;
+use App\Mail\CreateCaseMail;
 use App\Mail\DocumentMail;
 use App\Mail\ExceptionMail;
 use App\Mail\SendMail;
@@ -348,7 +349,7 @@ class CaseManagementController extends Controller
             $formattedDate = date('Y-m-d H:i');
             $randomNumber = random_int(
                 5,
-                10000000000
+                10000000000000
             );
 
             if (isset($tsql)) {
@@ -379,10 +380,10 @@ class CaseManagementController extends Controller
 
                         $user_emails = User::where('id',  $recipients->user_id)->pluck('email')->toArray();
                         $staff_emails = Staff::where('id',  $recipients->assigned_user)->pluck('email')->toArray();
-                        if ((isset($staff_emails) && !empty($staff_emails))) {
+                        if (($staff_emails)) {
                             $emails[] =   $staff_emails;
                         } else {
-                            return response()->json(['message' => 'assigned user id not found']);
+                            return response()->json(['message' => 'assigned user is not a staff']);
                         }
                         $responder_id = ($recipients->assigned_user);
 
@@ -577,56 +578,61 @@ class CaseManagementController extends Controller
                     return response()->json(['error' => 'Returning id not included in your query!']);
                 }
                 $recipients = CaseManagement2::find($rowId)->first();
-                $recipients->created_at = $formattedDate;
-                $recipientsId = [];
-                if (isset($recipients->assigned_user)) {
-                    if ($staff = Staff::where('id', $recipients->assigned_user)->get()) {
-                        $recipientsId[] = $recipients->assigned_user;
-                    }
-                }
-                if (isset($recipients->user_id)) {
-                    $recipientsId[] = $recipients->user_id;
-                }
-                if (isset($recipients->supervisor_1)) {
-                    $recipientsId[] =   $recipients->supervisor_1;
-                }
-                if (isset($recipients->supervisor_2)) {
-                    $recipientsId[] =  $recipients->supervisor_2;
-                }
-                if (isset($recipients->supervisor_3)) {
-                    $recipientsId[] =  $recipients->supervisor_3;
-                }
-                if (isset($recipients->customer_id)) {
-                    $recipientsId[] =  $recipients->customer_id;
-                }
-                $randomNumber = random_int(5, 10000000000);
-                $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+              
                 $department = Department::find($recipients->department_id);
+                $user_emails = User::where('id', $recipients->user_id)->pluck('email');
+                // return $user_emails;
+                $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
+                if (($staff_emails)) {
+                    $emails[] =   $staff_emails;
+                } else {
+                    return response()->json(['message' => 'assigned user is not a staff']);
+                }
+
+                //
+                $emails = [];
+                $recipientsId = [];
+                $other_emails=[];
                 $deptarr = [];
                 $allmail = [];
-                if (isset($department->email) && !empty($department->email)) {
+                $responder_id = ($recipients->assigned_user);
+                // 
+               
+                if ($user_emails) {
+                    $emails[] = $user_emails;
+                }
+                if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
+                    $recipientsId[] =   $recipients->supervisor_1;
+                }
+                if (isset($recipients->supervisor_2) && !empty($recipients->supervisor_2)) {
+                    $recipientsId[] =  $recipients->supervisor_2;
+                }
+                if (isset($recipients->supervisor_3) && !empty($recipients->supervisor_3)) {
+                    $recipientsId[] =  $recipients->supervisor_3;
+                }
+                //get customer_id
+                if (isset($recipients->customer_id) && !empty($recipients->customer_id)) {
+                    $recipientsId[] =  $recipients->customer_id;
+                }
+                //check for department                
+                if (Department::find($recipients->department_id)) {
+                    # code...
+                    $department = Department::find($recipients->department_id);
+                }
+                //get emails
+                if (User::whereIn('id', $recipientsId)->pluck('email')->toArray()) {
+                    # code...
+                    $other_emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
+                }
+
+               
+
+                if (!empty($department->email) && isset($department->email)) {
                     $deptarr[] = $department->email;
                 }
-                if (isset($emails, $deptarr) && !empty($emails)) {
-                    $allmail[] = array_merge($emails, $deptarr);
-                } else {
-                    $allmail[] = $emails;
-                }
-                $view = view('email.notification_email', compact('case_notification'))->render();
 
-                $alertid = Alert::create([
-                    'mail_to' => $allmail,
-                    'status_id' => $recipients->case_status_id,
-                    'alert_description' => $recipients->description,
-                    'team_id' => $recipients->department_id,
-                    'exception_process_id' => $recipients->process_id,
-                    'alert_action' => $recipients->case_action,
-                    'alert_subject' => 'This is to notify you that a case was just created',
-                    'alert_name' => 'ALERT' . $randomNumber,
-                    'user_id' => $recipients->assigned_user,
-                    'email' => $view
-                ]);
 
+                $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
 
                 $exceptions_logs = ExceptionsLogs::create([
                     'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
@@ -654,6 +660,17 @@ class CaseManagementController extends Controller
                     // 'transaction_id'
 
                 ]);
+                $alertid = Alert::create([
+                    'mail_to' => $allmail,
+                    'status_id' => $recipients->case_status_id,
+                    'alert_description' => $recipients->description,
+                    'team_id' => $recipients->department_id,
+                    'exception_process_id' => $recipients->process_id,
+                    'alert_action' => $recipients->case_action,
+                    'alert_subject' => 'This is to notify you that a case was just created',
+                    'alert_name' => 'ALERT' . $randomNumber,
+                    'user_id' => $recipients->assigned_user,
+                ]);
                 $recipients->update([
                     'alert_id' => $alertid->id,
                     'exception_log_id' => $exceptions_logs->id,
@@ -665,7 +682,7 @@ class CaseManagementController extends Controller
                     'alert_id' => $alertid->id,
                 ]);
 
-                $case_notification = [
+                $create_case = [
                     'event_date' => $this->setNullIfEmpty($recipients->event_data),
                     'alert_name' => $this->setNullIfEmpty($alertid->alert_name),
                     'title' => $this->setNullIfEmpty($recipients->title),
@@ -674,13 +691,19 @@ class CaseManagementController extends Controller
                     'case_action' => $this->setNullIfEmpty($recipients->case_action),
                     'user_email' => $this->setNullIfEmpty($recipients->user->email),
                     'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
+                    'description'=> $recipients->description
 
                 ];
+
+                $view = view('email.create_case_mail', compact('create_case'))->render();
+                $alertid->update([
+                    'email'=> $view
+                ]);
 
 
                 if (!empty($allmail)) {
                     foreach ($allmail as $email) {
-                        Mail::to($email)->send(new CaseMail($case_notification));
+                        Mail::to($email)->send(new CreateCaseMail($create_case));
                     }
                 }
                 return response()->json([
@@ -702,18 +725,18 @@ class CaseManagementController extends Controller
                     $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                     // return $user_emails;
                     $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
-
+                    if (($staff_emails)) {
+                        $emails[] =   $staff_emails;
+                    } else {
+                        return response()->json(['message' => 'assigned user is not a staff']);
+                    }
 
                     $emails = [];
                     $recipientsId = [];
                     $responder_id = ($recipients->assigned_user);
                     // 
-                    if ((isset($staff_emails) && !empty($staff_emails))) {
-                        $emails[] =   $staff_emails;
-                    } else {
-                        return response()->json(['message' => 'assigned user id not found']);
-                    }
-                    if ((isset($user_emails) && !empty($user_emails))) {
+                    
+                    if ($user_emails) {
                         $emails[] = $user_emails;
                     }
                     if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {

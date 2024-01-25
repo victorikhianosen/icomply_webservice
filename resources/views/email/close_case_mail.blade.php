@@ -58,7 +58,7 @@
                     <div>
                         <div class="text-end">
                             <tr>
-                                <td>Event Date</td>
+                                <td><b>Event Date</b></td>
                                 <td> @isset($close_case['event_data'])
                                     {{ $close_case['event_data'] }}
                                     @else
@@ -69,15 +69,15 @@
                         </div>
 
                         <tr>
-                            <td>ID</td>
-                            <td>@isset($close_case['event_data'])
-                            {{ $close_case['event_data'] }}
+                            <td><b>ID</b></td>
+                            <td>@isset($close_case['alert_name'])
+                            {{ $close_case['alert_name'] }}
                             @else
                             NULL
                             @endisset </td>
                         </tr>
                         <tr>
-                            <td>Title</td>
+                            <td><b>Title</b></td>
                             <td>@isset($close_case['title'])
                             {{ $close_case['title'] }}
                             @else
@@ -85,7 +85,7 @@
                             @endisset </td>
                         </tr>
                         <tr>
-                            <td>Rating</td>
+                            <td><b>Rating</b></td>
                             <td>@isset($close_case['rating_name'])
                             {{ $close_case['rating_name'] }}
                             @else
@@ -101,7 +101,7 @@
                             @endisset</td>
                         </tr>
                         <tr>
-                            <td>Action</td>
+                            <td><b>Action</b></td>
                             <td>@isset($close_case['case_action'])
                             {{ $close_case['case_action'] }}
                             @else
@@ -115,7 +115,7 @@
                     <tr>
                         <td colspan="2" style="border-right: none;">
                             <div class="mt-5">
-                                <h5 class=""> Required Action</h5>
+                                <h5 class=""><b>Required Action</b> </h5>
                                 <p style="font-weight: normal;"><i> Please review and ensure compliance</i></p>
                                 <p style="font-weight: normal;"><i>Please ensure 100% review of this exception.</i> </p>
                             </div>

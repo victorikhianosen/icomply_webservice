@@ -58,45 +58,73 @@
                     <div>
                         <div class="text-end">
                             <tr>
-                                <td>Event Date</td>
-                                <td>Value 1</td>
+                                <td><b>Event Date</b></td>
+                                <td>@isset($create_case['event_data'])
+                                {{ $create_case['event_data'] }}
+                                @else
+                                NULL
+                                @endisset</td>
                             </tr>
                         </div>
 
                         <tr>
-                            <td>ID</td>
-                            <td>Value 2</td>
+                            <td><b>ID</b> </td>
+                            <td>@isset($create_case['alert_name'])
+                            {{ $create_case['alert_name'] }}
+                            @else
+                            NULL
+                            @endisset</td>
                         </tr>
                         <tr>
-                            <td>Narration</td>
-                            <td>Value 3</td>
+                            <td><b>Narration</b></td>
+                            <td>@isset($create_case['title'])
+                            {{ $create_case['title'] }}
+                            @else
+                            NULL
+                            @endisset</td>
                         </tr>
                         <tr>
-                            <td>Severity Rating</td>
-                            <td>Value 3</td>
+                            <td><b>Severity Rating</b> </td>
+                            <td>@isset($create_case['rating_name'])
+                            {{ $create_case['rating_name'] }}
+                            @else
+                            NULL
+                            @endisset</td>
                         </tr>
                         <tr>
-                            <td>Status</td>
-                            <td>Value 3</td>
+                            <td><b>Status</b></td>
+                            <td>@isset($create_case['status_name'])
+                            {{ $create_case['status_name'] }}
+                            @else
+                            NULL
+                            @endisset</td>
                         </tr>
                         <tr>
-                            <td>Recommended Action</td>
-                            <td>Value 3</td>
+                            <td><b>Recommended Action</b> </td>
+                            <td>@isset($create_case['case_action'])
+                            {{ $create_case['case_action'] }}
+                            @else
+                            NULL
+                            @endisset</td>
                         </tr>
                         <tr>
-                            <td>Additional Details</td>
-                            <td>Value 3</td>
+                            <td><b>Additional Details</b></td>
+                            <td>@isset($create_case['description'])
+                            {{ $create_case['description'] }}
+                            @else
+                            NULL
+                            @endisset</td>
                         </tr>
                     </div>
 
                     <tr>
-                        <td class="employee-response">Employee Response</td>
-                        <td class="employee-response">Value 3nhh</td>
+                        <td class="employee-response"><b>Employee Response</b> </td>
+                        <td class="employee-response"><a href="">click here to respond</a></td>
                     </tr>
                     <tr>
                         <td colspan="2" style="border-right: none;">
                             <div class="mt-5">
-                                <h5 class=""> Required Action</h5>
+                                <h5 class=""><b>Required Action</b> </h5>
                                 <p style="font-weight: normal;"><i> Please review</i></p>
                                 <p style="font-weight: normal;"><i>Please ensure 100% review of this exception.</i> </p>
                             </div>
