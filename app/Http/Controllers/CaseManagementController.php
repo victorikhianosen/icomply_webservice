@@ -633,7 +633,7 @@ class CaseManagementController extends Controller
                     $deptarr[] = $department->email;
                 }
 
-
+// return $formattedDate;
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
 
                 $exceptions_logs = ExceptionsLogs::create([
@@ -680,6 +680,7 @@ class CaseManagementController extends Controller
                     'created_at'=>$formattedDate
 
                 ]);
+                // return $recipients;
                 $exceptions_logs->update([
                     'exceptions_logs_id' => $exceptions_logs->id,
                     'alert_id' => $alertid->id,
