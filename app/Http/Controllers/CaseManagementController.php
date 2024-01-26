@@ -676,7 +676,8 @@ class CaseManagementController extends Controller
                 $recipients->update([
                     'alert_id' => $alertid->id,
                     'exception_log_id' => $exceptions_logs->id,
-                    'ids' => 0
+                    'ids' => 0,
+                    'created_at'=>$formattedDate
 
                 ]);
                 $exceptions_logs->update([
