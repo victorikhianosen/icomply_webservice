@@ -498,7 +498,7 @@ class CaseManagementController extends Controller
                         // 
                         $exceptions_logs = ExceptionsLogs::find($recipients->exception_log_id);
                         $exceptions_logs->update([
-                            'response_note' => $this->setNullIfEmpty($caseResponse->response),
+                            'response_note' => $this->setNullIfEmpty($recipients->assigned_user_response),
                             'updated_at' => $formattedDate
                             // 'transaction_id'
 
@@ -699,6 +699,7 @@ class CaseManagementController extends Controller
                 $exceptions_logs->update([
                     'exceptions_logs_id' => $exceptions_logs->id,
                     'alert_id' => $alertid->id,
+                    
                 ]);
 
                 $create_case = [
