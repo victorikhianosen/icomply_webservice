@@ -354,19 +354,23 @@ class CaseManagementController extends Controller
             );
 
             if (isset($tsql)) {
-                // 
-                $lowercaseTsql = strtolower($tsql);
+
+                $tsql=preg_replace('/\s+/', ' ', $tsql);
+                $tsql = trim(strtolower($tsql));
                 $searchTerm = 'delete';
-                if (strpos($lowercaseTsql, $searchTerm) !== false) {
+                if (strpos($tsql, $searchTerm) !== false) {
                     // Reject any SQL statement with "DELETE"
                     return response()->json(["message" => "Invalid SQL statement"]);
                 }
                 // $updatepattern = '/UPDATE\s+case_management\s+SET\s+(responses\s*=\s*(\'|"|\')(.*?)\\2|[^;])*WHERE\s+id\s*=\s*(\d+);?/i';
+               
                 $updatepattern = '/UPDATE\s+case_management\s+SET\s+(assigned_user_response\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
+                $updatepattern = strtolower($updatepattern);
                 if (preg_match($updatepattern, $tsql, $matches)) {
-                    $lowercaseTsql = strtolower($tsql);
+                  
+                    // return "no cache";
                     $searchTerm = 'assigned_user_response';
-                    if (strpos($lowercaseTsql, $searchTerm) == true) {
+                    if (strpos($tsql, $searchTerm) == true) {
                         $UpdatedRowId = $matches[4];
 
                         $response_msg = $matches[3];
@@ -496,9 +500,10 @@ class CaseManagementController extends Controller
                         ]);
 
                         // 
+                        // return $recipients->exception_log_id;
                         $exceptions_logs = ExceptionsLogs::find($recipients->exception_log_id);
                         $exceptions_logs->update([
-                            'response_note' => $this->setNullIfEmpty($response_msg),
+                            'response_note' => ($response_msg),
                             'updated_at' => $formattedDate
                             // 'transaction_id'
 
@@ -517,10 +522,7 @@ class CaseManagementController extends Controller
                     }
                 };
 
-                // $validate_case_update =  '/UPDATE\s+case_management\s+SET\s+(case_status_id\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
-                // $validate_case_update = '/UPDATE\s+case_management\s+SET\s+(assigned_user_response\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
-
-                $validate_case = '/UPDATE\s+case_management\s+SET\s+(reason_for_close\s*=\s*(\'|"|\')(.*?)\\2|case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
+               $validate_case = '/UPDATE\s+case_management\s+SET\s+(reason_for_close\s*=\s*(\'|"|\')(.*?)\\2|case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
                 // $validate_case = '/UPDATE\s+case_management\s+SET\s+(case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
                 $tsql = strtolower($tsql);
                 $validate_case = strtolower($validate_case);
