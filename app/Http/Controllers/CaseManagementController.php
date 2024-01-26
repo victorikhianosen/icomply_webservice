@@ -751,6 +751,7 @@ class CaseManagementController extends Controller
                     $emails = [];
                     $recipientsId = [];
                     $responder_id = ($recipients->assigned_user);
+                    $other_emails=[];
                     // 
 
                     if ($user_emails) {
