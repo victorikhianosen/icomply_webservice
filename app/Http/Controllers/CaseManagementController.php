@@ -473,7 +473,9 @@ class CaseManagementController extends Controller
                         $currentArray = json_decode($currentResponses, true);
                         $currentArray[] = json_decode($newArrayValue);
                         $updatedResponses = json_encode($currentArray);
-                        $recipients->assigned_user_response = $updatedResponses;
+                        // $recipients->assigned_user_response = $updatedResponses;
+                        $recipients->assigned_user_response = $response_msg;
+
                         $recipients->updated_at = $formattedDate;
                         $recipients->save();
 
