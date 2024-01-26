@@ -11,17 +11,19 @@
         }
 
         td {
-            padding: 3px;
-            font-weight: normal;
-
+        padding: 3px;
+        font-weight: normal;
+        word-wrap: break-word;
+        
         }
-
+        
         tr td:first-child {
-            border-right: 1px solid #ccc;
-            font-weight: bold;
-            /* padding-right: 0px;
-            padding-left: 0px; */
-
+        border-right: 1px solid #ccc;
+        font-weight: bold;
+        white-space: nowrap;
+        /* padding-right: 0px;
+        padding-left: 0px; */
+        
         }
 
 
@@ -39,7 +41,7 @@
 </head>
 
 <body class="card-header" style="border: none;">
-    <div class="containerr card" style="width: 40%;">
+    <div class="containerr card" style="width: 100%;">
         <div class="row card-body card border">
             <div class="col">
                 <div class="mt">
@@ -49,9 +51,9 @@
                     <tr>
                         <td colspan="2" style="border-right: none;font-weight: normal;">
                             <div>
-                                <p><i>The exception below was raised on a transaction you processed or an activity within your scope of responsibility.</i></p>
-                                <p><i>Please respond to the exception immediately, explaining the reason(s) behind it as well as what you are doing to prevent re-occurrence.</i> </p>
-                                <p><i>Note: The exception will remain open and therefore count against you unless resolved.</i> </p>
+                                <p style="word-wrap: break-word;"><i>The exception below was raised on a transaction you processed or an activity within your scope of responsibility.</i></p>
+                                <p style="word-wrap: break-word;"><i>Please respond to the exception immediately, explaining the reason(s) behind it as well as what you are doing to prevent re-occurrence.</i> </p>
+                                <p style="word-wrap: break-word;"><i>Note: The exception will remain open and therefore count against you unless resolved.</i> </p>
                             </div>
                         </td>
                     </tr>

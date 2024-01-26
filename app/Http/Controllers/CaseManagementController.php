@@ -368,7 +368,7 @@ class CaseManagementController extends Controller
                     $searchTerm = 'assigned_user_response';
                     if (strpos($lowercaseTsql, $searchTerm) == true) {
                         $UpdatedRowId = $matches[4];
-                       
+
                         $response_msg = $matches[3];
                         // return $response_msg;
                         $emails = [];
@@ -395,7 +395,7 @@ class CaseManagementController extends Controller
 
                         ///get supervisor ids
                         $recipientsId = [];
-                        $other_emails=[];
+                        $other_emails = [];
                         if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                             $recipientsId[] =   $recipients->supervisor_1;
                         }
@@ -422,13 +422,13 @@ class CaseManagementController extends Controller
 
 
                         $allmail = [];
-                        $deptarr=[];
+                        $deptarr = [];
                         if (!empty($department->email) && isset($department->email)) {
                             $deptarr[] = $department->email;
                         }
 
                         //    
-                //    return $recipients->staff->staff_name;
+                        //    return $recipients->staff->staff_name;
 
                         $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
 
@@ -486,6 +486,7 @@ class CaseManagementController extends Controller
                         $recipients->assigned_user_response = $caseResponse->response;
 
                         $recipients->updated_at = $formattedDate;
+                        $recipients->alert_id = $alertid->id;
                         $recipients->save();
 
                         $alertid->update([
@@ -497,7 +498,7 @@ class CaseManagementController extends Controller
                         // 
                         $exceptions_logs = ExceptionsLogs::find($recipients->exception_log_id);
                         $exceptions_logs->update([
-                            'response_note' => $this->setNullIfEmpty($recipients->assigned_user_response),
+                            'response_note' => $this->setNullIfEmpty($caseResponse->response),
                             'updated_at' => $formattedDate
                             // 'transaction_id'
 
@@ -518,20 +519,27 @@ class CaseManagementController extends Controller
                 // $validate_case_update =  '/UPDATE\s+case_management\s+SET\s+(case_status_id\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
                 // $validate_case_update = '/UPDATE\s+case_management\s+SET\s+(assigned_user_response\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
 
-                // $validate_case = '/UPDATE\s+case_management\s+SET\s+(case_status_id\s*=\s*(\'|"|\')(.*?)\\2|case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
-                $validate_case = '/UPDATE\s+case_management\s+SET\s+(case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
+                $validate_case = '/UPDATE\s+case_management\s+SET\s+(reason_for_close\s*=\s*(\'|"|\')(.*?)\\2|case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
+                // $validate_case = '/UPDATE\s+case_management\s+SET\s+(case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
                 $tsql = strtolower($tsql);
                 $validate_case = strtolower($validate_case);
                 if (preg_match($validate_case, $tsql, $matches)) {
-                    // return $matches[3];
+                    // row id $matches[5]
+                    // case_status id $matches[4]
+                    // reason_for_close $matches[3]
                     $lowercaseTsql = strtolower($tsql);
                     $searchTerm = 'case_status_id';
+                    $searchTerm2 = 'reason_for_close';
                     if (strpos($lowercaseTsql, $searchTerm) == true) {
-                        if (($matches[2] != 2) && ($matches[2] != 1)) {
+                        if (($matches[4] != 2) && ($matches[4] != 1)) {
                             return response()->json([
                                 'message' => 'Invalid case status Id.'
                             ]);
                         }
+                    }elseif (strpos($lowercaseTsql, $searchTerm2) == false) {
+                        return response()->json([
+                            'message' => 'reason_for_close is required.'
+                        ]);
                     }
                 }
                 // 
@@ -589,7 +597,7 @@ class CaseManagementController extends Controller
                     return response()->json(['error' => 'Returning id not included in your query!']);
                 }
                 $recipients = CaseManagement2::find($rowId)->first();
-              
+
                 $department = Department::find($recipients->department_id);
                 $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                 // return $user_emails;
@@ -603,12 +611,12 @@ class CaseManagementController extends Controller
                 //
                 $emails = [];
                 $recipientsId = [];
-                $other_emails=[];
+                $other_emails = [];
                 $deptarr = [];
                 $allmail = [];
                 $responder_id = ($recipients->assigned_user);
                 // 
-               
+
                 if ($user_emails) {
                     $emails[] = $user_emails;
                 }
@@ -636,13 +644,11 @@ class CaseManagementController extends Controller
                     $other_emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
                 }
 
-               
 
                 if (!empty($department->email) && isset($department->email)) {
                     $deptarr[] = $department->email;
                 }
 
-// return $formattedDate;
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
 
                 $exceptions_logs = ExceptionsLogs::create([
@@ -686,7 +692,7 @@ class CaseManagementController extends Controller
                     'alert_id' => $alertid->id,
                     'exception_log_id' => $exceptions_logs->id,
                     'ids' => 0,
-                    'created_at'=>$formattedDate
+                    'created_at' => $formattedDate
 
                 ]);
                 // return $recipients;
@@ -704,13 +710,13 @@ class CaseManagementController extends Controller
                     'case_action' => $this->setNullIfEmpty($recipients->case_action),
                     'user_email' => $this->setNullIfEmpty($recipients->user->email),
                     'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
-                    'description'=> $recipients->description
+                    'description' => $recipients->description
 
                 ];
 
                 $view = view('email.create_case_mail', compact('create_case'))->render();
                 $alertid->update([
-                    'email'=> $view
+                    'email' => $view
                 ]);
 
 
@@ -729,11 +735,9 @@ class CaseManagementController extends Controller
 
             // -----------------------CLOSE CASE_MANAGEMENT-------------
             if (preg_match($validate_case, $tsql, $matches)) {
-
-                $lowercaseTsql = strtolower($tsql);
-                $searchTerm = 'case_status_id';
-                if ($matches[2] == 2) {
-                    $id = $matches[3];
+                if ($matches[4] == 2) {
+                    $id = $matches[5];
+                    $reason_for_close = $matches[3];
                     $recipients = CaseManagement2::find($id);
                     $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                     // return $user_emails;
@@ -748,7 +752,7 @@ class CaseManagementController extends Controller
                     $recipientsId = [];
                     $responder_id = ($recipients->assigned_user);
                     // 
-                    
+
                     if ($user_emails) {
                         $emails[] = $user_emails;
                     }
@@ -810,6 +814,7 @@ class CaseManagementController extends Controller
                         'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                         'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
                         'updated_at' => $formattedDate,
+                        'close_remarks' => $reason_for_close
                     ]);
 
                     $close_case = [
@@ -820,6 +825,7 @@ class CaseManagementController extends Controller
                         'status_name' => $this->setNullIfEmpty($recipients->status->name),
                         'case_action' => $this->setNullIfEmpty($recipients->case_action),
                         'user_email' => $this->setNullIfEmpty($recipients->user->email),
+                        'close_remarks'=>$reason_for_close
 
                     ];
                     $view = view('email.close_case_mail', compact('close_case'))->render();
@@ -828,7 +834,8 @@ class CaseManagementController extends Controller
                     $exceptions_logs->update([
                         'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                         'updated_at' => $formattedDate,
-                        'case_id' => $recipients->id
+                        'case_id' => $recipients->id,
+                        'close_remarks' => $reason_for_close
                         // 'transaction_id'
 
                     ]);

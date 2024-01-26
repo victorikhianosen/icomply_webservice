@@ -10,18 +10,20 @@
 
         }
 
-        td {
-            padding: 3px;
-            font-weight: normal;
-
+       td {
+        padding: 3px;
+        font-weight: normal;
+        word-wrap: break-word;
+        
         }
-
+        
         tr td:first-child {
-            border-right: 1px solid #ccc;
-            font-weight: bold;
-            /* padding-right: 0px;
-            padding-left: 0px; */
-
+        border-right: 1px solid #ccc;
+        font-weight: bold;
+        white-space: nowrap;
+        /* padding-right: 0px;
+        padding-left: 0px; */
+        
         }
 
 
@@ -39,7 +41,7 @@
 </head>
 
 <body class="card-header" style="border: none;">
-    <div class="containerr card" style="width:40%;">
+    <div class="containerr card" style="width:100%;">
         <div class="row card-body ">
             <div class="col">
                 <div class="mt">
@@ -49,7 +51,7 @@
                     <tr>
                         <td colspan="2" style="border-right: none;font-weight: normal;">
                             <div>
-                                <p><i>An exception initiated by {{ $update_case['user_email'] }} has been responder to by {{ $update_case['responder_name'] }}. see details below:</i></p>
+                                <p style="word-wrap: break-word;"><i>An exception initiated by {{ $update_case['user_email'] }} has been responder to by {{ $update_case['responder_name'] }}. see details below:</i></p>
 
                             </div>
                         </td>
