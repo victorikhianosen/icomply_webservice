@@ -54,7 +54,7 @@ class CaseManagement2 extends Model
 
     public function assigned_user()
     {
-        return $this->belongsTo(User::class, 'assigned_user');
+        return $this->belongsTo(Staff::class, 'assigned_user');
     }
 
     public function priority()

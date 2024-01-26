@@ -358,7 +358,7 @@ class CaseManagementController extends Controller
 
                 $tsql=preg_replace('/\s+/', ' ', $tsql);
                 $tsql = trim(strtolower($tsql));
-                
+                return response()->json([$tsql]);
                 $searchTerm = 'delete';
                 if (strpos($tsql, $searchTerm) !== false) {
                     // Reject any SQL statement with "DELETE"
