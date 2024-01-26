@@ -358,9 +358,7 @@ class CaseManagementController extends Controller
 
                 $tsql=preg_replace('/\s+/', ' ', $tsql);
                 $tsql = trim(strtolower($tsql));
-                return response()->json([
-                    $tsql
-                ]);
+                
                 $searchTerm = 'delete';
                 if (strpos($tsql, $searchTerm) !== false) {
                     // Reject any SQL statement with "DELETE"
@@ -368,7 +366,7 @@ class CaseManagementController extends Controller
                 }
                 // $updatepattern = '/UPDATE\s+case_management\s+SET\s+(responses\s*=\s*(\'|"|\')(.*?)\\2|[^;])*WHERE\s+id\s*=\s*(\d+);?/i';
                
-                $updatepattern = '/UPDATE\s+case_management\s+SET\s+(assigned_user_response\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
+                $updatepattern = '/UPDATE\s+case_management\s+SET\s+(assigned_user_response\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+)?/i';
                 $updatepattern = strtolower($updatepattern);
                 if (preg_match($updatepattern, $tsql, $matches)) {
                   
@@ -376,6 +374,7 @@ class CaseManagementController extends Controller
                     $searchTerm = 'assigned_user_response';
                     if (strpos($tsql, $searchTerm) == true) {
                         $UpdatedRowId = $matches[4];
+                    //   return  gettype($UpdatedRowId);
 
                         $response_msg = $matches[3];
                         // return $response_msg;
