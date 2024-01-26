@@ -498,11 +498,12 @@ class CaseManagementController extends Controller
                         // 
                         $exceptions_logs = ExceptionsLogs::find($recipients->exception_log_id);
                         $exceptions_logs->update([
-                            'response_note' => $this->setNullIfEmpty($recipients->assigned_user_response),
+                            'response_note' => $this->setNullIfEmpty($response_msg),
                             'updated_at' => $formattedDate
                             // 'transaction_id'
 
                         ]);
+                        // return$exceptions_logs;
 
                         if (!empty($allmail)) {
 
