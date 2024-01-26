@@ -24,6 +24,7 @@ use App\Models\Alert;
 use App\Models\AlertGroup;
 use App\Models\CaseManagement;
 use App\Models\CaseManagement2;
+use App\Models\CaseResponse;
 use App\Models\CaseStatus;
 use App\Models\Department;
 use App\Models\Document;
@@ -432,7 +433,15 @@ class CaseManagementController extends Controller
                         $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
 
                         $responder = $recipients->assigned_user;
-
+                        //
+                        $caseResponse = CaseResponse::create([
+                            'case_id' => $recipients->id,
+                            'response' => $response_msg,
+                            'created_at' => $formattedDate
+                        ]);
+                        $caseResponse->update([
+                            'case_management_response_id' => $caseResponse->id,
+                        ]);
                         $exception_category_id = ExceptionCategory::where('code', 'non-trans')->first();
                         $alertid = Alert::create([                            //
                             'mail_to' => $allmail,
@@ -459,7 +468,7 @@ class CaseManagementController extends Controller
                             'status_name' => $this->setNullIfEmpty($recipients->status->name),
                             'case_action' => $this->setNullIfEmpty($recipients->case_action),
                             'user_email' => $this->setNullIfEmpty($recipients->user->email),
-                            'response' => $this->setNullIfEmpty($response_msg),
+                            'response' => $this->setNullIfEmpty($caseResponse->response),
                             'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
                             // 'responder_email' => $recipients->assigned_user->email,
 
@@ -474,13 +483,13 @@ class CaseManagementController extends Controller
                         $currentArray[] = json_decode($newArrayValue);
                         $updatedResponses = json_encode($currentArray);
                         // $recipients->assigned_user_response = $updatedResponses;
-                        $recipients->assigned_user_response = $response_msg;
+                        $recipients->assigned_user_response = $caseResponse->response;
 
                         $recipients->updated_at = $formattedDate;
                         $recipients->save();
 
                         $alertid->update([
-                            'assigned_user_response' => $this->setNullIfEmpty($response_msg),
+                            'assigned_user_response' => $this->setNullIfEmpty($caseResponse->response),
                             'updated_at' => $formattedDate,
                             'email' => $view
                         ]);

@@ -12,7 +12,7 @@ class CaseManagement2 extends Model
     public $timestamps = false;
 
 
-    protected $fillable = [
+    public $fillable = [
 
         'user_id',
         'case_status_id',
@@ -39,9 +39,6 @@ class CaseManagement2 extends Model
         'ids',
         'assigned_user_response',
         'created_at'
-
-
-
 
     ];
 
@@ -78,5 +75,10 @@ class CaseManagement2 extends Model
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function case_response()
+    {
+        return $this->hasMany(CaseResponse::class);
     }
 }
