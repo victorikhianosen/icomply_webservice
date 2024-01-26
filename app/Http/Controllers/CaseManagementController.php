@@ -354,9 +354,13 @@ class CaseManagementController extends Controller
             );
 
             if (isset($tsql)) {
+                
 
                 $tsql=preg_replace('/\s+/', ' ', $tsql);
                 $tsql = trim(strtolower($tsql));
+                return response()->json([
+                    $tsql
+                ]);
                 $searchTerm = 'delete';
                 if (strpos($tsql, $searchTerm) !== false) {
                     // Reject any SQL statement with "DELETE"
@@ -553,9 +557,11 @@ class CaseManagementController extends Controller
             }
 
             if (isset($dsql)) {
+                $dsql = preg_replace('/\s+/', ' ', $dsql);
+                $dsql = trim(strtolower($dsql));
                 $lowercaseTsql = strtolower($dsql);
                 $searchTerm = 'delete';
-                if (strpos($lowercaseTsql, $searchTerm) !== false) {
+                if (strpos($dsql, $searchTerm) !== false) {
                     // Reject any SQL statement with "DELETE"
                     return response()->json(["message" => "Invalid SQL statement"]);
                 }
