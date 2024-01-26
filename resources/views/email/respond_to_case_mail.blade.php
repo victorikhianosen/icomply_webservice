@@ -57,11 +57,11 @@
                         </td>
                     </tr>
                     <div>
-                        <div class="text-end">
+                        <div>
                             <tr>
                                 <td><b>Event Date</b></td>
-                                <td> @isset($update_case['event_data'])
-                                    {{ $update_case['event_data'] }}
+                                <td> @isset($update_case['event_date'])
+                                    {{ $update_case['event_date'] }}
                                     @else
                                     NULL
                                     @endisset
