@@ -340,7 +340,7 @@ class CaseManagementController extends Controller
 
             //read only and download
             $dsql = $request->input('dsql');
-            
+
             //debug key
             $debug = $request->input('debug');
             $nv_download_name = $request->input('download_name');
@@ -432,6 +432,8 @@ class CaseManagementController extends Controller
                         }
                         //    
                         $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
+                        $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
+
                         $responder = $recipients->assigned_user;
                         //
                         $caseResponse = CaseResponse::create([
@@ -461,7 +463,7 @@ class CaseManagementController extends Controller
                         ]);
                         // 
                         $update_case = [
-                            'event_date' => $this->setNullIfEmpty($recipients->event_data),
+                            'event_date' => $this->setNullIfEmpty($recipients->event_date),
                             'alert_name' => $this->setNullIfEmpty($alertid->alert_name),
                             'title' => $this->setNullIfEmpty($recipients->title),
                             'rating_name' => $this->setNullIfEmpty($recipients->priority->name),
@@ -645,6 +647,7 @@ class CaseManagementController extends Controller
                 }
 
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
+                $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
 
                 $exceptions_logs = ExceptionsLogs::create([
                     'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
@@ -777,21 +780,14 @@ class CaseManagementController extends Controller
 
                     $deptarr = [];
                     $allmail = [];
-
-                    if (!empty($department->email) && isset($department->email)) {
-                        $deptarr[] = $department->email;
-                    }
-
+                    $deptarr[] = $department->email;
 
                     $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
-                    // $allmail = [...$emails, ...$deptarr, ...$other_emails];
+                    $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
 
-                    // return response()->json(['allmail' => $allmail, 'deptarr' => $deptarr, 'emails' => $emails, 'other_emails' => $other_emails]);
-
-                    // 
                     $exception_category_id = ExceptionCategory::where('code', 'non-trans')->first();
                     // 
-                    $alertid = Alert::create([                    
+                    $alertid = Alert::create([
                         'mail_to' => $allmail,
                         'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                         'alert_action' => $this->setNullIfEmpty($recipients->case_action),
@@ -965,14 +961,9 @@ class CaseManagementController extends Controller
 
                 $deptarr = [];
                 $allmail = [];
+                $deptarr[] = $department->email;
 
-                if (!empty($department->email)) {
-                    $deptarr[] = $department->email;
-                }
-
-                if (empty($deptarr)) {
-                    $allmail = $emails;
-                } elseif (!empty($emails) && !empty($deptarr)) {
+                if (!empty($emails) && !empty($deptarr)) {
                     $allmail = array_merge($allmail, $emails, $deptarr);
                 }
 
