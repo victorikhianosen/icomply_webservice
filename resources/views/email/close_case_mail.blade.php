@@ -5,7 +5,7 @@
     <style>
         table {
             width: 100%;
-            margin-top: 15px;
+            margin-top: 2px;
             margin-left: 0;
 
         }
@@ -46,13 +46,18 @@
         <div class="row card-body ">
             <div class="col">
                 <div class="mt">
-                    <img src="allfiles/Sterling_Logo.png" alt="" class="img-fluid img-responsive" width="170">
+                    <img src="http://139.59.186.114/icomply_webservice/public/allfiles/Fkpkq5xyDmglUjE8WcLQlxVVGgp1fD7gXBGZSLkj.png"
+                        alt="" class="img-fluid img-responsive" width="170">
                 </div>
                 <table>
                     <tr>
                         <td colspan="2" style="border-right: none;font-weight: normal;">
                             <div>
-                                <p style="word-wrap: break-word;"><i>An exception initiated by {{ $close_case['user_email'] }} has been closed. see details below:</i></p>
+                                <p style="word-wrap: break-word;"><i>An exception initiated by
+                                        @isset($close_case['user_email'])
+                                        {{ $close_case['user_email'] }}
+                                        @endisset
+                                        has been closed. see details below:</i></p>
 
                             </div>
                         </td>
@@ -73,34 +78,34 @@
                         <tr>
                             <td><b>ID</b></td>
                             <td>@isset($close_case['alert_name'])
-                            {{ $close_case['alert_name'] }}
-                            @else
-                            NULL
-                            @endisset </td>
+                                {{ $close_case['alert_name'] }}
+                                @else
+                                NULL
+                                @endisset </td>
                         </tr>
                         <tr>
                             <td><b>Title</b></td>
                             <td>@isset($close_case['title'])
-                            {{ $close_case['title'] }}
-                            @else
-                            NULL
-                            @endisset </td>
+                                {{ $close_case['title'] }}
+                                @else
+                                NULL
+                                @endisset </td>
                         </tr>
                         <tr>
                             <td><b>Rating</b></td>
                             <td>@isset($close_case['rating_name'])
-                            {{ $close_case['rating_name'] }}
-                            @else
-                            NULL
-                            @endisset</td>
+                                {{ $close_case['rating_name'] }}
+                                @else
+                                NULL
+                                @endisset</td>
                         </tr>
                         <tr>
                             <td>Status</td>
                             <td>@isset($close_case['status_name'])
-                            {{ $close_case['status_name'] }}
-                            @else
-                            NULL
-                            @endisset</td>
+                                {{ $close_case['status_name'] }}
+                                @else
+                                NULL
+                                @endisset</td>
                         </tr>
                         <tr>
                             <td><b>Reason For Close</b></td>
@@ -113,10 +118,10 @@
                         <tr>
                             <td><b>Action</b></td>
                             <td>@isset($close_case['case_action'])
-                            {{ $close_case['case_action'] }}
-                            @else
-                            NULL
-                            @endisset</td>
+                                {{ $close_case['case_action'] }}
+                                @else
+                                NULL
+                                @endisset</td>
                         </tr>
 
                     </div>

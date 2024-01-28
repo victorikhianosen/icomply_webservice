@@ -338,7 +338,6 @@ class CaseManagementController extends Controller
             ];
             $validator = Validator::make(['file' => $file], $rules, $messages);
 
-
             //read only and download
             $dsql = $request->input('dsql');
             
@@ -1170,8 +1169,6 @@ class CaseManagementController extends Controller
             }
 
             //< --------------CREATE DOCUMENT ----------------------->
-
-
             $insertdocument = '/INSERT\s+INTO\s+ctl_document/i';
             if (preg_match($insertdocument, $tsql)) {
                 $rowId = [];
@@ -1204,6 +1201,7 @@ class CaseManagementController extends Controller
                     'id' => $id,
                     'link' => '',
                 ];
+
                 $status = $recipients->status;
                 if ($status == 'approved') {
                     $status = 1;
@@ -1228,7 +1226,6 @@ class CaseManagementController extends Controller
                     'user_id' => $this->setNullIfEmpty($recipients->user_id),
                     'created_at' => $formattedDate,
                     'email' => $view
-
                 ]);
 
 
@@ -1243,8 +1240,6 @@ class CaseManagementController extends Controller
                     }
                     $new_file = $file->store('allfiles');
                     if ($new_file) {
-
-
                         $file_name = basename($new_file);
                         $original_name = $file->getClientOriginalName();
                         $file->move(public_path('allfiles'), $file_name);
@@ -1359,8 +1354,6 @@ class CaseManagementController extends Controller
                     $emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
                 }
 
-
-
                 $system = [
                     'allocate_title' => 'New System Allocation',
                     'allocate' => 'This Is To Notify You That a New System Was Allocated',
@@ -1448,7 +1441,6 @@ class CaseManagementController extends Controller
                     }
                 }
 
-
                 return response()->json([
                     'message' => 'System Allocation Approved!.....'
                 ]);
@@ -1525,7 +1517,6 @@ class CaseManagementController extends Controller
 
                 $from  = request()->get('page', $from);
 
-
                 $collection = new Collection($result);
 
                 // Paginate the collection
@@ -1558,8 +1549,6 @@ class CaseManagementController extends Controller
                     ]);
                 }
                 $download_stat = Nv_DownloadStatus::where('slug', 'completed')->first();
-
-
 
                 $reference_id = uniqid();
                 // testing
