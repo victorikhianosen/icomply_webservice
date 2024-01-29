@@ -43,6 +43,6 @@ class CloseCaseMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('')->view('email.close_case_mail');
+        return $this->subject('Case Closure')->view('email.close_case_mail');
     }
 }

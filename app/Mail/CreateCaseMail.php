@@ -43,6 +43,6 @@ class CreateCaseMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('')->view('email.create_case_mail');
+        return $this->subject('New Case Creation')->view('email.create_case_mail');
     }
 }

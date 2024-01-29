@@ -43,6 +43,6 @@ class UpdateCaseMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('')->view('email.respond_to_case_mail');
+        return $this->subject('Case Response')->view('email.respond_to_case_mail');
     }
 }
