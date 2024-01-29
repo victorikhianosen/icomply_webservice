@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+ini_set('max_execution_time', 120); // Change the value as needed (in seconds)
 // ini_set('memory_limit', '4096M');
 
 use App\Events\ApiRequestEvent;
@@ -17,6 +18,7 @@ use App\Mail\CloseMail;
 use App\Mail\CreateCaseMail;
 use App\Mail\DocumentMail;
 use App\Mail\ExceptionMail;
+use App\Mail\ReportEmail;
 use App\Mail\SendMail;
 use App\Mail\SystemMail;
 use App\Mail\UpdateCaseMail;
@@ -63,6 +65,8 @@ use PhpParser\Node\Stmt\Return_;
 use ZipArchive;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
+use PhpParser\Node\Expr\Isset_;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use function PHPUnit\Framework\isNull;
@@ -308,6 +312,39 @@ class CaseManagementController extends Controller
     //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
     public function query(Request $request)
     {
+        // $results = DB::select(DB::raw('SELECT * from team'));
+        // return $results;
+        // $rows = DB::table('exception_process')->where('frequency', 'none')->get();
+        // $validResults = [];
+        // $invalidIds = [];
+        // $validIds = [];
+        // $email=[];
+
+        // foreach ($rows as $row) {
+        //     $tableName = $row->table_name;
+        //     $sql = $row->sql_text;
+
+        //     // Check if the table exists
+        //     if (Schema::hasTable($tableName)) {
+        //         // Execute the SQL query
+        //         $results = DB::select($sql);
+        //         $validResults[] = $results;
+        //         $validIds[] = $row->id;
+        //         $email[]=$row->email_to;
+        //     } else {
+        //         $invalidIds[] = $row->id;
+        //     }
+        //       Mail::to($email)->send(new MyMailableClass());
+        // }
+
+        // // Check if results are found
+
+        // if (!empty($validResults) || !empty($invalidIds)) {
+
+        //     $view = view('email.reports_template', compact('validResults'))->render();
+
+        //     return response()->json(['result' => $validResults, 'valid query' => $validIds, 'invalid query' => $invalidIds,'emails'=>$email]);
+        // }
         $case_notification = [
             'title' => 'Notification Mail',
             'body' => 'This is to notify you that a case was just created',
@@ -329,14 +366,14 @@ class CaseManagementController extends Controller
 
 
             //file size validation
-            $upload_file_size = '2048';
-            $rules = [
-                'file' => 'required|file|max:' . $upload_file_size, // Max file size is 2MB (2 * 1024 KB)
-            ];
-            $messages = [
-                'file.max' => 'The file size should not exceed 2MB.',
-            ];
-            $validator = Validator::make(['file' => $file], $rules, $messages);
+            // $upload_file_size = '2048';
+            // $rules = [
+            //     'file' => 'required|file|max:' . $upload_file_size, // Max file size is 2MB (2 * 1024 KB)
+            // ];
+            // $messages = [
+            //     'file.max' => 'The file size should not exceed 2MB.',
+            // ];
+            // $validator = Validator::make(['file' => $file], $rules, $messages);
 
             //read only and download
             $dsql = $request->input('dsql');
@@ -601,16 +638,15 @@ class CaseManagementController extends Controller
                 $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                 // return $user_emails;
                 $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
-               
+
                 if ($staff_emails->isEmpty()) {
                     $recipients->delete();
                     return response()->json(['message' => 'assigned user email address not found']);
-
                 }
                 if ($user_emails->isEmpty()) {
                     $recipients->delete();
                     return response()->json(['message' => 'user email address not found']);
-                } 
+                }
 
                 //
                 $emails = [];
@@ -655,6 +691,12 @@ class CaseManagementController extends Controller
 
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                 $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
+                $attachment_file[1] = null;
+                if (isset($file)) {
+
+                    $response[1] = $this->handleFileUpload($file);
+                    $attachment_file = $response[1];
+                }
 
                 $exceptions_logs = ExceptionsLogs::create([
                     'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
@@ -676,7 +718,7 @@ class CaseManagementController extends Controller
                     'category_id' => $this->setNullIfEmpty($recipients->process_categoryid),
                     'event_date' => $this->setNullIfEmpty($recipients->event_date),
                     'process_id' => $this->setNullIfEmpty($recipients->process_id),
-                    'attachment_filename' => $this->setNullIfEmpty($recipients->attachment_filename),
+                    'attachment_filename' => $this->setNullIfEmpty($attachment_file[1]),
                     'tran_id' => $this->setNullIfEmpty($recipients->tran_id),
                     'customer_id' => $this->setNullIfEmpty($recipients->customer_id),
                 ]);
@@ -691,12 +733,14 @@ class CaseManagementController extends Controller
                     'alert_subject' => 'This is to notify you that a case was just created',
                     'alert_name' => 'ALERT' . $randomNumber,
                     'user_id' => $recipients->assigned_user,
+                    'attachment_file' => $attachment_file[1]
                 ]);
 
                 $recipients->update([
                     'alert_id' => $alertid->id,
                     'exception_log_id' => $exceptions_logs->id,
-                    'created_at' => $formattedDate
+                    'created_at' => $formattedDate,
+                    'attachment_filename' => $attachment_file[1]
                 ]);
 
                 $exceptions_logs->update([
@@ -723,7 +767,7 @@ class CaseManagementController extends Controller
 
                 if (!empty($allmail)) {
                     foreach ($allmail as $email) {
-                        Mail::to($email)->send(new CreateCaseMail($create_case));
+                        Mail::to($email)->send(new CreateCaseMail($create_case, $attachment_file[0]));
                     }
                 }
                 return response()->json([
@@ -1224,28 +1268,28 @@ class CaseManagementController extends Controller
                     'created_at' => $formattedDate,
                     'email' => $view
                 ]);
+                // =========================================HERE==================================
+                // if (isset($file)) {
+                //     if (!$file) {
+                //         // Handle the case when the file input is not present or empty
+                //         return response()->json(['error' => 'No file provided.'], 400);
+                //     }
+                //     if ($validator->fails()) {
+                //         // If validation fails, return the validation errors
+                //         return response()->json(['errors' => $validator->errors()], 400);
+                //     }
+                //     $new_file = $file->store('allfiles');
+                //     if ($new_file) {
+                //         $file_name = basename($new_file);
+                //         $original_name = $file->getClientOriginalName();
+                //         $file->move(public_path('allfiles'), $file_name);
+                //         $imageUrl = url(asset('allfiles/' . $file_name));
+                //         // $recipients->source_file = $imageUrl;
+                //         // $recipients->file_name = $original_name;
+                //         // $recipients->save();
+                //     }
+                // }
 
-
-                if (isset($file)) {
-                    if (!$file) {
-                        // Handle the case when the file input is not present or empty
-                        return response()->json(['error' => 'No file provided.'], 400);
-                    }
-                    if ($validator->fails()) {
-                        // If validation fails, return the validation errors
-                        return response()->json(['errors' => $validator->errors()], 400);
-                    }
-                    $new_file = $file->store('allfiles');
-                    if ($new_file) {
-                        $file_name = basename($new_file);
-                        $original_name = $file->getClientOriginalName();
-                        $file->move(public_path('allfiles'), $file_name);
-                        $imageUrl = url(asset('allfiles/' . $file_name));
-                        $recipients->source_file = $imageUrl;
-                        $recipients->file_name = $original_name;
-                        $recipients->save();
-                    }
-                }
                 if (!empty($emails)) {
                     # code...
                     foreach ($emails as $email) {
@@ -1762,5 +1806,44 @@ class CaseManagementController extends Controller
         // return $response;
         return
             date('Y-m-d H:i:s');;
+    }
+
+    function handleFileUpload($file)
+    {
+        $path = [];
+        $upload_file_size = '2048';
+        $rules = [
+            'file' => 'required|file|max:' . $upload_file_size, // Max file size is 2MB (2 * 1024 KB)
+        ];
+        $messages = [
+            'file.max' => 'The file size should not exceed 2MB.',
+        ];
+        $validator = Validator::make(['file' => $file], $rules, $messages);
+
+        if ($validator->fails()) {
+            // If validation fails, return the validation errors
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        if (isset($file)) {
+            if (!$file) {
+                // Handle the case when the file input is not present or empty
+                return response()->json(['error' => 'No file provided.'], 400);
+            }
+
+            $new_file = $file->store('allfiles');
+            if ($new_file) {
+                $file_name = basename($new_file);
+                $original_name = $file->getClientOriginalName();
+                $file->move(public_path('allfiles'), $file_name);
+                $imagePath = public_path('allfiles/' . $file_name);
+                $imageUrl = url(asset('allfiles/' . $file_name));
+                $path[] = $imagePath;
+                $path[] = $imageUrl;
+
+
+                return ($path);
+            }
+        }
     }
 }

@@ -9,9 +9,10 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class CreateCaseMail extends Mailable
+class ReportEmail extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $create_case;
     public $attachmentPath;
 
@@ -22,7 +23,7 @@ class CreateCaseMail extends Mailable
      */
     public function __construct($create_case, $attachmentPath)
     {
-        $this->create_case = $create_case;
+         $this->create_case = $create_case;
         $this->attachmentPath = $attachmentPath;
     }
 
@@ -45,14 +46,12 @@ class CreateCaseMail extends Mailable
      */
     public function build()
     {
-        $mail = $this->subject('New Case Creation')->view('email.create_case_mail');
-        if (!empty($this->attachmentPath) && file_exists($this->attachmentPath)) {
-            // $mail->attach($this->attachmentPath);
-            $extension = pathinfo($this->attachmentPath, PATHINFO_EXTENSION);
-            $customName = 'case_creation_file.' . $extension;
-            $mail->attach($this->attachmentPath, ['as' => $customName]);
-              }
-            
+        $mail = $this->subject('5-Minute Interval Report.')->view('email.reports_template');
+
+        if ($this->attachmentPath) {
+            $mail->attach($this->attachmentPath);
+        }
+
         return $mail;
     }
 }

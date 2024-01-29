@@ -24,7 +24,8 @@ class Alert extends Model
         'exception_category_id',
         'exception_category_alert_id',
         'assigned_user_response',
-        'close_remarks'
+        'close_remarks',
+        'attachment_file'
 
     ];
 
