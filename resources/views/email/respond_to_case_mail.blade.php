@@ -5,7 +5,7 @@
     <style>
         table {
             width: 100%;
-            margin-top: 2px;
+            margin-top: 10px;
             margin-left: 0;
 
         }

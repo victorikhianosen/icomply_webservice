@@ -5,7 +5,7 @@
     <style>
         table {
             width: 100%;
-            margin-top: 2px;
+            margin-top: 10px;
             margin-left: 0;
 
         }
@@ -57,7 +57,7 @@
                                         @isset($close_case['user_email'])
                                         {{ $close_case['user_email'] }}
                                         @endisset
-                                        has been closed. see details below:</i></p>
+                                        has been closed. SEE details below:</i></p>
 
                             </div>
                         </td>

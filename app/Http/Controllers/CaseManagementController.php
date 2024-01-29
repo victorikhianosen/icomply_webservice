@@ -363,18 +363,6 @@ class CaseManagementController extends Controller
             //all crud operation
             $tsql = $request->input('sql');
             $file = $request->file('file');
-
-
-            //file size validation
-            // $upload_file_size = '2048';
-            // $rules = [
-            //     'file' => 'required|file|max:' . $upload_file_size, // Max file size is 2MB (2 * 1024 KB)
-            // ];
-            // $messages = [
-            //     'file.max' => 'The file size should not exceed 2MB.',
-            // ];
-            // $validator = Validator::make(['file' => $file], $rules, $messages);
-
             //read only and download
             $dsql = $request->input('dsql');
 
