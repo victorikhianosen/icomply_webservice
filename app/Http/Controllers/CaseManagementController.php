@@ -370,6 +370,7 @@ class CaseManagementController extends Controller
                     // Reject any SQL statement with "DELETE"
                     return response()->json(["message" => "Invalid SQL statement"]);
                 }
+
                 // $updatepattern = '/UPDATE\s+case_management\s+SET\s+(responses\s*=\s*(\'|"|\')(.*?)\\2|[^;])*WHERE\s+id\s*=\s*(\d+);?/i';
                 $updatepattern = '/UPDATE\s+case_management\s+SET\s+(assigned_user_response\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+)?/i';
                 $updatepattern = strtolower($updatepattern);
@@ -600,11 +601,16 @@ class CaseManagementController extends Controller
                 $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                 // return $user_emails;
                 $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
-                if (($staff_emails)) {
-                    $emails[] =   $staff_emails;
-                } else {
-                    return response()->json(['message' => 'assigned user is not a staff']);
+               
+                if ($staff_emails->isEmpty()) {
+                    $recipients->delete();
+                    return response()->json(['message' => 'assigned user email address not found']);
+
                 }
+                if ($user_emails->isEmpty()) {
+                    $recipients->delete();
+                    return response()->json(['message' => 'user email address not found']);
+                } 
 
                 //
                 $emails = [];
@@ -614,6 +620,7 @@ class CaseManagementController extends Controller
                 $allmail = [];
                 $responder_id = ($recipients->assigned_user);
                 // 
+                $emails[] =   $staff_emails;
 
                 if ($user_emails) {
                     $emails[] = $user_emails;
@@ -704,7 +711,7 @@ class CaseManagementController extends Controller
                     'rating_name' => $this->setNullIfEmpty($recipients->priority->name),
                     'status_name' => $this->setNullIfEmpty($recipients->status->name),
                     'case_action' => $this->setNullIfEmpty($recipients->case_action),
-                    'user_email' => $this->setNullIfEmpty($recipients->user->email),
+                    'user_email' => $this->setNullIfEmpty($recipients->user->firstname),
                     'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
                     'description' => $recipients->description
                 ];
