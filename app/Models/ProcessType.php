@@ -5,25 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProcessCategory extends Model
+class ProcessType extends Model
 {
     use HasFactory;
+    protected $table = 'exception_process_type';
     public $timestamps = false;
 
     protected $fillable = [
         'id',
         'name',
-        'code',
-        'description',
-        'created_at',
+        'category_id'
     ];
-    protected $table = 'exception_category';
 
-    public function process_category()
+    public function process()
     {
-        return $this->hasMany(ProcessType::class);
+        return $this->hasMany(Process::class);
     }
 
+    public function exception_category()
+    {
+        return $this->belongsTo(ProcessCategory::class, 'exception_category_id');
+    }
     public function cases()
     {
         return $this->hasMany(CaseManagement2::class);

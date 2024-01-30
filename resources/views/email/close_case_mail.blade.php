@@ -76,7 +76,7 @@
                         </div>
 
                         <tr>
-                            <td><b>ID</b></td>
+                            <td><b>ALERT ID<</b></td>
                             <td>@isset($close_case['alert_name'])
                                 {{ $close_case['alert_name'] }}
                                 @else
@@ -100,9 +100,34 @@
                                 @endisset</td>
                         </tr>
                         <tr>
+                            
                             <td>Status</td>
                             <td>@isset($close_case['status_name'])
                                 {{ $close_case['status_name'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process</b></td>
+                            <td>@isset($update_case['exception_process'])
+                                {{ $update_case['exception_process'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Type</b></td>
+                            <td>@isset($close_case['process_type'])
+                                {{ $close_case['process_type'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Category</b></td>
+                            <td>@isset($close_case['process_category'])
+                                {{ $close_case['process_category'] }}
                                 @else
                                 NULL
                                 @endisset</td>

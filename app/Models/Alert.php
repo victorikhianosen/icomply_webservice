@@ -56,12 +56,12 @@ class Alert extends Model
 
     public function exception_category()
     {
-        return $this->belongsTo(ExceptionCategory::class, 'exception_category_id');
+        return $this->belongsTo(ProcessCategory::class, 'exception_category_id');
     }
 
     public function exception_status()
     {
-        return $this->belongsTo(ExceptionProcessStatus::class, 'exception_process_status_id');
+        return $this->belongsTo(ProcessStatus::class, 'exception_process_status_id');
     }
 
     public function alert_group()

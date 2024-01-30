@@ -77,7 +77,7 @@
                         </div>
 
                         <tr>
-                            <td><b>ID</b></td>
+                            <td><b>ALERT ID</b></td>
                             <td>@isset($update_case['alert_name'])
                                 {{ $update_case['alert_name'] }}
                                 @else
@@ -96,6 +96,30 @@
                             <td><b>Rating</b></td>
                             <td>@isset($update_case['rating_name'])
                                 {{ $update_case['rating_name'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process</b></td>
+                            <td>@isset($update_case['exception_process'])
+                                {{ $update_case['exception_process'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Type</b></td>
+                            <td>@isset($update_case['process_type'])
+                                {{ $update_case['process_type'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Category</b></td>
+                            <td>@isset($update_case['process_category'])
+                                {{ $update_case['process_category'] }}
                                 @else
                                 NULL
                                 @endisset</td>

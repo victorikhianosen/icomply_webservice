@@ -70,7 +70,7 @@
                         </div>
 
                         <tr>
-                            <td><b>ID</b> </td>
+                            <td><b>ALERT ID</b> </td>
                             <td>@isset($create_case['alert_name'])
                             {{ $create_case['alert_name'] }}
                             @else
@@ -100,6 +100,30 @@
                             @else
                             NULL
                             @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process</b></td>
+                            <td>@isset($create_case['exception_process'])
+                                {{ $create_case['exception_process'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Type</b></td>
+                            <td>@isset($create_case['process_type'])
+                                {{ $create_case['process_type'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Category</b></td>
+                            <td>@isset($create_case['process_category'])
+                                {{ $create_case['process_category'] }}
+                                @else
+                                NULL
+                                @endisset</td>
                         </tr>
                         <tr>
                             <td><b>Recommended Action</b> </td>

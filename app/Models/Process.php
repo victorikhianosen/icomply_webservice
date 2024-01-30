@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Process extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     protected $fillable = [
         'id',
@@ -28,11 +29,15 @@ class Process extends Model
 
     public function process_category()
     {
-        return $this->belongsTo(ProcessCategory::class,'process_id');
+        return $this->belongsTo(ProcessType::class,'process_id');
     }
 
     public function alert()
     {
         return $this->hasMany(Alert::class,'alert_id');
+    }
+    public function cases()
+    {
+        return $this->hasMany(CaseManagement2::class);
     }
 }

@@ -37,6 +37,8 @@ use App\Models\ExceptionsLogs;
 use App\Models\Nv_Download as ModelsNv_Download;
 use App\Models\Nv_DownloadStatus;
 use App\Models\Process;
+use App\Models\ProcessCategory;
+use App\Models\ProcessType;
 use App\Models\Staff;
 use App\Models\StrTransactions;
 use App\Models\System;
@@ -414,7 +416,25 @@ class CaseManagementController extends Controller
                         // 
                         $user_emails = User::where('id',  $recipients->user_id)->pluck('email')->toArray();
                         $staff_emails = Staff::where('id',  $recipients->assigned_user)->pluck('email')->toArray();
+
+                       if (!isset($recipients->exception_process_id)) {
+                            return response()->json(['message' => 'exception process id is required']);
+                       }
+                        if (!isset($recipients->process_categoryid)) {
+                            return response()->json(['message' => 'exception process type is required']);
+                        }
+                        $process= Process::find($recipients->exception_process_id);
+                        $processType = ProcessType::find($recipients->process_categoryid);
+
+                        if (!$process) {
+                            return response()->json(['message' => 'exception process id not found']);
+                        }
+                        if (!$processType) {
+                            return response()->json(['message' => 'exception process type id not found']);
+                        }
                         // 
+                        // return response()->json([$process->name,$processType->name]);
+
                         if (($staff_emails)) {
                             $emails[] =   $staff_emails;
                         } else {
@@ -472,7 +492,7 @@ class CaseManagementController extends Controller
                             'case_management_response_id' => $caseResponse->id,
                         ]);
                         // 
-                        $exception_category_id = ExceptionCategory::where('code', 'non-trans')->first();
+                        $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
                         $alertid = Alert::create([                            //
                             'mail_to' => $allmail,
                             'status_id' => $this->setNullIfEmpty($recipients->status_id),
@@ -498,6 +518,11 @@ class CaseManagementController extends Controller
                             'user_email' => $this->setNullIfEmpty($recipients->user->email),
                             'response' => $this->setNullIfEmpty($caseResponse->response),
                             'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
+                            'exception_process'=>$this->setNullIfEmpty($process->name),
+                            'process_type' => $this->setNullIfEmpty($processType->name),
+                            'process_category' => $this->setNullIfEmpty($exception_category_id->name),
+
+
                         ];
                         // 
                         $view = view('email.respond_to_case_mail', compact('update_case'))->render();
@@ -626,6 +651,25 @@ class CaseManagementController extends Controller
                 $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                 // return $user_emails;
                 $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
+                if (!isset($recipients->exception_process_id)) {
+                    $recipients->delete();
+                    return response()->json(['message' => 'exception process id is required']);
+                }
+                if (!isset($recipients->process_categoryid)) {
+                    $recipients->delete();
+                    return response()->json(['message' => 'exception process type is required']);
+                }
+                $process = Process::find($recipients->exception_process_id);
+                $processType = ProcessType::find($recipients->process_categoryid);
+
+                if (!$process) {
+                    $recipients->delete();
+                    return response()->json(['message' => 'exception process id not found']);
+                }
+                if (!$processType) {
+                    $recipients->delete();
+                    return response()->json(['message' => 'exception process type id not found']);
+                }
 
                 if ($staff_emails->isEmpty()) {
                     $recipients->delete();
@@ -680,11 +724,13 @@ class CaseManagementController extends Controller
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                 $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
                 $attachment_file[1] = null;
+                $attachment_file[0]=null;
                 if (isset($file)) {
 
                     $response[1] = $this->handleFileUpload($file);
                     $attachment_file = $response[1];
                 }
+                $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
 
                 $exceptions_logs = ExceptionsLogs::create([
                     'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
@@ -745,7 +791,10 @@ class CaseManagementController extends Controller
                     'case_action' => $this->setNullIfEmpty($recipients->case_action),
                     'user_email' => $this->setNullIfEmpty($recipients->user->firstname),
                     'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
-                    'description' => $recipients->description
+                    'description' => $recipients->description,
+                    'exception_process' => $this->setNullIfEmpty($process->name),
+                    'process_type' => $this->setNullIfEmpty($processType->name),
+                    'process_category' => $this->setNullIfEmpty($exception_category_id->name),
                 ];
 
                 $view = view('email.create_case_mail', compact('create_case'))->render();
@@ -775,6 +824,23 @@ class CaseManagementController extends Controller
                     $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                     // return $user_emails;
                     $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
+// 
+                    if (!isset($recipients->exception_process_id)) {
+                        return response()->json(['message' => 'exception process id is required']);
+                    }
+                    if (!isset($recipients->process_categoryid)) {
+                        return response()->json(['message' => 'exception process type is required']);
+                    }
+                    $process = Process::find($recipients->exception_process_id);
+                    $processType = ProcessType::find($recipients->process_categoryid);
+
+                    if (!$process) {
+                        return response()->json(['message' => 'exception process id not found']);
+                    }
+                    if (!$processType) {
+                        return response()->json(['message' => 'exception process type id not found']);
+                    }
+                    // 
                     if (($staff_emails)) {
                         $emails[] =   $staff_emails;
                     } else {
@@ -823,7 +889,7 @@ class CaseManagementController extends Controller
                     $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                     $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
 
-                    $exception_category_id = ExceptionCategory::where('code', 'non-trans')->first();
+                    $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
                     // 
                     $alertid = Alert::create([
                         'mail_to' => $allmail,
@@ -850,7 +916,10 @@ class CaseManagementController extends Controller
                         'status_name' => $this->setNullIfEmpty($recipients->status->name),
                         'case_action' => $this->setNullIfEmpty($recipients->case_action),
                         'user_email' => $this->setNullIfEmpty($recipients->user->email),
-                        'close_remarks' => $reason_for_close
+                        'close_remarks' => $reason_for_close,
+                        'exception_process' => $this->setNullIfEmpty($process->name),
+                        'process_type' => $this->setNullIfEmpty($processType->name),
+                        'process_category' => $this->setNullIfEmpty($exception_category_id->name),
                     ];
                     $view = view('email.close_case_mail', compact('close_case'))->render();
 

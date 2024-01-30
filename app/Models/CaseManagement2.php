@@ -76,6 +76,15 @@ class CaseManagement2 extends Model
     {
         return $this->belongsTo(Department::class, 'department_id');
     }
+    public function process()
+    {
+        return $this->belongsTo(Department::class, 'exception_process_id');
+    }
+
+    public function process_type()
+    {
+        return $this->belongsTo(ProcessType::class, 'process_categoryid');
+    }
 
     public function case_response()
     {
