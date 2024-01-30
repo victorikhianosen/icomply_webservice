@@ -417,13 +417,13 @@ class CaseManagementController extends Controller
                         $user_emails = User::where('id',  $recipients->user_id)->pluck('email')->toArray();
                         $staff_emails = Staff::where('id',  $recipients->assigned_user)->pluck('email')->toArray();
 
-                       if (!isset($recipients->exception_process_id)) {
+                        if (!isset($recipients->exception_process_id)) {
                             return response()->json(['message' => 'exception process id is required']);
-                       }
+                        }
                         if (!isset($recipients->process_categoryid)) {
                             return response()->json(['message' => 'exception process type is required']);
                         }
-                        $process= Process::find($recipients->exception_process_id);
+                        $process = Process::find($recipients->exception_process_id);
                         $processType = ProcessType::find($recipients->process_categoryid);
 
                         if (!$process) {
@@ -501,7 +501,7 @@ class CaseManagementController extends Controller
                             'team_id' => $this->setNullIfEmpty($recipients->department_id),
                             'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
                             'alert_action' => $this->setNullIfEmpty($recipients->case_action),
-                            'alert_subject' => 'This is to notify you that a case was just created',
+                            'alert_subject' => 'Case Response',
                             'alert_name' => 'ALERT' . $randomNumber,
                             'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
                             'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
@@ -518,11 +518,9 @@ class CaseManagementController extends Controller
                             'user_email' => $this->setNullIfEmpty($recipients->user->email),
                             'response' => $this->setNullIfEmpty($caseResponse->response),
                             'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
-                            'exception_process'=>$this->setNullIfEmpty($process->name),
+                            'exception_process' => $this->setNullIfEmpty($process->name),
                             'process_type' => $this->setNullIfEmpty($processType->name),
                             'process_category' => $this->setNullIfEmpty($exception_category_id->name),
-
-
                         ];
                         // 
                         $view = view('email.respond_to_case_mail', compact('update_case'))->render();
@@ -724,7 +722,7 @@ class CaseManagementController extends Controller
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                 $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
                 $attachment_file[1] = null;
-                $attachment_file[0]=null;
+                $attachment_file[0] = null;
                 if (isset($file)) {
 
                     $response[1] = $this->handleFileUpload($file);
@@ -764,17 +762,21 @@ class CaseManagementController extends Controller
                     'team_id' => $recipients->department_id,
                     'exception_process_id' => $recipients->process_id,
                     'alert_action' => $recipients->case_action,
-                    'alert_subject' => 'This is to notify you that a case was just created',
+                    'alert_subject' => 'New Case Creation',
                     'alert_name' => 'ALERT' . $randomNumber,
                     'user_id' => $recipients->assigned_user,
-                    'attachment_file' => $attachment_file[1]
+                    'attachment_file' => $attachment_file[1],
+                    'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
+                    'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
+
                 ]);
 
                 $recipients->update([
                     'alert_id' => $alertid->id,
                     'exception_log_id' => $exceptions_logs->id,
                     'created_at' => $formattedDate,
-                    'attachment_filename' => $attachment_file[1]
+                    'attachment_filename' => $attachment_file[1],
+                    'case_status_id' => 1
                 ]);
 
                 $exceptions_logs->update([
@@ -824,7 +826,7 @@ class CaseManagementController extends Controller
                     $user_emails = User::where('id', $recipients->user_id)->pluck('email');
                     // return $user_emails;
                     $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
-// 
+                    // 
                     if (!isset($recipients->exception_process_id)) {
                         return response()->json(['message' => 'exception process id is required']);
                     }
@@ -899,7 +901,7 @@ class CaseManagementController extends Controller
                         'team_id' => $this->setNullIfEmpty($recipients->department_id),
                         'exception_process_id' => $this->setNullIfEmpty($recipients->process_id),
                         'alert_action' => $this->setNullIfEmpty($recipients->case_action),
-                        'alert_subject' => 'This is to notify you that a case was just created',
+                        'alert_subject' => 'Case Closure',
                         'alert_name' => 'ALERT' . $randomNumber,
                         'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
                         'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
