@@ -76,7 +76,7 @@
                         </div>
 
                         <tr>
-                            <td><b>ALERT ID<</b></td>
+                            <td><b>ALERT ID</b></td>
                             <td>@isset($close_case['alert_name'])
                                 {{ $close_case['alert_name'] }}
                                 @else
