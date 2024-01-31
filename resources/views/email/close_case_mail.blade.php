@@ -16,6 +16,9 @@
             word-wrap: break-word;
 
         }
+        .space {
+        padding-left: 10px
+        }
 
         tr td:first-child {
             border-right: 1px solid #ccc;
@@ -66,7 +69,7 @@
                         <div>
                             <tr>
                                 <td><b>Event Date</b></td>
-                                <td> @isset($close_case['event_date'])
+                                <td class="space"> @isset($close_case['event_date'])
                                     {{ $close_case['event_date'] }}
                                     @else
                                     NULL
@@ -76,8 +79,8 @@
                         </div>
 
                         <tr>
-                            <td><b>ALERT ID</b></td>
-                            <td>@isset($close_case['alert_name'])
+                            <td><b>Alert Id</b></td>
+                            <td class="space">@isset($close_case['alert_name'])
                                 {{ $close_case['alert_name'] }}
                                 @else
                                 NULL
@@ -85,7 +88,7 @@
                         </tr>
                         <tr>
                             <td><b>Title</b></td>
-                            <td>@isset($close_case['title'])
+                            <td class="space">@isset($close_case['title'])
                                 {{ $close_case['title'] }}
                                 @else
                                 NULL
@@ -93,7 +96,7 @@
                         </tr>
                         <tr>
                             <td><b>Rating</b></td>
-                            <td>@isset($close_case['rating_name'])
+                            <td class="space">@isset($close_case['rating_name'])
                                 {{ $close_case['rating_name'] }}
                                 @else
                                 NULL
@@ -102,15 +105,15 @@
                         <tr>
                             
                             <td>Status</td>
-                            <td>@isset($close_case['status_name'])
+                            <td class="space">@isset($close_case['status_name'])
                                 {{ $close_case['status_name'] }}
                                 @else
                                 NULL
                                 @endisset</td>
                         </tr>
                         <tr>
-                            <td><b>Exception Process</b></td>
-                            <td>@isset($update_case['exception_process'])
+                            <td ><b>Exception Process</b></td>
+                            <td class="space">@isset($update_case['exception_process'])
                                 {{ $update_case['exception_process'] }}
                                 @else
                                 NULL
@@ -118,7 +121,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process Type</b></td>
-                            <td>@isset($close_case['process_type'])
+                            <td class="space">@isset($close_case['process_type'])
                                 {{ $close_case['process_type'] }}
                                 @else
                                 NULL
@@ -126,7 +129,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process Category</b></td>
-                            <td>@isset($close_case['process_category'])
+                            <td class="space">@isset($close_case['process_category'])
                                 {{ $close_case['process_category'] }}
                                 @else
                                 NULL
@@ -134,7 +137,7 @@
                         </tr>
                         <tr>
                             <td><b>Reason For Close</b></td>
-                            <td>@isset($close_case['close_remarks'])
+                            <td class="space">@isset($close_case['close_remarks'])
                                 {{ $close_case['close_remarks'] }}
                                 @else
                                 NULL
@@ -142,7 +145,7 @@
                         </tr>
                         <tr>
                             <td><b>Action</b></td>
-                            <td>@isset($close_case['case_action'])
+                            <td class="space">@isset($close_case['case_action'])
                                 {{ $close_case['case_action'] }}
                                 @else
                                 NULL

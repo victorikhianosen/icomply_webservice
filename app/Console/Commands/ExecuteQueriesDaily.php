@@ -6,21 +6,21 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class ExecuteQueriesIn5Minutes extends Command
+class ExecuteQueriesDaily extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'queries:execute-in-5minutes';
+    protected $signature = 'queries:execute-daily';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Execute scheduled queries every 5 minutes';
+    protected $description = 'Execute scheduled queries daily';
 
     /**
      * Execute the console command.
@@ -29,7 +29,7 @@ class ExecuteQueriesIn5Minutes extends Command
      */
     public function handle()
     {
-        $rows = DB::table('exception_process')->where('frequency', 'minutes')->get();
+        $rows = DB::table('exception_process')->where('frequency', 'day')->get();
         $validResults = [];
         $invalidIds = [];
         $validIds = [];

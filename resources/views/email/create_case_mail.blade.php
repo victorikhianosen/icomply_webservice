@@ -19,11 +19,15 @@
 
     tr td:first-child {
         border-right: 1px solid #ccc;
+        padding-left: 5px
         font-weight: bold;
         white-space: nowrap;
         /* padding-right: 0px;
             padding-left: 0px; */
 
+    }
+    .space {
+    padding-left: 10px    
     }
 
 
@@ -48,20 +52,20 @@
                     <img src="http://139.59.186.114/icomply_webservice/public/allfiles/Fkpkq5xyDmglUjE8WcLQlxVVGgp1fD7gXBGZSLkj.png" alt="" class="img-fluid img-responsive" width="170">
                 </div>
                 <table>
-                    <tr>
+                    <tr >
                         <td colspan="2" style="border-right: none;font-weight: normal;">
-                            <div>
-                                <p style="word-wrap: break-word;"><i>The exception below was raised on a transaction you processed or an activity within your scope of responsibility.</i></p>
-                                <p style="word-wrap: break-word;"><i>Please respond to the exception immediately, explaining the reason(s) behind it as well as what you are doing to prevent re-occurrence.</i> </p>
-                                <p style="word-wrap: break-word;"><i>Note: The exception will remain open and therefore count against you unless resolved.</i> </p>
+                            <div class="mb-3">
+                                <span style="word-wrap: break-word;"><i>The exception below was raised on a transaction you processed or an activity within your scope of responsibility.</i></span><br>
+                                <span style="word-wrap: break-word;"><i>Please respond to the exception immediately, explaining the reason(s) behind it as well as what you are doing to prevent re-occurrence.</i> </span><br>
+                                <span style="word-wrap: break-word;"><i>Note: The exception will remain open and therefore count against you unless resolved.</i> </span>  <br>
                             </div>
                         </td>
                     </tr>
                     <div>
                         <div>
                             <tr>
-                                <td><b>Event Date</b></td>
-                                <td>@isset($create_case['event_date'])
+                                <td ><b>Event Date</b></td>
+                                <td class="space">@isset($create_case['event_date'])
                                 {{ $create_case['event_date'] }}
                                 @else
                                 NULL
@@ -70,8 +74,8 @@
                         </div>
 
                         <tr>
-                            <td><b>ALERT ID</b> </td>
-                            <td>@isset($create_case['alert_name'])
+                            <td><b>Alert Id</b> </td>
+                            <td class="space">@isset($create_case['alert_name'])
                             {{ $create_case['alert_name'] }}
                             @else
                             NULL
@@ -79,7 +83,7 @@
                         </tr>
                         <tr>
                             <td><b>Narration</b></td>
-                            <td>@isset($create_case['title'])
+                            <td class="space">@isset($create_case['title'])
                             {{ $create_case['title'] }}
                             @else
                             NULL
@@ -87,7 +91,7 @@
                         </tr>
                         <tr>
                             <td><b>Severity Rating</b> </td>
-                            <td>@isset($create_case['rating_name'])
+                            <td class="space">@isset($create_case['rating_name'])
                             {{ $create_case['rating_name'] }}
                             @else
                             NULL
@@ -95,7 +99,7 @@
                         </tr>
                         <tr>
                             <td><b>Status</b></td>
-                            <td>@isset($create_case['status_name'])
+                            <td class="space">@isset($create_case['status_name'])
                             {{ $create_case['status_name'] }}
                             @else
                             NULL
@@ -103,7 +107,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process</b></td>
-                            <td>@isset($create_case['exception_process'])
+                            <td class="space">@isset($create_case['exception_process'])
                                 {{ $create_case['exception_process'] }}
                                 @else
                                 NULL
@@ -111,7 +115,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process Type</b></td>
-                            <td>@isset($create_case['process_type'])
+                            <td class="space">@isset($create_case['process_type'])
                                 {{ $create_case['process_type'] }}
                                 @else
                                 NULL
@@ -119,7 +123,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process Category</b></td>
-                            <td>@isset($create_case['process_category'])
+                            <td class="space">@isset($create_case['process_category'])
                                 {{ $create_case['process_category'] }}
                                 @else
                                 NULL
@@ -127,7 +131,7 @@
                         </tr>
                         <tr>
                             <td><b>Recommended Action</b> </td>
-                            <td>@isset($create_case['case_action'])
+                            <td class="space">@isset($create_case['case_action'])
                             {{ $create_case['case_action'] }}
                             @else
                             NULL
@@ -135,7 +139,7 @@
                         </tr>
                         <tr>
                             <td><b>Additional Details</b></td>
-                            <td>@isset($create_case['description'])
+                            <td class="space">@isset($create_case['description'])
                             {{ $create_case['description'] }}
                             @else
                             NULL
@@ -145,7 +149,7 @@
 
                     <tr>
                         <td class="employee-response"><b>Employee Response</b> </td>
-                        <td class="employee-response"><a href="https://www.google.com.mx/">click here to respond</a></td>
+                        <td class="employee-response"><a href="https://www.google.com.mx/">CLICK here to respond</a></td>
                     </tr>
                     <tr>
                         <td colspan="2" style="border-right: none;">

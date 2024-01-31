@@ -9,6 +9,9 @@
             margin-left: 0;
 
         }
+        .space {
+        padding-left: 10px
+        }
 
         td {
             padding: 3px;
@@ -58,7 +61,7 @@
                                         {{ $update_case['user_email'] }}
                                         @endisset has been responder to by @isset($update_case['responder_name'])
                                         {{ $update_case['responder_name'] }}
-                                        @endisset. see details below:</i></p>
+                                        @endisset. SEE details below:</i></p>
 
                             </div>
                         </td>
@@ -67,7 +70,7 @@
                         <div>
                             <tr>
                                 <td><b>Event Date</b></td>
-                                <td> @isset($update_case['event_date'])
+                                <td class="space"> @isset($update_case['event_date'])
                                     {{ $update_case['event_date'] }}
                                     @else
                                     NULL
@@ -77,8 +80,8 @@
                         </div>
 
                         <tr>
-                            <td><b>ALERT ID</b></td>
-                            <td>@isset($update_case['alert_name'])
+                            <td><b>Alert Id</b></td>
+                            <td class="space">@isset($update_case['alert_name'])
                                 {{ $update_case['alert_name'] }}
                                 @else
                                 NULL
@@ -86,7 +89,7 @@
                         </tr>
                         <tr>
                             <td><b>Title</b></td>
-                            <td>@isset($update_case['title'])
+                            <td class="space">@isset($update_case['title'])
                                 {{ $update_case['title'] }}
                                 @else
                                 NULL
@@ -94,7 +97,7 @@
                         </tr>
                         <tr>
                             <td><b>Rating</b></td>
-                            <td>@isset($update_case['rating_name'])
+                            <td class="space">@isset($update_case['rating_name'])
                                 {{ $update_case['rating_name'] }}
                                 @else
                                 NULL
@@ -102,7 +105,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process</b></td>
-                            <td>@isset($update_case['exception_process'])
+                            <td class="space">@isset($update_case['exception_process'])
                                 {{ $update_case['exception_process'] }}
                                 @else
                                 NULL
@@ -110,7 +113,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process Type</b></td>
-                            <td>@isset($update_case['process_type'])
+                            <td class="space">@isset($update_case['process_type'])
                                 {{ $update_case['process_type'] }}
                                 @else
                                 NULL
@@ -118,7 +121,7 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process Category</b></td>
-                            <td>@isset($update_case['process_category'])
+                            <td class="space">@isset($update_case['process_category'])
                                 {{ $update_case['process_category'] }}
                                 @else
                                 NULL
@@ -126,7 +129,7 @@
                         </tr>
                         <tr>
                             <td><b>Status</b></td>
-                            <td>@isset($update_case['status_name'])
+                            <td class="space">@isset($update_case['status_name'])
                                 {{ $update_case['status_name'] }}
                                 @else
                                 NULL
@@ -134,7 +137,7 @@
                         </tr>
                         <tr>
                             <td><b>Action</b></td>
-                            <td>@isset($update_case['case_action'])
+                            <td class="space">@isset($update_case['case_action'])
                                 {{ $update_case['case_action'] }}
                                 @else
                                 NULL
@@ -142,7 +145,7 @@
                         </tr>
                         <tr>
                             <td><b>Response message</b></td>
-                            <td>@isset($update_case['response'])
+                            <td class="space">@isset($update_case['response'])
                                 {{ $update_case['response'] }}
                                 @else
                                 NULL

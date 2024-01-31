@@ -14,17 +14,17 @@ class ReportEmail extends Mailable
     use Queueable, SerializesModels;
 
     public $create_case;
-    public $attachmentPath;
+    public $subject;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($create_case, $attachmentPath)
+    public function __construct($create_case, $subject)
     {
          $this->create_case = $create_case;
-        $this->attachmentPath = $attachmentPath;
+        $this->subject = $subject;
     }
 
     /**
@@ -46,12 +46,7 @@ class ReportEmail extends Mailable
      */
     public function build()
     {
-        $mail = $this->subject('5-Minute Interval Report.')->view('email.reports_template');
-
-        if ($this->attachmentPath) {
-            $mail->attach($this->attachmentPath);
-        }
-
+        $mail = $this->subject($this->subject)->view('email.reports_template');
         return $mail;
     }
 }

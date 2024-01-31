@@ -336,7 +336,7 @@ class CaseManagementController extends Controller
         //     } else {
         //         $invalidIds[] = $row->id;
         //     }
-        //       Mail::to($email)->send(new MyMailableClass());
+        //       Mail::to($email)->send(new ReportEmail($validResults,$results));
         // }
 
         // // Check if results are found
