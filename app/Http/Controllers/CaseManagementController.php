@@ -351,7 +351,7 @@ class CaseManagementController extends Controller
 // return view('reports_template', ['validResults' => $validResults, 'exceptionName' => $exceptionName]);
 //             // return response()->json(['result' => $validResults, 'valid query' => $validIds, 'invalid query' => $invalidIds,'emails'=>$email]);
 //         }
-        // 
+        
         $case_notification = [
             'title' => 'Notification Mail',
             'body' => 'This is to notify you that a case was just created',

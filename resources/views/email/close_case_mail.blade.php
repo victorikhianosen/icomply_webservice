@@ -61,7 +61,7 @@
                                        {{$close_case['user_name']}} 
                                         @endisset
                                         @isset($close_case['user_email'])
-                                        {{$close_case['user_email']}}
+                                        ({{$close_case['user_email']}})
                                         @endisset
                                         has been closed. SEE details below:</i></p>
 
