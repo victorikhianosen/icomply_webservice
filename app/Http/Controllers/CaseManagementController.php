@@ -316,37 +316,42 @@ class CaseManagementController extends Controller
     {
         // $results = DB::select(DB::raw('SELECT * from team'));
         // return $results;
-        // $rows = DB::table('exception_process')->where('frequency', 'none')->get();
-        // $validResults = [];
-        // $invalidIds = [];
-        // $validIds = [];
-        // $email=[];
+//         $rows = DB::table('exception_process')->where('frequency', 'none')->get();
+//         $validResults = [];
+//         $invalidIds = [];
+//         $validIds = [];
+//         $email=[];
 
-        // foreach ($rows as $row) {
-        //     $tableName = $row->table_name;
-        //     $sql = $row->sql_text;
+//         foreach ($rows as $row) {
+//             $tableName = $row->table_name;
+//             $sql = $row->sql_text;
+//             $exceptionName=$row->name;
 
-        //     // Check if the table exists
-        //     if (Schema::hasTable($tableName)) {
-        //         // Execute the SQL query
-        //         $results = DB::select($sql);
-        //         $validResults[] = $results;
-        //         $validIds[] = $row->id;
-        //         $email[]=$row->email_to;
-        //     } else {
-        //         $invalidIds[] = $row->id;
-        //     }
-        //       Mail::to($email)->send(new ReportEmail($validResults,$results));
-        // }
+//             // Check if the table exists
+//             if (Schema::hasTable($tableName)) {
+//                 // Execute the SQL query
+//                 $results = DB::select(DB::raw($sql));
+//                 $validResults[] = $results;
+//                 $validIds[] = $row->id;
+//                 $email[]=$row->email_to;
+//             } else {
+//                 $invalidIds[] = $row->id;
+//             }
+//             foreach ($email as $value) {
+//                 $recipients = explode(',', $value); // Split the comma-separated list of email addresses
+//                 foreach ($recipients as $recipient) {
+//                     Mail::to(trim($recipient))->send(new ReportEmail($validResults, $exceptionName));
+//                 }
+//             }
+//         }
 
-        // // Check if results are found
-
-        // if (!empty($validResults) || !empty($invalidIds)) {
-
-        //     $view = view('email.reports_template', compact('validResults'))->render();
-
-        //     return response()->json(['result' => $validResults, 'valid query' => $validIds, 'invalid query' => $invalidIds,'emails'=>$email]);
-        // }
+//         // Check if results are found
+//         if (!empty($validResults) || !empty($invalidIds)) {
+//             // $view = view('email.reports_template',['validResults'=>$validResults, 'exceptionName'=>$exceptionName])->render();
+// return view('reports_template', ['validResults' => $validResults, 'exceptionName' => $exceptionName]);
+//             // return response()->json(['result' => $validResults, 'valid query' => $validIds, 'invalid query' => $invalidIds,'emails'=>$email]);
+//         }
+        // 
         $case_notification = [
             'title' => 'Notification Mail',
             'body' => 'This is to notify you that a case was just created',
@@ -479,6 +484,7 @@ class CaseManagementController extends Controller
                         //    
                         $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                         $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
+                        $allmail = array_filter($allmail);
 
                         $responder = $recipients->assigned_user;
                         //
@@ -516,8 +522,10 @@ class CaseManagementController extends Controller
                             'status_name' => $this->setNullIfEmpty($recipients->status->name),
                             'case_action' => $this->setNullIfEmpty($recipients->case_action),
                             'user_email' => $this->setNullIfEmpty($recipients->user->email),
+                            'user_name' => $this->setNullIfEmpty($recipients->user->firstname),
                             'response' => $this->setNullIfEmpty($caseResponse->response),
                             'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
+                            'responder_email' =>  $this->setNullIfEmpty($recipients->staff->email),
                             'exception_process' => $this->setNullIfEmpty($process->name),
                             'process_type' => $this->setNullIfEmpty($processType->name),
                             'process_category' => $this->setNullIfEmpty($exception_category_id->name),
@@ -721,6 +729,8 @@ class CaseManagementController extends Controller
 
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                 $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
+                $allmail = array_filter($allmail);
+
                 $attachment_file[1] = null;
                 $attachment_file[0] = null;
                 if (isset($file)) {
@@ -890,7 +900,9 @@ class CaseManagementController extends Controller
 
                     $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                     $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
-
+                    $allmail = array_filter($allmail);
+                    // If you want to reindex the array keys
+                    // $allmail = array_values($allmail);
                     $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
                     // 
                     $alertid = Alert::create([
@@ -918,6 +930,7 @@ class CaseManagementController extends Controller
                         'status_name' => $this->setNullIfEmpty($recipients->status->name),
                         'case_action' => $this->setNullIfEmpty($recipients->case_action),
                         'user_email' => $this->setNullIfEmpty($recipients->user->email),
+                        'user_name' => $this->setNullIfEmpty($recipients->user->firstname),
                         'close_remarks' => $reason_for_close,
                         'exception_process' => $this->setNullIfEmpty($process->name),
                         'process_type' => $this->setNullIfEmpty($processType->name),

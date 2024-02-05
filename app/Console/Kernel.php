@@ -18,7 +18,17 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\StartInsertListener::class,
         Commands\CbnApi::class,
         Commands\DeleteExpiredFiles::class,
-        Commands\ExecuteQueriesIn5Minutes::class
+        // 
+        Commands\ExecuteQueriesIn5Minutes::class,
+        Commands\ExecuteQueriesHourly::class,
+        Commands\ExecuteQueriesDaily::class,
+        Commands\ExecuteQueriesWeekly::class,
+        Commands\ExecuteQueriesWeekly::class,
+        Commands\ExecuteQueriesYearly::class,
+
+
+
+
        
     ];
 
@@ -27,6 +37,10 @@ class Kernel extends ConsoleKernel
         //  $schedule->command('pgsql:listen')->everyMinute();
         $schedule->command('files:delete-expired')->everyMinute();
         $schedule->command('queries:execute-in-5minutes')->everyFiveMinutes();
+        $schedule->command('queries:execute-daily')->daily();
+        $schedule->command('queries:execute-weekly')->weekly();
+        $schedule->command('queries:execute-monthly')->monthly();
+        $schedule->command('queries:execute-yearly')->yearly();
 
     }
 

@@ -58,9 +58,9 @@
                             <div>
                                 <p style="word-wrap: break-word;"><i>An exception initiated by
                                         @isset($update_case['user_email'])
-                                        {{ $update_case['user_email'] }}
-                                        @endisset has been responder to by @isset($update_case['responder_name'])
-                                        {{ $update_case['responder_name'] }}
+                                       {{ $update_case['user_name'] }} ({{ $update_case['user_email'] }})
+                                        @endisset has been responded to by @isset($update_case['responder_name'])
+                                        {{ $update_case['responder_name'] }} ({{ $update_case['responder_email'] }})
                                         @endisset. SEE details below:</i></p>
 
                             </div>

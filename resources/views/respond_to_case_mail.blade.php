@@ -9,6 +9,9 @@
             margin-left: 0;
 
         }
+        .space {
+        padding-left: 10px
+        }
 
         td {
             padding: 3px;
@@ -16,16 +19,13 @@
             word-wrap: break-word;
 
         }
-        .space {
-        padding-left: 10px
-        }
 
         tr td:first-child {
             border-right: 1px solid #ccc;
             font-weight: bold;
             white-space: nowrap;
             /* padding-right: 0px;
-            padding-left: 0px; */
+        padding-left: 0px; */
 
         }
 
@@ -48,7 +48,7 @@
     <div class="containerr card" style="width:100%;">
         <div class="row card-body ">
             <div class="col">
-                <div class="mt">
+                <div class="">
                     <img src="http://139.59.186.114/icomply_webservice/public/allfiles/Fkpkq5xyDmglUjE8WcLQlxVVGgp1fD7gXBGZSLkj.png"
                         alt="" class="img-fluid img-responsive" width="170">
                 </div>
@@ -57,13 +57,11 @@
                         <td colspan="2" style="border-right: none;font-weight: normal;">
                             <div>
                                 <p style="word-wrap: break-word;"><i>An exception initiated by
-                                        @isset($close_case['user_email'])
-                                       {{$close_case['user_name']}} 
-                                        @endisset
-                                        @isset($close_case['user_email'])
-                                        {{$close_case['user_email']}}
-                                        @endisset
-                                        has been closed. SEE details below:</i></p>
+                                        @isset($update_case['user_email'])
+                                       {{ $update_case['user_firstname'] }} ({{ $update_case['user_email'] }})
+                                        @endisset has been responded to by @isset($update_case['responder_name'])
+                                        {{ $update_case['responder_name'] }}
+                                        @endisset. SEE details below:</i></p>
 
                             </div>
                         </td>
@@ -72,8 +70,8 @@
                         <div>
                             <tr>
                                 <td><b>Event Date</b></td>
-                                <td class="space"> @isset($close_case['event_date'])
-                                    {{ $close_case['event_date'] }}
+                                <td class="space"> @isset($update_case['event_date'])
+                                    {{ $update_case['event_date'] }}
                                     @else
                                     NULL
                                     @endisset
@@ -83,39 +81,30 @@
 
                         <tr>
                             <td><b>Alert Id</b></td>
-                            <td class="space">@isset($close_case['alert_name'])
-                                {{ $close_case['alert_name'] }}
+                            <td class="space">@isset($update_case['alert_name'])
+                                {{ $update_case['alert_name'] }}
                                 @else
                                 NULL
                                 @endisset </td>
                         </tr>
                         <tr>
                             <td><b>Title</b></td>
-                            <td class="space">@isset($close_case['title'])
-                                {{ $close_case['title'] }}
+                            <td class="space">@isset($update_case['title'])
+                                {{ $update_case['title'] }}
                                 @else
                                 NULL
                                 @endisset </td>
                         </tr>
                         <tr>
                             <td><b>Rating</b></td>
-                            <td class="space">@isset($close_case['rating_name'])
-                                {{ $close_case['rating_name'] }}
+                            <td class="space">@isset($update_case['rating_name'])
+                                {{ $update_case['rating_name'] }}
                                 @else
                                 NULL
                                 @endisset</td>
                         </tr>
                         <tr>
-                            
-                            <td>Status</td>
-                            <td class="space">@isset($close_case['status_name'])
-                                {{ $close_case['status_name'] }}
-                                @else
-                                NULL
-                                @endisset</td>
-                        </tr>
-                        <tr>
-                            <td ><b>Exception Process</b></td>
+                            <td><b>Exception Process</b></td>
                             <td class="space">@isset($update_case['exception_process'])
                                 {{ $update_case['exception_process'] }}
                                 @else
@@ -124,32 +113,40 @@
                         </tr>
                         <tr>
                             <td><b>Exception Process Type</b></td>
-                            <td class="space">@isset($close_case['process_type'])
-                                {{ $close_case['process_type'] }}
+                            <td class="space">@isset($update_case['process_type'])
+                                {{ $update_case['process_type'] }}
                                 @else
                                 NULL
                                 @endisset</td>
                         </tr>
                         <tr>
                             <td><b>Exception Process Category</b></td>
-                            <td class="space">@isset($close_case['process_category'])
-                                {{ $close_case['process_category'] }}
+                            <td class="space">@isset($update_case['process_category'])
+                                {{ $update_case['process_category'] }}
                                 @else
                                 NULL
                                 @endisset</td>
                         </tr>
                         <tr>
-                            <td><b>Reason For Close</b></td>
-                            <td class="space">@isset($close_case['close_remarks'])
-                                {{ $close_case['close_remarks'] }}
+                            <td><b>Status</b></td>
+                            <td class="space">@isset($update_case['status_name'])
+                                {{ $update_case['status_name'] }}
                                 @else
                                 NULL
                                 @endisset</td>
                         </tr>
                         <tr>
                             <td><b>Action</b></td>
-                            <td class="space">@isset($close_case['case_action'])
-                                {{ $close_case['case_action'] }}
+                            <td class="space">@isset($update_case['case_action'])
+                                {{ $update_case['case_action'] }}
+                                @else
+                                NULL
+                                @endisset</td>
+                        </tr>
+                        <tr>
+                            <td><b>Response message</b></td>
+                            <td class="space">@isset($update_case['response'])
+                                {{ $update_case['response'] }}
                                 @else
                                 NULL
                                 @endisset</td>
@@ -161,7 +158,7 @@
                     <tr>
                         <td colspan="2" style="border-right: none;">
                             <div class="mt-5">
-                                <h5 class=""><b>Required Action</b> </h5>
+                                <h5 class=""> Required Action</h5>
                                 <p style="font-weight: normal;"><i> Please review and ensure compliance</i></p>
                                 <p style="font-weight: normal;"><i>Please ensure 100% review of this exception.</i> </p>
                             </div>
