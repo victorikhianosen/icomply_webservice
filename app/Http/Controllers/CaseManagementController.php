@@ -71,6 +71,7 @@ use Illuminate\Support\Facades\Schema;
 use PhpParser\Node\Expr\Isset_;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+use function PHPUnit\Framework\isEmpty;
 use function PHPUnit\Framework\isNull;
 
 class CaseManagementController extends Controller
@@ -316,47 +317,85 @@ class CaseManagementController extends Controller
     {
         // $results = DB::select(DB::raw('SELECT * from team'));
         // return $results;
-//         $rows = DB::table('exception_process')->where('frequency', 'none')->get();
-//         $validResults = [];
-//         $invalidIds = [];
-//         $validIds = [];
-//         $email=[];
+        // $rows = DB::table('exception_process')->where('frequency', 'none')->get();
+        // $validResults = [];
+        // $invalidIds = [];
+        // $validIds = [];
+        // $email = [];
+        // $rowId = '';
 
-//         foreach ($rows as $row) {
-//             $tableName = $row->table_name;
-//             $sql = $row->sql_text;
-//             $exceptionName=$row->name;
+        // foreach ($rows as $row) {
+        //     $tableName = $row->table_name;
+        //     $sql = $row->sql_text;
+        //     $exceptionName = $row->name;
+        //     $rowId = $row->id;
 
-//             // Check if the table exists
-//             if (Schema::hasTable($tableName)) {
-//                 // Execute the SQL query
-//                 $results = DB::select(DB::raw($sql));
-//                 $validResults[] = $results;
-//                 $validIds[] = $row->id;
-//                 $email[]=$row->email_to;
-//             } else {
-//                 $invalidIds[] = $row->id;
-//             }
-//             foreach ($email as $value) {
-//                 $recipients = explode(',', $value); // Split the comma-separated list of email addresses
-//                 foreach ($recipients as $recipient) {
-//                     Mail::to(trim($recipient))->send(new ReportEmail($validResults, $exceptionName));
-//                 }
-//             }
-//         }
+        //     // Check if the table exists
+        //     if (Schema::hasTable($tableName)) {
+        //         // Execute the SQL query
+        //         $results = DB::select(DB::raw($sql));
+        //         $validResults[] = $results;
+        //         $validIds[] = $row->id;
+        //         $email[] = $row->email_to;
+        //     } else {
+        //         $invalidIds[] = $row->id;
+        //     }
+        //     foreach ($email as $value) {
+        //         $recipients = explode(',', $value); // Split the comma-separated list of email addresses
+        //         foreach ($recipients as $recipient) {
+        //             // Mail::to(trim($recipient))->send(new ReportEmail($validResults, $exceptionName));
+        //         }
+        //     }
+        // }
 
-//         // Check if results are found
-//         if (!empty($validResults) || !empty($invalidIds)) {
-//             // $view = view('email.reports_template',['validResults'=>$validResults, 'exceptionName'=>$exceptionName])->render();
-// return view('reports_template', ['validResults' => $validResults, 'exceptionName' => $exceptionName]);
-//             // return response()->json(['result' => $validResults, 'valid query' => $validIds, 'invalid query' => $invalidIds,'emails'=>$email]);
-//         }
-        
-        $case_notification = [
-            'title' => 'Notification Mail',
-            'body' => 'This is to notify you that a case was just created',
-            'link' => 'http://127.0.0.1:8000/case-details/'
-        ];
+        // // Check if results are found
+        // if (!empty($validResults) || !empty($invalidIds)) {
+        //     $view = view('email.reports_template', ['validResults' => $validResults, 'exceptionName' => $exceptionName])->render();
+        //     // return view('reports_template', ['validResults' => $validResults, 'exceptionName' => $exceptionName]);
+        //     // return $rowId;
+        //     $exception_process = Process::find($rowId);
+        //     return $exception_process;
+        //     $exceptionState='';
+        //     if ($exception_process->state=='active') {
+        //         $exceptionState=1;
+        //     }else {
+        //         $exceptionState = 2;
+        //     }
+        //     // $exceptions_logs = ExceptionsLogs::create([
+        //     //     'status_id' => $this->setNullIfEmpty($exception_process->case_status_id),
+        //     //     'team_id' => $this->setNullIfEmpty($exception_process->department_id),
+        //     //     'exception_process_id' => $this->setNullIfEmpty($exception_process->process_id),
+        //     //     'exception_process_id' => $this->setNullIfEmpty($exception_process->exception_process_id),
+        //     //     'staff_id' => $this->setNullIfEmpty($exception_process->assigned_user),
+        //     //     'user_id' => $this->setNullIfEmpty($exception_process->user_id),
+        //     //     'title' => $this->setNullIfEmpty($exception_process->name),
+        //     //     // 'created_at' => $formattedDate,
+        //     //     'response_note' => $this->setNullIfEmpty($exception_process->assigned_user_response),
+        //     //     'rating_id' => $this->setNullIfEmpty($exception_process->priority_level_id),
+        //     //     'category_id' => $this->setNullIfEmpty($exception_process->process_categoryid),
+        //     //     'event_date' => $this->setNullIfEmpty($exception_process->event_date),
+        //     //     'process_id' => $this->setNullIfEmpty($exception_process->process_id),
+        //     //     'tran_id' => $this->setNullIfEmpty($exception_process->tran_id),
+        //     //     'customer_id' => $this->setNullIfEmpty($exception_process->customer_id),
+        //     // ]);
+        //     $alertid = Alert::create([                            //
+        //         'mail_to' => $email,
+        //         'status_id' => $this->setNullIfEmpty($exceptionState),
+        //         'alert_action' => $this->setNullIfEmpty($exception_process->narration),
+        //         'alert_group_id' => $this->setNullIfEmpty(8),
+        //         'team_id' => $this->setNullIfEmpty($exception_process->department_id),
+        //         'exception_process_id' => $this->setNullIfEmpty($exception_process->process_id),
+        //         'alert_action' => $this->setNullIfEmpty($exception_process->case_action),
+        //         'alert_subject' => 'Case Response',
+        //         // 'alert_name' => 'ALERT' . $randomNumber,
+        //         'user_id' => $this->setNullIfEmpty($exception_process->assigned_user),
+        //         // 'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
+        //         'exception_category_alert_id' => $this->setNullIfEmpty($exception_process->id),
+        //         'email' => $view
+
+        //     ]);
+        //     return response()->json(['result' => $validResults]);
+        // }
 
         $dsn = 'pgsql:host=139.59.186.114'  . ';dbname=icomply_database';
         $username = 'icomply_user';
@@ -395,10 +434,10 @@ class CaseManagementController extends Controller
 
             if (isset($tsql)) {
                 $tsql = preg_replace('/\s+/', ' ', $tsql);
-                $tsql = trim(strtolower($tsql));
+                $tsql_lowercase = trim(strtolower($tsql));
                 // 
                 $searchTerm = 'delete';
-                if (strpos($tsql, $searchTerm) !== false) {
+                if (strpos($tsql_lowercase, $searchTerm) !== false) {
                     // Reject any SQL statement with "DELETE"
                     return response()->json(["message" => "Invalid SQL statement"]);
                 }
@@ -406,7 +445,7 @@ class CaseManagementController extends Controller
                 // $updatepattern = '/UPDATE\s+case_management\s+SET\s+(responses\s*=\s*(\'|"|\')(.*?)\\2|[^;])*WHERE\s+id\s*=\s*(\d+);?/i';
                 $updatepattern = '/UPDATE\s+case_management\s+SET\s+(assigned_user_response\s*=\s*(\'|"|\')(.*?)\\2|[^;])*?\s+WHERE\s+id\s*=\s*(\d+)?/i';
                 $updatepattern = strtolower($updatepattern);
-                if (preg_match($updatepattern, $tsql, $matches)) {
+                if (preg_match($updatepattern, $tsql_lowercase, $matches)) {
                     $searchTerm = 'assigned_user_response';
                     if (strpos($tsql, $searchTerm) == true) {
                         $UpdatedRowId = trim($matches[4], "'");
@@ -571,26 +610,24 @@ class CaseManagementController extends Controller
 
                 $validate_case = '/UPDATE\s+case_management\s+SET\s+(reason_for_close\s*=\s*(\'|"|\')(.*?)\\2|case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
                 // $validate_case = '/UPDATE\s+case_management\s+SET\s+(case_status_id\s*=\s*(\d+)|[^;])*?\s+WHERE\s+id\s*=\s*(\d+);?/i';
-                $tsql = strtolower($tsql);
                 $validate_case = strtolower($validate_case);
-                if (preg_match($validate_case, $tsql, $matches)) {
+                if (preg_match($validate_case, $tsql_lowercase, $matches)) {
                     // row id $matches[5]
                     // case_status id $matches[4]
                     // reason_for_close $matches[3]
-                    $lowercaseTsql = strtolower($tsql);
                     $searchTerm = 'case_status_id';
                     $searchTerm2 = 'reason_for_close';
-                    if (strpos($tsql, $searchTerm) !== false && strpos($tsql, $searchTerm2) !== false) {
+                    if (strpos($tsql_lowercase, $searchTerm) !== false && strpos($tsql_lowercase, $searchTerm2) !== false) {
 
                         if ((trim($matches[4], "'") != 2)) {
                             return response()->json([
                                 'message' => "The value of $searchTerm is invalid."
                             ], 400);
                         }
-                    } elseif (strpos($tsql, $searchTerm) !== false) {
+                    } elseif (strpos($tsql_lowercase, $searchTerm) !== false) {
                         $msg = "$searchTerm2 is Required";
                         return response()->json(['message' => $msg], 406);
-                    } elseif (strpos($tsql, $searchTerm2) !== false) {
+                    } elseif (strpos($tsql_lowercase, $searchTerm2) !== false) {
                         $msg = "$searchTerm is Required";
                         return response()->json(['message' => $msg], 406);
                     }
@@ -643,7 +680,8 @@ class CaseManagementController extends Controller
 
             // <----------------------CREATE CASE_MANAGEMENT ---------------------------->
             $insertpattern_for_case_mgt = '/INSERT\s+INTO\s+case_management/i';
-            if (preg_match($insertpattern_for_case_mgt, $tsql)) {
+            $insertpattern_for_case_mgt=strtolower($insertpattern_for_case_mgt);
+            if (preg_match($insertpattern_for_case_mgt, $tsql_lowercase)) {
                 $rowId = [];
                 foreach ($result as $item) {
                     $rowId[] = $item['id'];
@@ -828,7 +866,7 @@ class CaseManagementController extends Controller
             // =============================================================================================
 
             // -----------------------CLOSE CASE_MANAGEMENT-------------
-            if (preg_match($validate_case, $tsql, $matches)) {
+            if (preg_match($validate_case, $tsql_lowercase, $matches)) {
                 if (trim($matches[4], "'") == 2) {
                     $id = trim($matches[5], "'");
                     $reason_for_close = $matches[3];
@@ -1101,7 +1139,7 @@ class CaseManagementController extends Controller
                     'alert_description' => $this->setNullIfEmpty($recipients->cases_description),
                     'team_id' => $this->setNullIfEmpty($recipients->team_id),
                     'exception_process_id' => $this->setNullIfEmpty($recipients->exception_process_id),
-                    'alert_subject' => $this->setNullIfEmpty($case_notification['body']),
+                    'alert_subject' => $this->setNullIfEmpty('lk'),
                     'alert_name' => 'ALERT' . $randomNumber,
                     'user_id' => $this->setNullIfEmpty($recipients->user_id),
                     'email' => $view
@@ -1115,7 +1153,7 @@ class CaseManagementController extends Controller
                 if (!empty($allmail)) {
                     # code...
                     foreach ($allmail as $email) {
-                        Mail::to($email)->send(new CaseMail($case_notification));
+                        // Mail::to($email)->send(new CaseMail($case_notification));
                     }
                 }
 
@@ -1699,12 +1737,10 @@ class CaseManagementController extends Controller
             }
 
 
-
             $select_for_tsql = '/select \* from/i';
             // $tsql= 'select * from';
             if (isset($tsql) && preg_match($select_for_tsql, $tsql)) {
-
-                if (empty($result)) {
+                if (empty(($result))) {
                     return response()->json([
                         'message' => 'Data Not Found.'
                     ]);

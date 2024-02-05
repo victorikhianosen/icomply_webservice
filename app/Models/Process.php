@@ -21,7 +21,8 @@ class Process extends Model
         'status',
         'branch_code',
         'alert_group_id',
-        'narration','approver_id'
+        'narration',
+        'approver_id'
     ];
 
    

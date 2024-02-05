@@ -30,6 +30,10 @@ Route::get('/closecase', function () {
     return view('close_case_mail');
 });
 
+Route::get('/file_upload', function () {
+    return view('test_file_upload');
+});
+
 Route::get('/report_temp',[App\Http\Controllers\CaseManagementController::class, 'query']);
 
 Auth::routes();
