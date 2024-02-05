@@ -116,8 +116,8 @@
                         </tr>
                         <tr>
                             <td ><b>Exception Process</b></td>
-                            <td class="space">@isset($update_case['exception_process'])
-                                {{ $update_case['exception_process'] }}
+                            <td class="space">@isset($close_case['exception_process'])
+                                {{ $close_case['exception_process'] }}
                                 @else
                                 NULL
                                 @endisset</td>
