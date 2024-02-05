@@ -674,10 +674,6 @@ class CaseManagementController extends Controller
             // Close the connection
             $conn = null;
 
-
-
-
-
             // <----------------------CREATE CASE_MANAGEMENT ---------------------------->
             $insertpattern_for_case_mgt = '/INSERT\s+INTO\s+case_management/i';
             $insertpattern_for_case_mgt=strtolower($insertpattern_for_case_mgt);
