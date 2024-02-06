@@ -617,6 +617,16 @@ class CaseManagementController extends Controller
                     // reason_for_close $matches[3]
                     $searchTerm = 'case_status_id';
                     $searchTerm2 = 'reason_for_close';
+                    $case_mgt= CaseManagement2::find($matches[5]);
+                    $user_emails = User::where('id', $case_mgt->user_id)->pluck('email');
+                    $staff_emails = Staff::where('id', $case_mgt->assigned_user)->pluck('email');
+                    
+                    if ($staff_emails->isEmpty()) {
+                        return response()->json(['message' => 'assigned user email address not found']);
+                    }
+                    if ($user_emails->isEmpty()) {
+                        return response()->json(['message' => 'user email address not found']);
+                    }
                     if (strpos($tsql_lowercase, $searchTerm) !== false && strpos($tsql_lowercase, $searchTerm2) !== false) {
 
                         if ((trim($matches[4], "'") != 2)) {
@@ -676,7 +686,7 @@ class CaseManagementController extends Controller
 
             // <----------------------CREATE CASE_MANAGEMENT ---------------------------->
             $insertpattern_for_case_mgt = '/INSERT\s+INTO\s+case_management/i';
-            $insertpattern_for_case_mgt=strtolower($insertpattern_for_case_mgt);
+            $insertpattern_for_case_mgt = strtolower($insertpattern_for_case_mgt);
             if (preg_match($insertpattern_for_case_mgt, $tsql_lowercase)) {
                 $rowId = [];
                 foreach ($result as $item) {
@@ -841,6 +851,7 @@ class CaseManagementController extends Controller
                     'exception_process' => $this->setNullIfEmpty($process->name),
                     'process_type' => $this->setNullIfEmpty($processType->name),
                     'process_category' => $this->setNullIfEmpty($exception_category_id->name),
+                    'response_link' => "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?alert_id=$alertid->id",
                 ];
 
                 $view = view('email.create_case_mail', compact('create_case'))->render();
@@ -867,10 +878,7 @@ class CaseManagementController extends Controller
                     $id = trim($matches[5], "'");
                     $reason_for_close = $matches[3];
                     $recipients = CaseManagement2::find($id);
-                    $user_emails = User::where('id', $recipients->user_id)->pluck('email');
-                    // return $user_emails;
-                    $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
-                    // 
+
                     if (!isset($recipients->exception_process_id)) {
                         return response()->json(['message' => 'exception process id is required']);
                     }
@@ -887,21 +895,13 @@ class CaseManagementController extends Controller
                         return response()->json(['message' => 'exception process type id not found']);
                     }
                     // 
-                    if (($staff_emails)) {
-                        $emails[] =   $staff_emails;
-                    } else {
-                        return response()->json(['message' => 'assigned user is not a staff']);
-                    }
-
                     $emails = [];
+                    $emails[] =   $staff_emails;
+                    $emails[] = $user_emails;
                     $recipientsId = [];
                     $responder_id = ($recipients->assigned_user);
                     $other_emails = [];
                     // 
-
-                    if ($user_emails) {
-                        $emails[] = $user_emails;
-                    }
                     if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                         $recipientsId[] =   $recipients->supervisor_1;
                     }

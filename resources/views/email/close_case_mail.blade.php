@@ -170,6 +170,10 @@
                 </table>
             </div>
         </div>
+        
+    </div>
+    <div class="px-3">
+        <a href="http://139.59.186.114:8080/ords/r/sterling/icomply/login">Login to iComply portal</a>
     </div>
 
 </body>

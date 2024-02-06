@@ -1,54 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>File Upload</title>
-        <style>
-            body {
-                padding: 20px;
-            }
-        </style>
-</head>
-<h1>File Upload</h1>
-<input type="file" id="fileInput">
-{{-- <input type="text" id="queryStringInput" placeholder="Query String"> --}}
-<textarea id="queryStringInput" cols="30" rows="10" placeholder="Query String"></textarea>
-<button onclick="uploadFile()">Upload</button>
+<form id="uploadForm">
+    <div>
+        <label for="queryStringInput">Query String API Key:</label>
+        <input type="text" id="queryStringInput" name="queryStringApiKey">
+    </div>
+    <div>
+        <label for="fileInput">File API Key:</label>
+        <input type="text" id="fileInput" name="fileApiKey">
+    </div>
+    <div>
+        <label for="queryInput">Query String:</label>
+        <input type="text" id="queryInput" name="query">
+    </div>
+    <div>
+        <label for="fileInput">File:</label>
+        <input type="file" id="fileInput" name="file">
+    </div>
+    <button type="submit">Submit</button>
+</form>
 <script>
-    function uploadFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+  e.preventDefault(); // Prevent form submission
 
-            if (!file) {
-                alert('Please select a file.');
-                return;
-            }
+  var form = e.target;
+  var queryStringApiKey = form.elements.queryStringApiKey.value;
+  var fileApiKey = form.elements.fileApiKey.value;
+  var query = form.elements.query.value;
+  var file = form.elements.file.files[0];
 
-            const queryStringInput = document.getElementById('queryStringInput');
-            const queryString = queryStringInput.value;
+  var formData = new FormData();
+  formData.append('queryStringApiKey', queryStringApiKey);
+  formData.append('fileApiKey', fileApiKey);
+  formData.append('query', query);
+  formData.append('file', file);
 
-            const formData = new FormData();
-            formData.append('query', queryString);
-            formData.append('file', file);
-
-            fetch('https://api.example.com/upload', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('File uploaded successfully.');
-                } else {
-                    alert('File upload failed.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during the file upload.');
-            });
-        }
+  fetch('/api/send-request', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.json(); // Parse the JSON response
+    } else {
+      throw new Error('Request failed.');
+    }
+  })
+  .then(data => {
+    console.log(data); // Handle the response data
+    alert('Request submitted successfully.');
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred during the request.');
+  });
+});
 </script>
-</body>
-</html>
