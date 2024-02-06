@@ -620,7 +620,7 @@ class CaseManagementController extends Controller
                     $case_mgt= CaseManagement2::find($matches[5]);
                     $user_emails = User::where('id', $case_mgt->user_id)->pluck('email');
                     $staff_emails = Staff::where('id', $case_mgt->assigned_user)->pluck('email');
-                    
+
                     if ($staff_emails->isEmpty()) {
                         return response()->json(['message' => 'assigned user email address not found']);
                     }
@@ -851,7 +851,7 @@ class CaseManagementController extends Controller
                     'exception_process' => $this->setNullIfEmpty($process->name),
                     'process_type' => $this->setNullIfEmpty($processType->name),
                     'process_category' => $this->setNullIfEmpty($exception_category_id->name),
-                    'response_link' => "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?alert_id=$alertid->id",
+                    'response_link' => "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?p236_alert_id=$alertid->id",
                 ];
 
                 $view = view('email.create_case_mail', compact('create_case'))->render();
