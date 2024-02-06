@@ -851,7 +851,9 @@ class CaseManagementController extends Controller
                     'exception_process' => $this->setNullIfEmpty($process->name),
                     'process_type' => $this->setNullIfEmpty($processType->name),
                     'process_category' => $this->setNullIfEmpty($exception_category_id->name),
-                    'response_link' => "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?p236_alert_id=$alertid->id",
+                    'response_link' => "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response/$alertid->id",
+                    //  "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?p236_alert_id=$alertid->id",
+                   
                 ];
 
                 $view = view('email.create_case_mail', compact('create_case'))->render();
