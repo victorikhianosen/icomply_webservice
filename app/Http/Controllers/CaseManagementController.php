@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-ini_set('max_execution_time', 120); // Change the value as needed (in seconds)
+// ini_set('max_execution_time', 120); 
 // ini_set('memory_limit', '4096M');
 
 use App\Events\ApiRequestEvent;
