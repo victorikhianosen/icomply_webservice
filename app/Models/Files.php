@@ -13,6 +13,7 @@ class Files extends Model
         'file_name',
         'file_link',
         'file_id',
+        'file_path'
         
     ];
     public function case()

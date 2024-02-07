@@ -355,8 +355,9 @@ class CaseManagementController extends Controller
                 # code...
                 $uploaded_file = ($this->handleFileUpload($file));
                 $insert_file = Files::create([
-                    'file_name' => $uploaded_file[2],
-                    'file_link' => $uploaded_file[1],
+                    'file_name' => $uploaded_file['file_name'],
+                    'file_link' => $uploaded_file['file_link'],
+                    'file_path'=>$uploaded_file['file_path'],
                 ]);
                 $insert_file->update([
                     'file_id'=>$insert_file->id
@@ -714,10 +715,19 @@ class CaseManagementController extends Controller
 
                 $attachment_file[1] = null;
                 $attachment_file[0] = null;
+                $uploadedFile = null;
                 if (isset($file)) {
 
                     $response[1] = $this->handleFileUpload($file);
                     $attachment_file = $response[1];
+                }
+                if (isset($recipients->attachment)) {
+                    if (Files::find($recipients->attachment)) {
+                        # code...
+                        $uploadedFile = Files::find($recipients->attachment);
+
+                    }
+
                 }
                 $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
 
@@ -741,7 +751,7 @@ class CaseManagementController extends Controller
                     'category_id' => $this->setNullIfEmpty($recipients->process_categoryid),
                     'event_date' => $this->setNullIfEmpty($recipients->event_date),
                     'process_id' => $this->setNullIfEmpty($recipients->process_id),
-                    'attachment_filename' => $this->setNullIfEmpty($attachment_file[1]),
+                    'attachment_filename' => $this->setNullIfEmpty($uploadedFile->file_link),
                     'tran_id' => $this->setNullIfEmpty($recipients->tran_id),
                     'customer_id' => $this->setNullIfEmpty($recipients->customer_id),
                 ]);
@@ -756,7 +766,7 @@ class CaseManagementController extends Controller
                     'alert_subject' => 'New Case Creation',
                     'alert_name' => 'ALERT' . $randomNumber,
                     'user_id' => $recipients->assigned_user,
-                    'attachment_file' => $attachment_file[1],
+                    'attachment_file' => $uploadedFile->file_link,
                     'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                     'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
                     'exception_log_id' => $exceptions_logs->id
@@ -768,7 +778,7 @@ class CaseManagementController extends Controller
                     'alert_id' => $alertid->id,
                     'exception_log_id' => $exceptions_logs->id,
                     'created_at' => $formattedDate,
-                    'attachment_filename' => $attachment_file[1],
+                    'attachment_filename' => $uploadedFile->file_link,
                     'case_status_id' => 1
                 ]);
 
@@ -803,7 +813,7 @@ class CaseManagementController extends Controller
 
                 if (!empty($allmail)) {
                     foreach ($allmail as $email) {
-                        Mail::to($email)->send(new CreateCaseMail($create_case, $attachment_file[0]));
+                        Mail::to($email)->send(new CreateCaseMail($create_case, $uploadedFile->file_path));
                     }
                 }
                 return response()->json([
@@ -1865,9 +1875,9 @@ class CaseManagementController extends Controller
                 $file->move(public_path('allfiles'), $file_name);
                 $imagePath = public_path('allfiles/' . $file_name);
                 $imageUrl = url(asset('allfiles/' . $file_name));
-                $path[] = $imagePath;
-                $path[] = $imageUrl;
-                $path[] = $original_name;
+                $path['file_path'] = $imagePath;
+                $path['file_link'] = $imageUrl;
+                $path['file_name'] = $original_name;
 
                 return ($path);
             }
