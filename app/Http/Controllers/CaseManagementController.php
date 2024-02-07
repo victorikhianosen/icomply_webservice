@@ -363,7 +363,7 @@ class CaseManagementController extends Controller
                     'file_id'=>$insert_file->id
                 ]);
 
-                return $insert_file->id;
+                return response()->json(['uploaded_file_id'=> $insert_file->id]);
             }
 
             if (isset($tsql)) {
