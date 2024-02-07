@@ -34,6 +34,7 @@ use App\Models\DownLoadNotifier;
 use App\Models\DownLoadQueue;
 use App\Models\ExceptionCategory;
 use App\Models\ExceptionsLogs;
+use App\Models\Files;
 use App\Models\Nv_Download as ModelsNv_Download;
 use App\Models\Nv_DownloadStatus;
 use App\Models\Process;
@@ -308,94 +309,13 @@ class CaseManagementController extends Controller
 
     public function fetch()
     {
-
         $data = DB::connection('pgsql2')->select('select * from am_staff');
         return $data;
     }
+
     //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
     public function query(Request $request)
     {
-        // $results = DB::select(DB::raw('SELECT * from team'));
-        // return $results;
-        // $rows = DB::table('exception_process')->where('frequency', 'none')->get();
-        // $validResults = [];
-        // $invalidIds = [];
-        // $validIds = [];
-        // $email = [];
-        // $rowId = '';
-
-        // foreach ($rows as $row) {
-        //     $tableName = $row->table_name;
-        //     $sql = $row->sql_text;
-        //     $exceptionName = $row->name;
-        //     $rowId = $row->id;
-
-        //     // Check if the table exists
-        //     if (Schema::hasTable($tableName)) {
-        //         // Execute the SQL query
-        //         $results = DB::select(DB::raw($sql));
-        //         $validResults[] = $results;
-        //         $validIds[] = $row->id;
-        //         $email[] = $row->email_to;
-        //     } else {
-        //         $invalidIds[] = $row->id;
-        //     }
-        //     foreach ($email as $value) {
-        //         $recipients = explode(',', $value); // Split the comma-separated list of email addresses
-        //         foreach ($recipients as $recipient) {
-        //             // Mail::to(trim($recipient))->send(new ReportEmail($validResults, $exceptionName));
-        //         }
-        //     }
-        // }
-
-        // // Check if results are found
-        // if (!empty($validResults) || !empty($invalidIds)) {
-        //     $view = view('email.reports_template', ['validResults' => $validResults, 'exceptionName' => $exceptionName])->render();
-        //     // return view('reports_template', ['validResults' => $validResults, 'exceptionName' => $exceptionName]);
-        //     // return $rowId;
-        //     $exception_process = Process::find($rowId);
-        //     return $exception_process;
-        //     $exceptionState='';
-        //     if ($exception_process->state=='active') {
-        //         $exceptionState=1;
-        //     }else {
-        //         $exceptionState = 2;
-        //     }
-        //     // $exceptions_logs = ExceptionsLogs::create([
-        //     //     'status_id' => $this->setNullIfEmpty($exception_process->case_status_id),
-        //     //     'team_id' => $this->setNullIfEmpty($exception_process->department_id),
-        //     //     'exception_process_id' => $this->setNullIfEmpty($exception_process->process_id),
-        //     //     'exception_process_id' => $this->setNullIfEmpty($exception_process->exception_process_id),
-        //     //     'staff_id' => $this->setNullIfEmpty($exception_process->assigned_user),
-        //     //     'user_id' => $this->setNullIfEmpty($exception_process->user_id),
-        //     //     'title' => $this->setNullIfEmpty($exception_process->name),
-        //     //     // 'created_at' => $formattedDate,
-        //     //     'response_note' => $this->setNullIfEmpty($exception_process->assigned_user_response),
-        //     //     'rating_id' => $this->setNullIfEmpty($exception_process->priority_level_id),
-        //     //     'category_id' => $this->setNullIfEmpty($exception_process->process_categoryid),
-        //     //     'event_date' => $this->setNullIfEmpty($exception_process->event_date),
-        //     //     'process_id' => $this->setNullIfEmpty($exception_process->process_id),
-        //     //     'tran_id' => $this->setNullIfEmpty($exception_process->tran_id),
-        //     //     'customer_id' => $this->setNullIfEmpty($exception_process->customer_id),
-        //     // ]);
-        //     $alertid = Alert::create([                            //
-        //         'mail_to' => $email,
-        //         'status_id' => $this->setNullIfEmpty($exceptionState),
-        //         'alert_action' => $this->setNullIfEmpty($exception_process->narration),
-        //         'alert_group_id' => $this->setNullIfEmpty(8),
-        //         'team_id' => $this->setNullIfEmpty($exception_process->department_id),
-        //         'exception_process_id' => $this->setNullIfEmpty($exception_process->process_id),
-        //         'alert_action' => $this->setNullIfEmpty($exception_process->case_action),
-        //         'alert_subject' => 'Case Response',
-        //         // 'alert_name' => 'ALERT' . $randomNumber,
-        //         'user_id' => $this->setNullIfEmpty($exception_process->assigned_user),
-        //         // 'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
-        //         'exception_category_alert_id' => $this->setNullIfEmpty($exception_process->id),
-        //         'email' => $view
-
-        //     ]);
-        //     return response()->json(['result' => $validResults]);
-        // }
 
         $dsn = 'pgsql:host=139.59.186.114'  . ';dbname=icomply_database';
         $username = 'icomply_user';
@@ -430,6 +350,19 @@ class CaseManagementController extends Controller
                 $debug = preg_replace('/\s+/', ' ', $debug);
                 $debug = trim(strtolower($debug));
                 return response()->json([$debug]);
+            }
+            if (isset($file)) {
+                # code...
+                $uploaded_file = ($this->handleFileUpload($file));
+                $insert_file = Files::create([
+                    'file_name' => $uploaded_file[2],
+                    'file_link' => $uploaded_file[1],
+                ]);
+                $insert_file->update([
+                    'file_id'=>$insert_file->id
+                ]);
+
+                return $insert_file->id;
             }
 
             if (isset($tsql)) {
@@ -551,6 +484,7 @@ class CaseManagementController extends Controller
                             'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
                             'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                             'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
+
                         ]);
                         // 
                         $update_case = [
@@ -584,17 +518,20 @@ class CaseManagementController extends Controller
                         $recipients->alert_id = $alertid->id;
                         $recipients->save();
 
-                        $alertid->update([
-                            'assigned_user_response' => $this->setNullIfEmpty($caseResponse->response),
-                            'updated_at' => $formattedDate,
-                            'email' => $view
-                        ]);
+
                         // 
                         $exceptions_logs = ExceptionsLogs::find($recipients->exception_log_id);
                         $exceptions_logs->update([
                             'response_note' => ($response_msg),
                             'updated_at' => $formattedDate
                         ]);
+                        $alertid->update([
+                            'assigned_user_response' => $this->setNullIfEmpty($caseResponse->response),
+                            'updated_at' => $formattedDate,
+                            'email' => $view,
+                            'exception_log_id' => $exceptions_logs->id
+                        ]);
+
                         // 
                         if (!empty($allmail)) {
 
@@ -617,7 +554,7 @@ class CaseManagementController extends Controller
                     // reason_for_close $matches[3]
                     $searchTerm = 'case_status_id';
                     $searchTerm2 = 'reason_for_close';
-                    $case_mgt= CaseManagement2::find($matches[5]);
+                    $case_mgt = CaseManagement2::find($matches[5]);
                     $user_emails = User::where('id', $case_mgt->user_id)->pluck('email');
                     $staff_emails = Staff::where('id', $case_mgt->assigned_user)->pluck('email');
 
@@ -822,6 +759,8 @@ class CaseManagementController extends Controller
                     'attachment_file' => $attachment_file[1],
                     'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                     'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
+                    'exception_log_id' => $exceptions_logs->id
+
 
                 ]);
 
@@ -851,10 +790,10 @@ class CaseManagementController extends Controller
                     'exception_process' => $this->setNullIfEmpty($process->name),
                     'process_type' => $this->setNullIfEmpty($processType->name),
                     'process_category' => $this->setNullIfEmpty($exception_category_id->name),
-                    'response_link' => 
+                    'response_link' =>
                     // "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response/$alertid->id",
-                     "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?p236_alert_id=$alertid->id",
-                   
+                    "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?p236_alert_id=$alertid->id",
+
                 ];
 
                 $view = view('email.create_case_mail', compact('create_case'))->render();
@@ -984,7 +923,9 @@ class CaseManagementController extends Controller
                     ]);
 
                     $alertid->update([
-                        'email' => $view
+                        'email' => $view,
+                        'exception_log_id' => $exceptions_logs->id
+
                     ]);
 
                     if (!empty($allmail)) {
@@ -1377,28 +1318,7 @@ class CaseManagementController extends Controller
                     'created_at' => $formattedDate,
                     'email' => $view
                 ]);
-                // =========================================HERE==================================
-                // if (isset($file)) {
-                //     if (!$file) {
-                //         // Handle the case when the file input is not present or empty
-                //         return response()->json(['error' => 'No file provided.'], 400);
-                //     }
-                //     if ($validator->fails()) {
-                //         // If validation fails, return the validation errors
-                //         return response()->json(['errors' => $validator->errors()], 400);
-                //     }
-                //     $new_file = $file->store('allfiles');
-                //     if ($new_file) {
-                //         $file_name = basename($new_file);
-                //         $original_name = $file->getClientOriginalName();
-                //         $file->move(public_path('allfiles'), $file_name);
-                //         $imageUrl = url(asset('allfiles/' . $file_name));
-                //         // $recipients->source_file = $imageUrl;
-                //         // $recipients->file_name = $original_name;
-                //         // $recipients->save();
-                //     }
-                // }
-
+                // ===========================================================================
                 if (!empty($emails)) {
                     # code...
                     foreach ($emails as $email) {
@@ -1947,7 +1867,7 @@ class CaseManagementController extends Controller
                 $imageUrl = url(asset('allfiles/' . $file_name));
                 $path[] = $imagePath;
                 $path[] = $imageUrl;
-
+                $path[] = $original_name;
 
                 return ($path);
             }

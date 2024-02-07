@@ -13,18 +13,16 @@ class ReportEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $create_case;
-    public $subject;
+    public $report;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($create_case, $subject)
+    public function __construct($report)
     {
-         $this->create_case = $create_case;
-        $this->subject = $subject;
+         $this->report = $report;
     }
 
     /**
@@ -46,7 +44,8 @@ class ReportEmail extends Mailable
      */
     public function build()
     {
-        $mail = $this->subject($this->subject)->view('email.reports_template');
-        return $mail;
+        $subject = $this->report['exceptionName'];
+        return $this->subject($subject)
+            ->view('email.reports_template');
     }
 }
