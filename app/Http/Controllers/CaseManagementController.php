@@ -330,13 +330,13 @@ class CaseManagementController extends Controller
             $tsql = $request->input('sql');
             $file = $request->file('file');
             //read only and download
-            $dsql = $request->input('dsql');
+            $dsql = $request->input('download_sql');
 
             //debug key
             $debug = $request->input('debug');
             $nv_download_name = $request->input('download_name');
             //pagination
-            $pgnsql = $request->input('pgnsql');
+            $pgnsql = $request->input('paginate_sql');
             $from = $request->input('page');
             $record_per_page = $request->input('record_per_page');
             //
@@ -345,6 +345,10 @@ class CaseManagementController extends Controller
                 5,
                 10000000000000
             );
+            if (!isset($tsql) && !isset($file) && !isset($dsql) && !isset($debug) && 
+            !isset($nv_download_name) && !isset($pgnsql) && !isset($from) && !isset($record_per_page)) {
+                return response()->json(['message' => 'Api key not found or any empty value was passed']);
+            }
 
             if (isset($debug)) {
                 $debug = preg_replace('/\s+/', ' ', $debug);
@@ -484,7 +488,6 @@ class CaseManagementController extends Controller
                             'alert_name' => 'ALERT' . $randomNumber,
                             'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
                             'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
-                            'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
 
                         ]);
                         // 
@@ -768,7 +771,6 @@ class CaseManagementController extends Controller
                     'user_id' => $recipients->assigned_user,
                     'attachment_file' => $uploadedFile->file_link,
                     'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
-                    'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
                     'exception_log_id' => $exceptions_logs->id
 
 
@@ -903,7 +905,6 @@ class CaseManagementController extends Controller
                         'alert_name' => 'ALERT' . $randomNumber,
                         'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
                         'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
-                        'exception_category_alert_id' => $this->setNullIfEmpty($recipients->id),
                         'updated_at' => $formattedDate,
                         'close_remarks' => $reason_for_close
                     ]);

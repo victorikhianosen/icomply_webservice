@@ -22,11 +22,11 @@ class Alert extends Model
         'rule_id',
         'alert_frequency_id',
         'exception_category_id',
-        'exception_category_alert_id',
         'assigned_user_response',
         'close_remarks',
         'attachment_file',
-        'exception_log_id'
+        'exception_log_id',
+        'alert_subject'
 
     ];
 
