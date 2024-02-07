@@ -724,14 +724,20 @@ class CaseManagementController extends Controller
                     $response[1] = $this->handleFileUpload($file);
                     $attachment_file = $response[1];
                 }
+                // $uploadedFile->file_link=null;
+                $file_link=null;
+                $attachmentPath = null;
+
                 if (isset($recipients->attachment)) {
                     if (Files::find($recipients->attachment)) {
                         # code...
                         $uploadedFile = Files::find($recipients->attachment);
-
-                    }
+                        $file_link = $uploadedFile->file_link;
+                        $attachmentPath=$uploadedFile->file_path;
+                    }                    
 
                 }
+                
                 $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
 
                 $exceptions_logs = ExceptionsLogs::create([
@@ -754,7 +760,7 @@ class CaseManagementController extends Controller
                     'category_id' => $this->setNullIfEmpty($recipients->process_categoryid),
                     'event_date' => $this->setNullIfEmpty($recipients->event_date),
                     'process_id' => $this->setNullIfEmpty($recipients->process_id),
-                    'attachment_filename' => $this->setNullIfEmpty($uploadedFile->file_link),
+                    'attachment_filename' => $this->setNullIfEmpty($file_link),
                     'tran_id' => $this->setNullIfEmpty($recipients->tran_id),
                     'customer_id' => $this->setNullIfEmpty($recipients->customer_id),
                 ]);
@@ -769,7 +775,7 @@ class CaseManagementController extends Controller
                     'alert_subject' => 'New Case Creation',
                     'alert_name' => 'ALERT' . $randomNumber,
                     'user_id' => $recipients->assigned_user,
-                    'attachment_file' => $uploadedFile->file_link,
+                    'attachment_file' => $file_link,
                     'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                     'exception_log_id' => $exceptions_logs->id
 
@@ -780,7 +786,7 @@ class CaseManagementController extends Controller
                     'alert_id' => $alertid->id,
                     'exception_log_id' => $exceptions_logs->id,
                     'created_at' => $formattedDate,
-                    'attachment_filename' => $uploadedFile->file_link,
+                    'attachment_filename' => $file_link,
                     'case_status_id' => 1
                 ]);
 
@@ -815,7 +821,7 @@ class CaseManagementController extends Controller
 
                 if (!empty($allmail)) {
                     foreach ($allmail as $email) {
-                        Mail::to($email)->send(new CreateCaseMail($create_case, $uploadedFile->file_path));
+                        Mail::to($email)->send(new CreateCaseMail($create_case, $attachmentPath));
                     }
                 }
                 return response()->json([
