@@ -1,70 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <style>
+        table {
+            width: 100%;
+            margin-top: 10px;
+            margin-left: 0;
+
+        }
+
+        td {
+            padding: 3px;
+            font-weight: normal;
+            word-wrap: break-word;
+
+        }
+
+        tr td:first-child {
+            border-right: 1px solid #ccc;
+            font-weight: bold;
+            white-space: nowrap;
+            /* padding-right: 0px;
+            padding-left: 0px; */
+
+        }
+
+
+        td.employee-response {
+            padding-top: 20px;
+        }
+
+        .containerr {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
 
-<body>
-    <div>
-        <label for="textInput">Text:</label>
-        <input type="text" id="textInput" name="text">
+<body class="card-header" style="border: none;">
+    <div class="containerr card" style="width: 100%;">
+        <div class="row card-body">
+            <div class="col">
+                <div class="mt">
+                    <img src="http://139.59.186.114/icomply_webservice/public/allfiles/Fkpkq5xyDmglUjE8WcLQlxVVGgp1fD7gXBGZSLkj.png"
+                        alt class="img-fluid img-responsive" width="170">
+                </div>
+                <table>
+                    <tr>
+                        <td colspan="2" style="border-right: none;font-weight: normal;">
+                            <div>
+                                <p style="word-wrap: break-word;"><i>The exception below was
+                                        raised on a transaction you processed or an activity
+                                        within your scope of responsibility.</i></p>
+                                <p style="word-wrap: break-word;"><i>Please respond to the
+                                        exception immediately, explaining the reason(s) behind it
+                                        as well as what you are doing to prevent
+                                        re-occurrence.</i> </p>
+                                <p style="word-wrap: break-word;"><i>Note: The exception will
+                                        remain open and therefore count against you unless
+                                        resolved.</i> </p>
+                            </div>
+                        </td>
+                    </tr>
+                    <div>
+                        <div>
+                            <tr>
+                                <td><b>Event Date</b></td>
+                                <td> 2024-01-22
+                                </td>
+                            </tr>
+                        </div>
+
+                        <tr>
+                            <td><b>ALERT ID</b> </td>
+                            <td> ALERT3882246527443
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Narration</b></td>
+                            <td> no date on instrument
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Severity Rating</b> </td>
+                            <td> High
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Status</b></td>
+                            <td> Opened
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process</b></td>
+                            <td> No date on instrument
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Type</b></td>
+                            <td> CASH AND TELLER
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Exception Process Category</b></td>
+                            <td> Case Manager Exception Processes
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Recommended Action</b> </td>
+                            <td> kindly check
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><b>Additional Details</b></td>
+                            <td> check for attached file
+                            </td>
+                        </tr>
+                    </div>
+
+                    <tr>
+                        <td class="employee-response"><b>Employee Response</b> </td>
+                        <td class="employee-response"><a href="https://www.google.com.mx/">click here to
+                                respond</a></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="border-right: none;">
+                            <div class="mt-5">
+                                <h5 class><b>Required Action</b> </h5>
+                                <p style="font-weight: normal;"><i> Please review</i></p>
+                                <p style="font-weight: normal;"><i>Please ensure 100% review
+                                        of this exception.</i> </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
     </div>
-    <div>
-        <label for="fileInput">File:</label>
-        <input type="file" id="fileInput" name="file">
-    </div>
-    <button id="submitButton">Upload</button>
 
-    <div id="preview"></div>
-    <div id="err"></div>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var submitButton = document.getElementById("submitButton");
-
-            submitButton.addEventListener("click", function () {
-                var formData = new FormData();
-                formData.append("sql", document.getElementById("textInput").value);
-
-                var fileInput = document.getElementById("fileInput");
-                if (fileInput.files.length > 0) {
-                    formData.append("file", fileInput.files[0]);
-                }
-
-                fetch("http://139.59.186.114/icomply_webservice/public/index.php/api/send-request", {
-                    method: "POST",
-                    body: formData
-                })
-                    .then(function (response) {
-                        if (response.ok) {
-                            return response.text();
-                        } else {
-                            throw new Error("Error: " + response.status);
-                        }
-                    })
-                    .then(function (data) {
-                        if (data === "invalid") {
-                            document.getElementById("err").innerHTML = "Invalid File!";
-                            document.getElementById("err").style.display = "block";
-                        } else {
-                            document.getElementById("preview").innerHTML = data;
-                            document.getElementById("preview").style.display = "block";
-                            document.getElementById("textInput").value = ""; // Clear text input
-                            document.getElementById("fileInput").value = ""; // Clear file input
-                            console.log("Upload successful!"); // Display success message in the console
-                        }
-                    })
-                    .catch(function (error) {
-                        document.getElementById("err").innerHTML = error.message;
-                        document.getElementById("err").style.display = "block";
-                    });
-            });
-        });
-    </script>
 </body>
 
 </html>

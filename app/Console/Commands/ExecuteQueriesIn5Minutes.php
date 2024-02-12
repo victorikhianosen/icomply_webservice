@@ -34,78 +34,85 @@ class ExecuteQueriesIn5Minutes extends Command
      */
     public function handle()
     {
-        $rows = DB::table('exception_process')->where('frequency', 'none')->get();
-        $validResults = [];
-        $invalidIds = [];
-        $validIds = [];
-        $email = [];
-        $rowId = '';
-        $report = [];
+            //code...
+            $rows = DB::table('exception_process')->where('frequency', 'none')->get();
+            $validResults = [];
+            $invalidIds = [];
+            $validIds = [];
+            $email = [];
+            $rowId = '';
+            $report = [];
+            $exceptionName = '';
 
-        foreach ($rows as $row) {
-            $tableName = $row->table_name;
-            $sql = $row->sql_text;
-            $exceptionName = $row->name;
-            $rowId = $row->id;
+            foreach ($rows as $row) {
+                $tableName = $row->table_name;
+                $sql = $row->sql_text;
+                $exceptionName = $row->name;
+                $rowId = $row->id;
 
-            // Check if the table exists
-            if (Schema::hasTable($tableName)) {
-                // Execute the SQL query
-                $results = DB::select(DB::raw($sql));
-                $validResults[] = $results;
-                $validIds[] = $row->id;
-                $email[] = $row->email_to;
-            } else {
-                $invalidIds[] = $row->id;
-            }
-            $report = [
-                "validResults" => $validResults,
-                "exceptionName" => $exceptionName
-            ];
-            // return $report;
-            foreach ($email as $value) {
-                $recipients = explode(',', $value); // Split the comma-separated list of email addresses
-                foreach ($recipients as $recipient) {
-                    // Mail::to(trim($recipient))->send(new ReportEmail($report));
+                // Check if the table exists
+                if (Schema::hasTable($tableName)) {
+                    // Execute the SQL query
+                    $results = DB::select(DB::raw($sql));
+                    $validResults[] = $results;
+                    $validIds[] = $row->id;
+                    $email[] = $row->email_to;
+                } else {
+                    $invalidIds[] = $row->id;
                 }
             }
-        }
 
-        // Check if results are found
-        if (!empty($validResults)) {
-            $view = view('email.reports_template', ['report' => $report])->render();
-            // return view('reports_template', ['report' => $report]);
-            $exception_process = Process::find($rowId);
-            // return $exception_process;
-            $exceptions_logs = ExceptionsLogs::create([
-                'status_id' => $this->setNullIfEmpty($exception_process->state),
-                'exception_process_id' => $this->setNullIfEmpty($exception_process->id),
-                'user_id' => $this->setNullIfEmpty($exception_process->user_id),
-                'title' => $this->setNullIfEmpty($exception_process->process_name),
-                'created_at' => date('Y-m-d H:i'),
-                'rating_id' => $this->setNullIfEmpty($exception_process->risk_rating_id),
-                'category_id' => $this->setNullIfEmpty(21),
-                'process_id' => $this->setNullIfEmpty($exception_process->id),
-            ]);
-            $alertid = Alert::create([                            //
-                'mail_to' => $email,
-                'status_id' => $this->setNullIfEmpty($exception_process->state),
-                'alert_action' => $this->setNullIfEmpty($exception_process->narration),
-                'alert_group_id' => $this->setNullIfEmpty($exception_process->alert_group_id),
-                'exception_process_id' => $this->setNullIfEmpty($exception_process->id),
-                'alert_subject' => $this->setNullIfEmpty($exception_process->name),
-                'alert_name' => "$exception_process->name - ALERT" . random_int(5, 10000000000000),
-                'user_id' => $this->setNullIfEmpty($exception_process->user_id),
-                // 'exception_category_id' => $this->setNullIfEmpty($exception_process->category_id),
-                'email' => $view
-            ]);
-            $exceptions_logs->update([
-                'alert_id' => $alertid->id,
-            ]);
-            return response()->json(['result' => $validResults]);
-        }
-        // Save the rendered view to the database
+            // Check if results are found
+            if (!empty($validResults)) {
+                // return view('reports_template', ['report' => $report]);
+                $exception_process = Process::find($rowId);
+                // return $exception_process;
+                $exceptions_logs = ExceptionsLogs::create([
+                    'status_id' => ($exception_process->state),
+                    'exception_process_id' => ($exception_process->id),
+                    'user_id' => ($exception_process->user_id),
+                    'title' => ($exception_process->process_name),
+                    'created_at' => date('Y-m-d H:i'),
+                    'rating_id' => ($exception_process->risk_rating_id),
+                    'category_id' => (21),
+                    'process_id' => ($exception_process->id),
+                ]);
+                $alertid = Alert::create([                            //
+                    'mail_to' => $email,
+                    'status_id' => ($exception_process->state),
+                    'alert_action' => ($exception_process->narration),
+                    'alert_group_id' => ($exception_process->alert_group_id),
+                    'exception_process_id' => ($exception_process->id),
+                    'alert_subject' => ($exception_process->name),
+                    'alert_name' => "$exception_process->name - ALERT" . random_int(5, 10000000000000),
+                    'user_id' => ($exception_process->user_id),
+                    // 'exception_category_id' => $this->setNullIfEmpty($exception_process->category_id),
+                ]);
 
-        $this->info('Scheduled queries executed successfully (every 5 minutes).');
+                $report = [
+                    "validResults" => $validResults,
+                    "exceptionName" =>$exceptionName." - ". $alertid->alert_name
+                ];
+                $view = view('email.reports_template', ['report' => $report])->render();
+                $exceptions_logs->update([
+                    'alert_id' => $alertid->id,
+                    'email' => $view
+
+                ]);
+                // return $report;
+                // return $report;
+                foreach ($email as $value) {
+                    $recipients = explode(',', $value); // Split the comma-separated list of email addresses
+                    foreach ($recipients as $recipient) {
+                        Mail::to(trim($recipient))->send(new ReportEmail($report));
+                    }
+                }
+                // return response()->json(['result' => $validResults]);
+            }
+            // Save the rendered view to the database
+
+            // $this->info
+           return $this->info ('Scheduled queries executed successfully (every 5 minutes).');
+         
     }
 }

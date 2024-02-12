@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -34,13 +35,16 @@ class Kernel extends ConsoleKernel
 
     protected function schedule(Schedule $schedule)
     {
+        // $now = Carbon::now();
+        // $nextDue = $now->addMonths(11)->addWeeks(2);
         //  $schedule->command('pgsql:listen')->everyMinute();
-        $schedule->command('files:delete-expired')->everyMinute();
-        $schedule->command('queries:execute-in-5minutes')->everyFiveMinutes();
-        $schedule->command('queries:execute-daily')->daily();
-        $schedule->command('queries:execute-weekly')->weekly();
-        $schedule->command('queries:execute-monthly')->monthly();
-        $schedule->command('queries:execute-yearly')->yearly();
+        // $schedule->command('files:delete-expired')->everyMinute();
+        $schedule->command('queries:execute-in-5minutes')->everyMinute();
+        // $schedule->command('queries:execute-hourly')->hourly();
+        // $schedule->command('queries:execute-daily')->daily();
+        // $schedule->command('queries:execute-weekly')->weekly();
+        // $schedule->command('queries:execute-monthly')->monthly();
+        // $schedule->command('queries:execute-yearly')->yearly();
 
     }
 

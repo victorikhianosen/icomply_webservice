@@ -21,7 +21,7 @@
                 <img src="http://139.59.186.114/icomply_webservice/public/allfiles/Fkpkq5xyDmglUjE8WcLQlxVVGgp1fD7gXBGZSLkj.png"
                     alt="" class="img-fluid img-responsive" width="170">
             </div>
-            <div class="mt-5">{{$report['exceptionName']}} - </div>
+            <div class="mt-5">{{$report['exceptionName']}} </div>
             <p class="mt-4">Kindly review and revert</p>
             <table class="table table-striped table-hover table-responsive table-bordered mt-1">
                 <thead>

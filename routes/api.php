@@ -19,20 +19,16 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 // Route::post('/users/login', [UserController::class, 'userLogin']);
-
 //API ROUTE HANDLING QUERY TO DATABASE
 Route::post('/send-request', [CaseManagementController::class, 'query']);
 //API ROUTE HANDLING DOWNLOAD
 Route::get('/download/{filename}/{userId}', [CaseManagementController::class, 'downloadFile']);
-
 // API ROUTE HANDLING EMAILS 
 Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
 Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
 Route::post('/apex-auth',  [CaseManagementController::class, 'auth_user']);
 Route::post('/apex-test',  [CaseManagementController::class, 'auth_test']);
-
-
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/make-supervisor',  [UserController::class, 'makeSupervisor']);

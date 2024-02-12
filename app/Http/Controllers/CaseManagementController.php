@@ -332,6 +332,8 @@ class CaseManagementController extends Controller
             //read only and download
             $dsql = $request->input('download_sql');
 
+            $get_email_alert = $request->input('email_alert');
+
             //debug key
             $debug = $request->input('debug');
             $nv_download_name = $request->input('download_name');
@@ -345,8 +347,11 @@ class CaseManagementController extends Controller
                 5,
                 10000000000000
             );
-            if (!isset($tsql) && !isset($file) && !isset($dsql) && !isset($debug) && 
-            !isset($nv_download_name) && !isset($pgnsql) && !isset($from) && !isset($record_per_page)) {
+            if (
+                !isset($tsql) && !isset($file) && !isset($dsql) && !isset($debug) &&
+                !isset($nv_download_name) && !isset($pgnsql) && !isset($from) && !isset($record_per_page) &&
+                !isset($get_email_alert)
+            ) {
                 return response()->json(['message' => 'Api key not found or any empty value was passed']);
             }
 
@@ -361,13 +366,13 @@ class CaseManagementController extends Controller
                 $insert_file = Files::create([
                     'file_name' => $uploaded_file['file_name'],
                     'file_link' => $uploaded_file['file_link'],
-                    'file_path'=>$uploaded_file['file_path'],
+                    'file_path' => $uploaded_file['file_path'],
                 ]);
                 $insert_file->update([
-                    'file_id'=>$insert_file->id
+                    'file_id' => $insert_file->id
                 ]);
 
-                return response()->json(['uploaded_file_id'=> $insert_file->id]);
+                return response()->json(['uploaded_file_id' => $insert_file->id]);
             }
 
             if (isset($tsql)) {
@@ -521,8 +526,6 @@ class CaseManagementController extends Controller
                         $recipients->updated_at = $formattedDate;
                         $recipients->alert_id = $alertid->id;
                         $recipients->save();
-
-
                         // 
                         $exceptions_logs = ExceptionsLogs::find($recipients->exception_log_id);
                         $exceptions_logs->update([
@@ -603,6 +606,19 @@ class CaseManagementController extends Controller
                 // Continue with processing the result if needed
             }
 
+            if (isset($get_email_alert)) {
+                $get_email_alert = preg_replace('/\s+/', ' ', $get_email_alert);
+                $get_email_alert = trim(strtolower($get_email_alert));
+                $searchTerm = 'delete';
+                if (strpos($get_email_alert, $searchTerm) !== false) {
+                    // Reject any SQL statement with "DELETE"
+                    return response()->json(["message" => "Invalid SQL statement"]);
+                }
+                $stmt = $conn->prepare($get_email_alert);
+                $stmt->execute();
+                // Continue with processing the result if needed
+            }
+
             if (isset($pgnsql)) {
                 $pgnsql = preg_replace('/\s+/', ' ', $pgnsql);
                 $pgnsql = trim(strtolower($pgnsql));
@@ -628,7 +644,7 @@ class CaseManagementController extends Controller
             // <----------------------CREATE CASE_MANAGEMENT ---------------------------->
             $insertpattern_for_case_mgt = '/INSERT\s+INTO\s+case_management/i';
             $insertpattern_for_case_mgt = strtolower($insertpattern_for_case_mgt);
-            if (preg_match($insertpattern_for_case_mgt, $tsql_lowercase)) {
+            if (isset($tsql_lowercase) && preg_match($insertpattern_for_case_mgt, $tsql_lowercase)) {
                 $rowId = [];
                 foreach ($result as $item) {
                     $rowId[] = $item['id'];
@@ -725,7 +741,7 @@ class CaseManagementController extends Controller
                     $attachment_file = $response[1];
                 }
                 // $uploadedFile->file_link=null;
-                $file_link=null;
+                $file_link = null;
                 $attachmentPath = null;
 
                 if (isset($recipients->attachment)) {
@@ -733,11 +749,10 @@ class CaseManagementController extends Controller
                         # code...
                         $uploadedFile = Files::find($recipients->attachment);
                         $file_link = $uploadedFile->file_link;
-                        $attachmentPath=$uploadedFile->file_path;
-                    }                    
-
+                        $attachmentPath = $uploadedFile->file_path;
+                    }
                 }
-                
+
                 $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
 
                 $exceptions_logs = ExceptionsLogs::create([
@@ -833,7 +848,7 @@ class CaseManagementController extends Controller
             // =============================================================================================
 
             // -----------------------CLOSE CASE_MANAGEMENT-------------
-            if (preg_match($validate_case, $tsql_lowercase, $matches)) {
+            if (isset($validate_case) && preg_match($validate_case, $tsql_lowercase, $matches)) {
                 if (trim($matches[4], "'") == 2) {
                     $id = trim($matches[5], "'");
                     $reason_for_close = $matches[3];
@@ -1651,7 +1666,6 @@ class CaseManagementController extends Controller
 
                 $http_host = $_SERVER['HTTP_HOST'];
                 if ($http_host !== "127.0.0.1:8000") {
-                    # code...
 
                     $script_name = $_SERVER['SCRIPT_NAME'];
                     $link = $http_host . "/" . $script_name . "/";
@@ -1661,10 +1675,8 @@ class CaseManagementController extends Controller
                 }
 
                 DownloadRecordsJob::dispatch($dsql, $nv_download_name, $reference_id, $download->id, $link);
-
                 return response()->json([
                     'message' => 'Your Download is being processed'
-
                 ]);
             } else if (isset($dsql) && !preg_match($select_dsql, $dsql)) {
                 return response()->json([
@@ -1679,6 +1691,24 @@ class CaseManagementController extends Controller
                 if (empty(($result))) {
                     return response()->json([
                         'message' => 'Data Not Found.'
+                    ]);
+                }
+            }
+
+            $validate_select = '/SELECT\s+(?:\*|email)\s+FROM\s+alert\s+WHERE\s+id\s*=\s*(\d+)/i';
+            if (isset($get_email_alert) && preg_match($validate_select, $get_email_alert, $matches)) {
+                $Email = null;
+                foreach ($result as $record) {
+                    if (isset($record['email'])) {
+                        $Email = $record['email'];
+                        break; 
+                    }
+                }
+                if ($Email) {
+                    return $Email;
+                }else {
+                    return response()->json([
+                        'message' => 'Alert id not found.'
                     ]);
                 }
             }
