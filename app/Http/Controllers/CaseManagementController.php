@@ -1712,7 +1712,6 @@ class CaseManagementController extends Controller
                     ]);
                 }
             }
-
             return response()->json([
                 $result,
                 'message' => 'Query Execution Was Successful.'
