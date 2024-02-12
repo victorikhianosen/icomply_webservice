@@ -7,11 +7,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Staff extends Model
 {
-    protected $table = 'staffs';
+    protected $table = 'am_staffs';
 
-    // // INSERT INTO public.staffs(
-    // id, staff_name, department, email, dept_email, staff_id, user_id, os_user)
-    // VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    protected $fillable = [
+        'id',
+        'staff_name',
+        'department',
+        'email',
+        'dept_email',
+        'staff_id',
+        'user_id',
+        'os_user'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class,'user_id');

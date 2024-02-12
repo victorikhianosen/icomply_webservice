@@ -28,7 +28,7 @@ Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
 Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
 Route::post('/apex-auth',  [CaseManagementController::class, 'auth_user']);
-Route::post('/apex-test',  [CaseManagementController::class, 'auth_test']);
+Route::get('/sterling',  [CaseManagementController::class, 'Sterling']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/make-supervisor',  [UserController::class, 'makeSupervisor']);

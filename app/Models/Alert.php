@@ -20,20 +20,27 @@ class Alert extends Model
         'mail_to',
         'email',
         'rule_id',
+        'created_at',
         'alert_frequency_id',
         'exception_category_id',
         'assigned_user_response',
         'close_remarks',
         'attachment_file',
         'exception_log_id',
-        'alert_subject'
+        'alert_subject',
+        'event_date',
+        'mail_cc',
+        'staff_id',
+        'supervisor_1',
+        'supervisor_2',
+        'supervisor_3'       
 
     ];
 
     protected $table = 'alert';
-    protected $casts = [
-        'mail_to' => 'array'
-    ];
+    // protected $casts = [
+    //     'mail_to' => 'array'
+    // ];
 
     public function department()
     {

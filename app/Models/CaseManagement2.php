@@ -36,7 +36,6 @@ class CaseManagement2 extends Model
         'process_id',
         'responses',
         'case_id',
-        'ids',
         'assigned_user_response',
         'created_at'
 

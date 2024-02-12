@@ -402,7 +402,7 @@ class CaseManagementController extends Controller
                         }
                         // 
                         $user_emails = User::where('id',  $recipients->user_id)->pluck('email')->toArray();
-                        $staff_emails = Staff::where('id',  $recipients->assigned_user)->pluck('email')->toArray();
+                        $staff = Staff::find($recipients->assigned_user);
 
                         if (!isset($recipients->exception_process_id)) {
                             return response()->json(['message' => 'exception process id is required']);
@@ -422,20 +422,26 @@ class CaseManagementController extends Controller
                         // 
                         // return response()->json([$process->name,$processType->name]);
 
-                        if (($staff_emails)) {
-                            $emails[] =   $staff_emails;
-                        } else {
+                        if (!isset($staff->email)) {
+                            // $emails[] =   $staff_emails;
                             return response()->json(['message' => 'assigned user is not a staff']);
                         }
-                        // 
-                        $responder_id = ($recipients->assigned_user);
-                        // 
+                        //                         // 
                         if ((isset($user_emails) && !empty($user_emails))) {
                             $emails[] = $user_emails;
                         }
                         // 
                         $recipientsId = [];
                         $other_emails = [];
+                        if (!isset($recipients->supervisor_1)) {
+                            $recipients->supervisor_1 = null;
+                        }
+                        if (!isset($recipients->supervisor_2)) {
+                            $recipients->supervisor_2 = null;
+                        }
+                        if (!isset($recipients->supervisor_3)) {
+                            $recipients->supervisor_3 = null;
+                        }
                         if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                             $recipientsId[] =   $recipients->supervisor_1;
                         }
@@ -461,14 +467,16 @@ class CaseManagementController extends Controller
                         $allmail = [];
                         $deptarr = [];
                         if (!empty($department->email) && isset($department->email)) {
-                            $deptarr[] = $department->email;
+                            $deptarr[] = 'lebechiuchey@gmail.com';
+                            // $department->email;
                         }
+                        $deptarr[] = 'lebechiuchey@gmail.com';
+
                         //    
                         $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                         $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
                         $allmail = array_filter($allmail);
-
-                        $responder = $recipients->assigned_user;
+                        $commaSeparatedEmail = implode(',', $allmail);
                         //
                         $caseResponse = CaseResponse::create([
                             'case_id' => $recipients->id,
@@ -481,9 +489,12 @@ class CaseManagementController extends Controller
                         ]);
                         // 
                         $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
-                        $alertid = Alert::create([                            //
-                            'mail_to' => $allmail,
-                            'status_id' => $this->setNullIfEmpty($recipients->status_id),
+                        $charles_email = 'leonell4fame@gmail.com';
+
+                        $alertid = Alert::create([
+                            'mail_to' => $charles_email,
+                            //  $allmail,
+                            'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                             'alert_action' => $this->setNullIfEmpty($recipients->case_action),
                             'alert_description' => $this->setNullIfEmpty($recipients->description),
                             'team_id' => $this->setNullIfEmpty($recipients->department_id),
@@ -491,9 +502,14 @@ class CaseManagementController extends Controller
                             'alert_action' => $this->setNullIfEmpty($recipients->case_action),
                             'alert_subject' => 'Case Response',
                             'alert_name' => 'ALERT' . $randomNumber,
-                            'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
+                            'user_id' => $this->setNullIfEmpty($recipients->user_id),
                             'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
-
+                            'event_date' => $recipients->event_date,
+                            'staff_id' => $staff->id,
+                            'supervisor_1' => $recipients->supervisor_1,
+                            'supervisor_2' => $recipients->supervisor_2,
+                            'supervisor_3' => $recipients->supervisor_3,
+                            'mail_cc' => $commaSeparatedEmail
                         ]);
                         // 
                         $update_case = [
@@ -506,8 +522,8 @@ class CaseManagementController extends Controller
                             'user_email' => $this->setNullIfEmpty($recipients->user->email),
                             'user_name' => $this->setNullIfEmpty($recipients->user->firstname),
                             'response' => $this->setNullIfEmpty($caseResponse->response),
-                            'responder_name' =>  $this->setNullIfEmpty($recipients->staff->staff_name),
-                            'responder_email' =>  $this->setNullIfEmpty($recipients->staff->email),
+                            'responder_name' =>  $this->setNullIfEmpty($staff->staff_name),
+                            'responder_email' =>  $this->setNullIfEmpty($staff->email),
                             'exception_process' => $this->setNullIfEmpty($process->name),
                             'process_type' => $this->setNullIfEmpty($processType->name),
                             'process_category' => $this->setNullIfEmpty($exception_category_id->name),
@@ -515,7 +531,7 @@ class CaseManagementController extends Controller
                         // 
                         $view = view('email.respond_to_case_mail', compact('update_case'))->render();
                         //
-                        $newArrayValue = json_encode(['response_note' => stripslashes(trim($response_msg, '"')), 'timestamp' => $formattedDate, 'responder_id' => $responder_id, 'alert_id' => $alertid->id]);
+                        $newArrayValue = json_encode(['response_note' => stripslashes(trim($response_msg, '"')), 'timestamp' => $formattedDate, 'responder_id' => $staff->id, 'alert_id' => $alertid->id]);
                         $lastResponse = json_decode(json_encode($recipients->assigned_user_response));
                         $currentResponses = $lastResponse ?: '[]';
                         $currentArray = json_decode($currentResponses, true);
@@ -536,18 +552,18 @@ class CaseManagementController extends Controller
                             'assigned_user_response' => $this->setNullIfEmpty($caseResponse->response),
                             'updated_at' => $formattedDate,
                             'email' => $view,
-                            'exception_log_id' => $exceptions_logs->id
+                            'exception_log_id' => $exceptions_logs->id,
+                            'created_at' => $formattedDate
                         ]);
 
                         // 
                         if (!empty($allmail)) {
-
-                            foreach ($allmail as $email) {
-                                Mail::to($email)->send(new UpdateCaseMail($update_case));
-                            }
+                            Mail::to($charles_email)->send(new UpdateCaseMail($update_case));
+                            // Mail::to($charles_email)->bcc($allmail)->send(new UpdateCaseMail($update_case));;
                         }
                         return response()->json([
-                            'message' => 'Response Sent!.'
+                            'message' => 'Response Sent!.',
+                            'alert info' => $alertid
                         ]);
                     }
                 };
@@ -654,10 +670,9 @@ class CaseManagementController extends Controller
                 }
                 $recipients = CaseManagement2::find($rowId)->first();
 
-                $department = Department::find($recipients->department_id);
+                // $department = Department::find($recipients->department_id);
                 $user_emails = User::where('id', $recipients->user_id)->pluck('email');
-                // return $user_emails;
-                $staff_emails = Staff::where('id', $recipients->assigned_user)->pluck('email');
+                $staff = Staff::find($recipients->assigned_user);
                 if (!isset($recipients->exception_process_id)) {
                     $recipients->delete();
                     return response()->json(['message' => 'exception process id is required']);
@@ -678,7 +693,7 @@ class CaseManagementController extends Controller
                     return response()->json(['message' => 'exception process type id not found']);
                 }
 
-                if ($staff_emails->isEmpty()) {
+                if (empty($staff->email)) {
                     $recipients->delete();
                     return response()->json(['message' => 'assigned user email address not found']);
                 }
@@ -693,12 +708,19 @@ class CaseManagementController extends Controller
                 $other_emails = [];
                 $deptarr = [];
                 $allmail = [];
-                $responder_id = ($recipients->assigned_user);
-                // 
-                $emails[] =   $staff_emails;
+                // $emails[] =   $staff_emails;
 
                 if ($user_emails) {
                     $emails[] = $user_emails;
+                }
+                if (!isset($recipients->supervisor_1)) {
+                    $recipients->supervisor_1 = null;
+                }
+                if (!isset($recipients->supervisor_2)) {
+                    $recipients->supervisor_2 = null;
+                }
+                if (!isset($recipients->supervisor_3)) {
+                    $recipients->supervisor_3 = null;
                 }
                 if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                     $recipientsId[] =   $recipients->supervisor_1;
@@ -715,12 +737,10 @@ class CaseManagementController extends Controller
                 }
                 //check for department                
                 if (Department::find($recipients->department_id)) {
-                    # code...
                     $department = Department::find($recipients->department_id);
                 }
                 //get emails
                 if (User::whereIn('id', $recipientsId)->pluck('email')->toArray()) {
-                    # code...
                     $other_emails = User::whereIn('id', $recipientsId)->pluck('email')->toArray();
                 }
 
@@ -731,6 +751,8 @@ class CaseManagementController extends Controller
                 $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                 $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
                 $allmail = array_filter($allmail);
+                $commaSeparatedEmail = implode(',', $allmail);
+                // return $commaSeparatedEmail;
 
                 $attachment_file[1] = null;
                 $attachment_file[0] = null;
@@ -754,7 +776,8 @@ class CaseManagementController extends Controller
                 }
 
                 $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
-
+                $charles_email = 'charles.e@novajii.com';
+                // $uche_email = 'lebechiuchey@gmail.com';
                 $exceptions_logs = ExceptionsLogs::create([
                     'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                     'cases_description' => $this->setNullIfEmpty($recipients->description),
@@ -781,8 +804,10 @@ class CaseManagementController extends Controller
                 ]);
 
                 $alertid = Alert::create([
-                    'mail_to' => $allmail,
+                    'mail_to' => $charles_email,
+                    //  $allmail,
                     'status_id' => $recipients->case_status_id,
+                    'created_at' => $formattedDate,
                     'alert_description' => $recipients->description,
                     'team_id' => $recipients->department_id,
                     'exception_process_id' => $recipients->process_id,
@@ -792,7 +817,14 @@ class CaseManagementController extends Controller
                     'user_id' => $recipients->assigned_user,
                     'attachment_file' => $file_link,
                     'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
-                    'exception_log_id' => $exceptions_logs->id
+                    'exception_log_id' => $exceptions_logs->id,
+                    'event_date' => $recipients->event_date,
+                    'staff_id' => $staff->id,
+                    'supervisor_1' => $recipients->supervisor_1,
+                    'supervisor_2' => $recipients->supervisor_2,
+                    'supervisor_3' => $recipients->supervisor_3,
+                    'mail_cc' => $commaSeparatedEmail
+                    // $allmail
 
 
                 ]);
@@ -802,7 +834,8 @@ class CaseManagementController extends Controller
                     'exception_log_id' => $exceptions_logs->id,
                     'created_at' => $formattedDate,
                     'attachment_filename' => $file_link,
-                    'case_status_id' => 1
+                    'case_status_id' => 1,
+
                 ]);
 
                 $exceptions_logs->update([
@@ -835,12 +868,12 @@ class CaseManagementController extends Controller
                 ]);
 
                 if (!empty($allmail)) {
-                    foreach ($allmail as $email) {
-                        Mail::to($email)->send(new CreateCaseMail($create_case, $attachmentPath));
-                    }
+                    // Mail::to($charles_email)->bcc($allmail)->send(new CreateCaseMail($create_case, $attachmentPath));
+                    Mail::to($charles_email)->send(new CreateCaseMail($create_case, $attachmentPath));
                 }
+
                 return response()->json([
-                    'message' => 'Case Was Successfully Created!.'
+                    'message' => 'Case Was Successfully Created!.',
                 ]);
             }
 
@@ -862,6 +895,8 @@ class CaseManagementController extends Controller
                     }
                     $process = Process::find($recipients->exception_process_id);
                     $processType = ProcessType::find($recipients->process_categoryid);
+                    $staff = Staff::find($recipients->assigned_user);
+
 
                     if (!$process) {
                         return response()->json(['message' => 'exception process id not found']);
@@ -871,12 +906,20 @@ class CaseManagementController extends Controller
                     }
                     // 
                     $emails = [];
-                    $emails[] =   $staff_emails;
+                    // $emails[] =   $staff_emails;
                     $emails[] = $user_emails;
                     $recipientsId = [];
-                    $responder_id = ($recipients->assigned_user);
                     $other_emails = [];
                     // 
+                    if (!isset($recipients->supervisor_1)) {
+                        $recipients->supervisor_1 = null;
+                    }
+                    if (!isset($recipients->supervisor_2)) {
+                        $recipients->supervisor_2 = null;
+                    }
+                    if (!isset($recipients->supervisor_3)) {
+                        $recipients->supervisor_3 = null;
+                    }
                     if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                         $recipientsId[] =   $recipients->supervisor_1;
                     }
@@ -910,12 +953,16 @@ class CaseManagementController extends Controller
                     $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                     $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
                     $allmail = array_filter($allmail);
+                    $commaSeparatedEmail = implode(',', $allmail);
+
                     // If you want to reindex the array keys
                     // $allmail = array_values($allmail);
                     $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
                     // 
+                    $charles_email = 'charles.e@novajii.com';
                     $alertid = Alert::create([
-                        'mail_to' => $allmail,
+                        'mail_to' => $charles_email,
+                        // $allmail,
                         'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                         'alert_action' => $this->setNullIfEmpty($recipients->case_action),
                         'alert_description' => $this->setNullIfEmpty($recipients->description),
@@ -924,10 +971,18 @@ class CaseManagementController extends Controller
                         'alert_action' => $this->setNullIfEmpty($recipients->case_action),
                         'alert_subject' => 'Case Closure',
                         'alert_name' => 'ALERT' . $randomNumber,
-                        'user_id' => $this->setNullIfEmpty($recipients->assigned_user),
+                        'user_id' => $this->setNullIfEmpty($recipients->user_id),
                         'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                         'updated_at' => $formattedDate,
-                        'close_remarks' => $reason_for_close
+                        'created_at' => $formattedDate,
+                        'close_remarks' => $reason_for_close,
+                        'event_date' => $recipients->event_date,
+                        'staff_id' => $staff->id,
+                        'supervisor_1' => $recipients->supervisor_1,
+                        'supervisor_2' => $recipients->supervisor_2,
+                        'supervisor_3' => $recipients->supervisor_3,
+                        'mail_cc' => $commaSeparatedEmail
+
                     ]);
 
                     $close_case = [
@@ -957,18 +1012,15 @@ class CaseManagementController extends Controller
                     $alertid->update([
                         'email' => $view,
                         'exception_log_id' => $exceptions_logs->id
-
                     ]);
 
                     if (!empty($allmail)) {
-                        # code...
-                        foreach ($allmail as $email) {
-                            Mail::to($email)->send(new CloseCaseMail($close_case));
-                        }
+                        Mail::to($charles_email)->send(new CloseCaseMail($close_case));
+                        // Mail::to($charles_email)->bcc($allmail)->send(new CloseCaseMail($close_case));
                     }
 
                     return response()->json([
-                        'message' => 'Case Closed Successfully!.'
+                        'message' => 'Case Closed Successfully!.',
                     ]);
                 }
             }
@@ -1701,12 +1753,12 @@ class CaseManagementController extends Controller
                 foreach ($result as $record) {
                     if (isset($record['email'])) {
                         $Email = $record['email'];
-                        break; 
+                        break;
                     }
                 }
                 if ($Email) {
                     return $Email;
-                }else {
+                } else {
                     return response()->json([
                         'message' => 'Alert id not found.'
                     ]);
@@ -1872,13 +1924,39 @@ class CaseManagementController extends Controller
         // Output the response
         return $response;
     }
-    public function auth_test(Request $request)
+    public function Sterling(Request $request)
     {
-        //    $request->all();
-        //     $response = Http::get('https://apex.oracle.com/pls/apex/biggy/auth/ad',['username'=>$request['username']]);
-        // return $response;
-        return
-            date('Y-m-d H:i:s');;
+        $apiUrl = 'https://10.0.0.217/bankservice/ldap.asmx';
+
+        // Define the SOAP XML body
+        $xmlBody = '
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <searchUsersAll xmlns="http://tempuri.org/">
+      <text>string</text>
+    </searchUsersAll>
+  </soap:Body>
+</soap:Envelope>';
+
+        // Define the SOAP headers
+        $headers = [
+            'Content-Type' => 'text/xml',
+            // Add any additional headers here
+        ];
+
+        // Create a new Guzzle HTTP client
+        $client = new Client();
+
+        // Make the SOAP API call
+        $response = $client->post($apiUrl, [
+            'headers' => $headers,
+            'body' => $xmlBody,
+        ]);
+
+        // Get the response body
+        $responseBody = $response->getBody()->getContents();
+        return $responseBody;
     }
 
     function handleFileUpload($file)
