@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-// ini_set('max_execution_time', 120); 
+ini_set('max_execution_time', 300); 
 // ini_set('memory_limit', '4096M');
 
 use App\Events\ApiRequestEvent;
@@ -1924,40 +1924,12 @@ class CaseManagementController extends Controller
         // Output the response
         return $response;
     }
-    public function Sterling(Request $request)
+
+    public function seems()
     {
-        $apiUrl = 'https://10.0.0.217/bankservice/ldap.asmx';
-
-        // Define the SOAP XML body
-        $xmlBody = '
-<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <soap:Body>
-    <searchUsersAll xmlns="http://tempuri.org/">
-      <text>string</text>
-    </searchUsersAll>
-  </soap:Body>
-</soap:Envelope>';
-
-        // Define the SOAP headers
-        $headers = [
-            'Content-Type' => 'text/xml',
-            // Add any additional headers here
-        ];
-
-        // Create a new Guzzle HTTP client
-        $client = new Client();
-
-        // Make the SOAP API call
-        $response = $client->post($apiUrl, [
-            'headers' => $headers,
-            'body' => $xmlBody,
-        ]);
-
-        // Get the response body
-        $responseBody = $response->getBody()->getContents();
-        return $responseBody;
+        return "kjfefew";
     }
+
 
     function handleFileUpload($file)
     {
@@ -1996,5 +1968,112 @@ class CaseManagementController extends Controller
                 return ($path);
             }
         }
+    }
+
+    public function sterling_staffs()
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        // Set the XML body
+
+        $xmlBody = '<?xml version="1.0" encoding="utf-8"?>
+                    <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                    <soap:Body>
+                        <searchUsersAll xmlns="http://tempuri.org/">
+                        <text>string</text>
+                        </searchUsersAll>
+                    </soap:Body>
+                    </soap:Envelope>';
+
+        // Set cURL options
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://10.0.0.217/bankservice/ldap.asmx',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $xmlBody,
+            CURLOPT_HTTPHEADER => array(
+                'Content-Type: text/xml',
+            ),
+        ));
+
+        // Execute the cURL request
+        $response = curl_exec($curl);
+
+        // Check for cURL errors
+        if (curl_errno($curl)) {
+            $error_message = curl_error($curl);
+            // Handle the error appropriately
+        }
+
+        // Close the cURL session
+        curl_close($curl);
+
+        // Output the response
+          $response;
+        try {
+            // Parse the SOAP response XML
+            $xml = simplexml_load_string($response);
+
+            // Find all the <sr> elements
+            $srElements = $xml->xpath('//sr');
+           $SR_count=('Number of <sr> elements: ' . count($srElements));
+
+            // Iterate over the <sr> elements and extract the data
+            foreach ($srElements as $srElement) {
+                $fullname = (string) $srElement->fullname;
+                $email = (string) $srElement->email;
+                $staffid = (integer) $srElement->staffid;
+                $deptname = (string) $srElement->deptname;
+                // Create a new Staff model instance and set the attributes
+                Staff::create([
+                    'staff_name'=>$fullname,
+                    'email'=>$email,
+                    'staff_id'=>$staffid,
+                    'department'=>$deptname
+                ]);
+
+               
+            }
+            return 'successful ---- ' . $SR_count;
+        } catch (\Exception $e) {
+            // Handle any errors that occur during the insertion process
+            return ('Error inserting staff data from SOAP response: ' . $e->getMessage());
+        }
+       
+    }
+    public function bestman_(){
+        $client = new Client();
+
+        // API endpoint URL
+        $url = 'https://10.0.0.217/bankservice/ldap.asmx';
+
+        // Request headers
+        $headers = [
+                'Content-Type' => 'text/xml',
+            ];
+
+        // Request body
+        $body = '<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <searchUsersAll xmlns="http://tempuri.org/">
+      <text>string</text>
+    </searchUsersAll>
+  </soap:Body>
+</soap:Envelope>';
+
+        // Send the POST request
+        $response = $client->post($url, [
+                'headers' => $headers,
+                'body' => $body,
+            ]);
+
+        // Get the response body
+        $responseBody = $response->getBody()->getContents();
     }
 }

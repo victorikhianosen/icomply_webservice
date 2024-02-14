@@ -26,11 +26,8 @@ class Kernel extends ConsoleKernel
         Commands\ExecuteQueriesWeekly::class,
         Commands\ExecuteQueriesWeekly::class,
         Commands\ExecuteQueriesYearly::class,
-
-
-
-
-       
+        Commands\UpdateStaffWeekly::class,
+   
     ];
 
     protected function schedule(Schedule $schedule)
@@ -39,7 +36,10 @@ class Kernel extends ConsoleKernel
         // $nextDue = $now->addMonths(11)->addWeeks(2);
         //  $schedule->command('pgsql:listen')->everyMinute();
         // $schedule->command('files:delete-expired')->everyMinute();
-        $schedule->command('queries:execute-in-5minutes')->everyMinute();
+        // $schedule->command('queries:execute-in-5minutes')->everyMinute();
+        // $schedule->command('sterling:update-weekly')->everyTenMinutes();
+        // $schedule->command('sterling:update-weekly')->at('16:22');
+        $schedule->command('sterling:update-weekly')->dailyAt('16:25')->withoutOverlapping();
         // $schedule->command('queries:execute-hourly')->hourly();
         // $schedule->command('queries:execute-daily')->daily();
         // $schedule->command('queries:execute-weekly')->weekly();

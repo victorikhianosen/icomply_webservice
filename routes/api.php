@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CaseManagementController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\UserController;
 use App\Http\Requests\GetUserCaseRequest;
 use Illuminate\Support\Facades\Route;
@@ -28,7 +29,14 @@ Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
 Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
 Route::post('/apex-auth',  [CaseManagementController::class, 'auth_user']);
-Route::get('/sterling',  [CaseManagementController::class, 'Sterling']);
+// Route::get('/sterling_user',  [CaseManagementController::class, 'sterling_user']);
+
+Route::post('/sterling_staffs',  [CaseManagementController::class, 'sterling_staffs']);
+// log api
+// Route::get('/logs', [LogController::class, 'show'])->name('logs.show');
+
+Route::get('logs/{date}', [LogController::class, 'show'])->name('logs.show');
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users/make-supervisor',  [UserController::class, 'makeSupervisor']);

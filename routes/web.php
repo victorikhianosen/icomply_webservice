@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+// Route::get('/laravel-log', function () {
+//     return view('log');
+// });
+
+Route::get('/laravel-log', [LogController::class, 'index'])->name('log.viewer');
+
 
 Route::get('/', function () {
     return view('welcome');
