@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Staff extends Model
+class TestStaff extends Model
 {
 
     protected $table = 'test_am_staffs';
@@ -18,20 +18,22 @@ class Staff extends Model
         'dept_email',
         'staff_id',
         'user_id',
-        'os_user'
+        'os_user',
+        'updated_at',
+        'created_at'
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    // public function user()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 
     // public function department()
     // {
     //     return $this->belongsTo(Department::class, 'department');
     // }
-    public function cases()
-    {
-        return $this->hasMany(CaseManagement2::class);
-    }
+    // public function cases()
+    // {
+    //     return $this->hasMany(CaseManagement2::class);
+    // }
 }

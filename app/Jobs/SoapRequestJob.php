@@ -5,7 +5,7 @@ namespace App\Jobs;
 use App\Mail\SendEmailTest;
 use App\Models\Nv_Download;
 use App\Models\Nv_DownloadStatus;
-use App\Models\Staff;
+use App\Models\TestStaff;
 use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -68,8 +68,7 @@ class SoapRequestJob implements ShouldQueue
         // Check for cURL errors
         if (curl_errno($curl)) {
             $error_message = curl_error($curl);
-            Log::info("error  ---- " . $error_message);
-
+            Log::info("error -- " . $error_message);
             // Handle the error appropriately
         }
 
@@ -84,66 +83,125 @@ class SoapRequestJob implements ShouldQueue
         $SR_count = count($srElements);
 
         // Delete records that exist in the database but not in the XML response
-        $emailsInXml = [];
-        $counter = 0;
+        // $emailsInXml = [];
+        // $counter = 0;
 
-        foreach ($srElements as $srElement) {
-            $email = (string) $srElement->email;
-            $emailsInXml[] = $email;
+        // foreach ($srElements as $srElement) {
+        //     $email = (string) $srElement->email;
+        //     $emailsInXml[] = $email;
+        // }
+        // // Iterate over the <sr> elements and extract the data
+        // foreach ($srElements as $srElement) {
+        //     $counter++;
+
+        //     $fullname = (string) $srElement->fullname;
+        //     $email = (string) $srElement->email;
+        //     $staffid = (int) $srElement->staffid;
+        //     $deptname = (string) $srElement->deptname;
+
+        //     // Check if the staff record already exists in the database
+        //     $existingStaff = TestStaff::where('email', $email)->first();
+
+        //     if ($existingStaff) {
+        //         // Compare the attributes with the existing record
+        //         if ( $existingStaff->staff_name != $fullname ) {
+        //             $existingStaff->update([
+        //                 'staff_name' => $fullname,
+        //             ]);
+        //         }
+        //         if
+        //         ($existingStaff->department != $deptname) {
+        //             $existingStaff->update([
+        //                 'department' => $deptname,
+        //             ]);
+
+        //         }
+        //         if ($existingStaff->email != $email
+        //         ) {
+        //             $existingStaff->update([
+        //                 'email' => $email,
+        //             ]);
+        //         }
+        //         if ($existingStaff->staff_id != $staffid) {
+        //             $existingStaff->update([
+        //                 'staff_id' => $staffid,
+        //             ]);
+        //         }
+
+        //     } else {
+        //         // Create a new Staff model instance and set the attributes
+        //         TestStaff::create([
+        //             'staff_name' => $fullname,
+        //             'email' => $email,
+        //             'staff_id' => $staffid,
+        //             'department' => $deptname
+        //         ]);
+        //     }
+        //     if ($counter == $SR_count) {
+        //         TestStaff::whereNotIn('email', $emailsInXml)->delete();
+        //         Log::info("Successful");
+        //         exit;
+        //     }
+        // }
+
+        $values = [];
+        foreach ($srElements as $sr) {
+            $rowOrder = (string) $sr->attributes('urn:schemas-microsoft-com:xml-msdata')->rowOrder;
+            $values[] = $rowOrder;
         }
-        // Iterate over the <sr> elements and extract the data
-        foreach ($srElements as $srElement) {
-            $counter++;
+
+        foreach ($srElements as $index => $srElement) {
+            $counter = $index + 1;
 
             $fullname = (string) $srElement->fullname;
             $email = (string) $srElement->email;
             $staffid = (int) $srElement->staffid;
             $deptname = (string) $srElement->deptname;
+            $id = $values[$index]; // Use the msdata:rowOrder value as the ID
 
             // Check if the staff record already exists in the database
-            // $existingStaff = Staff::where('email', $email)->first();
-            $existingStaff = Staff::firstOrNew(['email' => $email]);
+            $existingStaff = TestStaff::where('email', $email)->first();
 
             if ($existingStaff) {
                 // Compare the attributes with the existing record
-                if ( $existingStaff->staff_name != $fullname ) {
+                if ($existingStaff->staff_name != $fullname) {
                     $existingStaff->update([
                         'staff_name' => $fullname,
                     ]);
                 }
-                if
-                ($existingStaff->department != $deptname) {
+                if ($existingStaff->department != $deptname) {
                     $existingStaff->update([
                         'department' => $deptname,
                     ]);
-
+                }
+                if ($existingStaff->email != $email) {
+                    $existingStaff->update([
+                        'email' => $email,
+                    ]);
                 }
                 if ($existingStaff->staff_id != $staffid) {
                     $existingStaff->update([
                         'staff_id' => $staffid,
                     ]);
                 }
-
             } else {
                 // Create a new Staff model instance and set the attributes
-                Staff::create([
+                TestStaff::create([
+                    'id' => $id,
                     'staff_name' => $fullname,
                     'email' => $email,
                     'staff_id' => $staffid,
                     'department' => $deptname
                 ]);
             }
-            if ($counter == 50) {
-                // Staff::whereNotIn('email', $emailsInXml)->delete();
-                $success_element = "Number of <sr> elements: $SR_count";
-                Log::info($counter);
-                return; // Break the loop
+
+            if ($counter == $SR_count) {
+                // Delete records that exist in the database but not in the XML response
+                TestStaff::whereNotIn('email', $email)->delete();
+                Log::info("Successful");
+                exit;
             }
         }
-        // Staff::whereNotIn('email', $emailsInXml)->delete();
-        Log::info("Successful");
-        // Log::info( $emailsInXml);
-        // return 'Successful ' .$success_element ;
 
     }
 }

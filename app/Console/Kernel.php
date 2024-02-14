@@ -39,7 +39,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('queries:execute-in-5minutes')->everyMinute();
         // $schedule->command('sterling:update-weekly')->everyTenMinutes();
         // $schedule->command('sterling:update-weekly')->at('16:22');
-        $schedule->command('sterling:update-weekly')->dailyAt('12:44')->withoutOverlapping();
+        $schedule->command('sterling:update-weekly')->dailyAt('14:32')->withoutOverlapping();
         // $schedule->command('queries:execute-hourly')->hourly();
         // $schedule->command('queries:execute-daily')->daily();
         // $schedule->command('queries:execute-weekly')->weekly();

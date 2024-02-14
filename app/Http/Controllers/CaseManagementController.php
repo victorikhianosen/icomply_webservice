@@ -491,7 +491,7 @@ class CaseManagementController extends Controller
                         ]);
                         // 
                         $exception_category_id = ProcessCategory::where('code', 'non-trans')->first();
-                        $charles_email = 'leonell4fame@gmail.com';
+                        $charles_email = 'charles.e@novajii.com';
 
                         $alertid = Alert::create([
                             'mail_to' => $charles_email,
@@ -2031,7 +2031,7 @@ class CaseManagementController extends Controller
         curl_close($curl);
 
         // Output the response
-        $response;
+        return $response;
         try {
             // Parse the SOAP response XML
             $xml = simplexml_load_string($response);
@@ -2039,6 +2039,13 @@ class CaseManagementController extends Controller
             // Find all the <sr> elements
             $srElements = $xml->xpath('//sr');
             $SR_count = ('Number of <sr> elements: ' . count($srElements));
+
+            $values=[];
+            foreach ($srElements as $sr) {
+                $rowOrder = (string) $sr->attributes('urn:schemas-microsoft-com:xml-msdata')->rowOrder;
+                $values[]= $rowOrder;
+            }
+            return $values;
 
             // Iterate over the <sr> elements and extract the data
             foreach ($srElements as $srElement) {
