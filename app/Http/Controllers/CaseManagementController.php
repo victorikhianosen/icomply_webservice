@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-ini_set('max_execution_time', 300); 
+ini_set('max_execution_time', 300);
 // ini_set('memory_limit', '4096M');
 
 use App\Events\ApiRequestEvent;
@@ -439,6 +439,9 @@ class CaseManagementController extends Controller
                         if (!isset($recipients->supervisor_2)) {
                             $recipients->supervisor_2 = null;
                         }
+                        if (!isset($recipients->staff_dept)) {
+                            $recipients->staff_dept = null;
+                        }
                         if (!isset($recipients->supervisor_3)) {
                             $recipients->supervisor_3 = null;
                         }
@@ -509,7 +512,8 @@ class CaseManagementController extends Controller
                             'supervisor_1' => $recipients->supervisor_1,
                             'supervisor_2' => $recipients->supervisor_2,
                             'supervisor_3' => $recipients->supervisor_3,
-                            'mail_cc' => $commaSeparatedEmail
+                            'mail_cc' => $commaSeparatedEmail,
+                            'staff_dept' => $recipients->staff_dept
                         ]);
                         // 
                         $update_case = [
@@ -697,7 +701,7 @@ class CaseManagementController extends Controller
                     $recipients->delete();
                     return response()->json(['message' => 'assigned user email address not found']);
                 }
-                if ($user_emails->isEmpty()) {
+                if (empty($user_emails)) {
                     $recipients->delete();
                     return response()->json(['message' => 'user email address not found']);
                 }
@@ -721,6 +725,9 @@ class CaseManagementController extends Controller
                 }
                 if (!isset($recipients->supervisor_3)) {
                     $recipients->supervisor_3 = null;
+                }
+                if (!isset($recipients->staff_dept)) {
+                    $recipients->staff_dept = null;
                 }
                 if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                     $recipientsId[] =   $recipients->supervisor_1;
@@ -801,6 +808,8 @@ class CaseManagementController extends Controller
                     'attachment_filename' => $this->setNullIfEmpty($file_link),
                     'tran_id' => $this->setNullIfEmpty($recipients->tran_id),
                     'customer_id' => $this->setNullIfEmpty($recipients->customer_id),
+                    'staff_dept' => $recipients->staff_dept
+
                 ]);
 
                 $alertid = Alert::create([
@@ -823,9 +832,9 @@ class CaseManagementController extends Controller
                     'supervisor_1' => $recipients->supervisor_1,
                     'supervisor_2' => $recipients->supervisor_2,
                     'supervisor_3' => $recipients->supervisor_3,
-                    'mail_cc' => $commaSeparatedEmail
+                    'mail_cc' => $commaSeparatedEmail,
+                    'staff_dept' => $recipients->staff_dept
                     // $allmail
-
 
                 ]);
 
@@ -856,6 +865,7 @@ class CaseManagementController extends Controller
                     'exception_process' => $this->setNullIfEmpty($process->name),
                     'process_type' => $this->setNullIfEmpty($processType->name),
                     'process_category' => $this->setNullIfEmpty($exception_category_id->name),
+                    'staff_dept' => $recipients->staff_dept,
                     'response_link' =>
                     // "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response/$alertid->id",
                     "http://139.59.186.114:8080/ords/r/sterling/icomply/public-case-response?p236_alert_id=$alertid->id",
@@ -920,6 +930,9 @@ class CaseManagementController extends Controller
                     if (!isset($recipients->supervisor_3)) {
                         $recipients->supervisor_3 = null;
                     }
+                    if (!isset($recipients->staff_dept)) {
+                        $recipients->staff_dept = null;
+                    }
                     if (isset($recipients->supervisor_1) && !empty($recipients->supervisor_1)) {
                         $recipientsId[] =   $recipients->supervisor_1;
                     }
@@ -981,7 +994,8 @@ class CaseManagementController extends Controller
                         'supervisor_1' => $recipients->supervisor_1,
                         'supervisor_2' => $recipients->supervisor_2,
                         'supervisor_3' => $recipients->supervisor_3,
-                        'mail_cc' => $commaSeparatedEmail
+                        'mail_cc' => $commaSeparatedEmail,
+                        'staff_dept' => $recipients->staff_dept
 
                     ]);
 
@@ -998,6 +1012,8 @@ class CaseManagementController extends Controller
                         'exception_process' => $this->setNullIfEmpty($process->name),
                         'process_type' => $this->setNullIfEmpty($processType->name),
                         'process_category' => $this->setNullIfEmpty($exception_category_id->name),
+                        'staff_dept' => $recipients->staff_dept
+
                     ];
                     $view = view('email.close_case_mail', compact('close_case'))->render();
 
@@ -1006,7 +1022,9 @@ class CaseManagementController extends Controller
                         'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                         'updated_at' => $formattedDate,
                         'case_id' => $recipients->id,
-                        'close_remarks' => $reason_for_close
+                        'close_remarks' => $reason_for_close,
+                        'staff_dept' => $recipients->staff_dept
+
                     ]);
 
                     $alertid->update([
@@ -2014,37 +2032,33 @@ class CaseManagementController extends Controller
         curl_close($curl);
 
         // Output the response
-          $response;
+        $response;
         try {
             // Parse the SOAP response XML
             $xml = simplexml_load_string($response);
 
             // Find all the <sr> elements
             $srElements = $xml->xpath('//sr');
-           $SR_count=('Number of <sr> elements: ' . count($srElements));
+            $SR_count = ('Number of <sr> elements: ' . count($srElements));
 
             // Iterate over the <sr> elements and extract the data
             foreach ($srElements as $srElement) {
                 $fullname = (string) $srElement->fullname;
                 $email = (string) $srElement->email;
-                $staffid = (integer) $srElement->staffid;
+                $staffid = (int) $srElement->staffid;
                 $deptname = (string) $srElement->deptname;
                 // Create a new Staff model instance and set the attributes
                 Staff::create([
-                    'staff_name'=>$fullname,
-                    'email'=>$email,
-                    'staff_id'=>$staffid,
-                    'department'=>$deptname
+                    'staff_name' => $fullname,
+                    'email' => $email,
+                    'staff_id' => $staffid,
+                    'department' => $deptname
                 ]);
-
-               
             }
             return 'successful ---- ' . $SR_count;
         } catch (\Exception $e) {
             // Handle any errors that occur during the insertion process
             return ('Error inserting staff data from SOAP response: ' . $e->getMessage());
         }
-       
     }
-   
 }

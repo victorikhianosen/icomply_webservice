@@ -43,6 +43,7 @@ class ExceptionsLogs extends Model
         'process_id',
         'tran_id',
         'updated_at',
-        'close_remarks'
+        'close_remarks',
+        'staff_dept'
     ];
 }

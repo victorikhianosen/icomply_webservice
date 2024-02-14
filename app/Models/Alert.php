@@ -33,7 +33,8 @@ class Alert extends Model
         'staff_id',
         'supervisor_1',
         'supervisor_2',
-        'supervisor_3'       
+        'supervisor_3',
+        'staff_dept'       
 
     ];
 

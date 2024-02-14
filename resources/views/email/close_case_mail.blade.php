@@ -106,6 +106,14 @@
                                 @endisset</td>
                         </tr>
                         <tr>
+                            <td><b>Department</b></td>
+                            <td class="space">@isset($close_case['staff_dept'])
+                                {{ $close_case['staff_dept'] }}
+                                @else
+                                NULL
+                                @endisset </td>
+                        </tr>
+                        <tr>
                             
                             <td>Status</td>
                             <td class="space">@isset($close_case['status_name'])

@@ -85,19 +85,55 @@ class SoapRequestJob implements ShouldQueue
         $SR_count = count($srElements);
 
         // Iterate over the <sr> elements and extract the data
+        // foreach ($srElements as $srElement) {
+        //     $fullname = (string) $srElement->fullname;
+        //     $email = (string) $srElement->email;
+        //     $staffid = (int) $srElement->staffid;
+        //     $deptname = (string) $srElement->deptname;
+
+        //     // Create a new Staff model instance and set the attributes
+        //     Staff::create([
+        //         'staff_name' => $fullname,
+        //         'email' => $email,
+        //         'staff_id' => $staffid,
+        //         'department' => $deptname
+        //     ]);
+        // }
+
+        // Iterate over the <sr> elements and extract the data
         foreach ($srElements as $srElement) {
             $fullname = (string) $srElement->fullname;
             $email = (string) $srElement->email;
             $staffid = (int) $srElement->staffid;
             $deptname = (string) $srElement->deptname;
 
-            // Create a new Staff model instance and set the attributes
-            Staff::create([
-                'staff_name' => $fullname,
-                'email' => $email,
-                'staff_id' => $staffid,
-                'department' => $deptname
-            ]);
+            // Check if the staff record already exists in the database
+            $existingStaff = Staff::where('staff_id', $staffid)->first();
+
+            if ($existingStaff) {
+                // Compare the attributes with the existing record
+                if (
+                    $existingStaff->staff_name != $fullname ||
+                    $existingStaff->email != $email ||
+                    $existingStaff->department != $deptname
+                ) {
+                    // Update the existing record with the new attributes
+                    $existingStaff->update([
+                        'staff_name' => $fullname,
+                        'email' => $email,
+                        'department' => $deptname,
+                        'staff_id'=> $staffid,
+                    ]);
+                }
+            } else {
+                // Create a new Staff model instance and set the attributes
+                Staff::create([
+                    'staff_name' => $fullname,
+                    'email' => $email,
+                    'staff_id' => $staffid,
+                    'department' => $deptname
+                ]);
+            }
         }
         $success_element= "Number of <sr> elements: $SR_count";
         Log::info("Successful  ---- " . $success_element);

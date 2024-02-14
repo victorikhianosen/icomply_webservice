@@ -37,7 +37,8 @@ class CaseManagement2 extends Model
         'responses',
         'case_id',
         'assigned_user_response',
-        'created_at'
+        'created_at',
+        'staff_dept'
 
     ];
 

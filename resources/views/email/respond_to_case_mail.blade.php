@@ -96,6 +96,14 @@
                                 @endisset </td>
                         </tr>
                         <tr>
+                            <td><b>Department</b></td>
+                            <td class="space">@isset($update_case['staff_dept'])
+                                {{ $update_case['staff_dept'] }}
+                                @else
+                                NULL
+                                @endisset </td>
+                        </tr>
+                        <tr>
                             <td><b>Rating</b></td>
                             <td class="space">@isset($update_case['rating_name'])
                                 {{ $update_case['rating_name'] }}
