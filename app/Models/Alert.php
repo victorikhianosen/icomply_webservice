@@ -34,7 +34,8 @@ class Alert extends Model
         'supervisor_1',
         'supervisor_2',
         'supervisor_3',
-        'staff_dept'       
+        'staff_dept'   ,
+        'case_id'    
 
     ];
 

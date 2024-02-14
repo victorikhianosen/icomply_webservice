@@ -512,7 +512,8 @@ class CaseManagementController extends Controller
                             'supervisor_2' => $recipients->supervisor_2,
                             'supervisor_3' => $recipients->supervisor_3,
                             'mail_cc' => $commaSeparatedEmail,
-                            'staff_dept' => $recipients->staff_dept
+                            'staff_dept' => $recipients->staff_dept,
+                            'case_id' => $recipients->id
                         ]);
                         // 
                         $update_case = [
@@ -832,7 +833,8 @@ class CaseManagementController extends Controller
                     'supervisor_2' => $recipients->supervisor_2,
                     'supervisor_3' => $recipients->supervisor_3,
                     'mail_cc' => $commaSeparatedEmail,
-                    'staff_dept' => $recipients->staff_dept
+                    'staff_dept' => $recipients->staff_dept,
+                    'case_id'=> $recipients->id
                     // $allmail
 
                 ]);
@@ -894,6 +896,7 @@ class CaseManagementController extends Controller
                 if (trim($matches[4], "'") == 2) {
                     $id = trim($matches[5], "'");
                     $reason_for_close = $matches[3];
+                    // return $reason_for_close;
                     $recipients = CaseManagement2::find($id);
 
                     if (!isset($recipients->exception_process_id)) {
@@ -987,14 +990,15 @@ class CaseManagementController extends Controller
                         'exception_category_id' => $this->setNullIfEmpty($exception_category_id->id),
                         'updated_at' => $formattedDate,
                         'created_at' => $formattedDate,
-                        'close_remarks' => $reason_for_close,
+                        'close_remarks' => $recipients->reason_for_close,
                         'event_date' => $recipients->event_date,
                         'staff_id' => $staff->id,
                         'supervisor_1' => $recipients->supervisor_1,
                         'supervisor_2' => $recipients->supervisor_2,
                         'supervisor_3' => $recipients->supervisor_3,
                         'mail_cc' => $commaSeparatedEmail,
-                        'staff_dept' => $recipients->staff_dept
+                        'staff_dept' => $recipients->staff_dept,
+                        'case_id' => $recipients->id
 
                     ]);
 
@@ -1007,7 +1011,7 @@ class CaseManagementController extends Controller
                         'case_action' => $this->setNullIfEmpty($recipients->case_action),
                         'user_email' => $this->setNullIfEmpty($recipients->user->email),
                         'user_name' => $this->setNullIfEmpty($recipients->user->firstname),
-                        'close_remarks' => $reason_for_close,
+                        'close_remarks' => $recipients->reason_for_close,
                         'exception_process' => $this->setNullIfEmpty($process->name),
                         'process_type' => $this->setNullIfEmpty($processType->name),
                         'process_category' => $this->setNullIfEmpty($exception_category_id->name),
@@ -1021,9 +1025,8 @@ class CaseManagementController extends Controller
                         'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                         'updated_at' => $formattedDate,
                         'case_id' => $recipients->id,
-                        'close_remarks' => $reason_for_close,
+                        'close_remarks' => $recipients->reason_for_close,
                         'staff_dept' => $recipients->staff_dept
-
                     ]);
 
                     $alertid->update([
