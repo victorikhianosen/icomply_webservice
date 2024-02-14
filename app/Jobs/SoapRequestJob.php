@@ -28,13 +28,12 @@ class SoapRequestJob implements ShouldQueue
      * @return void
      */
     protected $xmlBody;
-   
+
     // protected $details;
 
     public function __construct($xmlBody)
     {
         $this->xmlBody = $xmlBody;
-      
     }
 
     /**
@@ -84,47 +83,47 @@ class SoapRequestJob implements ShouldQueue
         $srElements = $xml->xpath('//sr');
         $SR_count = count($srElements);
 
-        // Iterate over the <sr> elements and extract the data
-        // foreach ($srElements as $srElement) {
-        //     $fullname = (string) $srElement->fullname;
-        //     $email = (string) $srElement->email;
-        //     $staffid = (int) $srElement->staffid;
-        //     $deptname = (string) $srElement->deptname;
+        // Delete records that exist in the database but not in the XML response
+        $emailsInXml = [];
+        $counter = 0;
 
-        //     // Create a new Staff model instance and set the attributes
-        //     Staff::create([
-        //         'staff_name' => $fullname,
-        //         'email' => $email,
-        //         'staff_id' => $staffid,
-        //         'department' => $deptname
-        //     ]);
-        // }
-
+        foreach ($srElements as $srElement) {
+            $email = (string) $srElement->email;
+            $emailsInXml[] = $email;
+        }
         // Iterate over the <sr> elements and extract the data
         foreach ($srElements as $srElement) {
+            $counter++;
+
             $fullname = (string) $srElement->fullname;
             $email = (string) $srElement->email;
             $staffid = (int) $srElement->staffid;
             $deptname = (string) $srElement->deptname;
 
             // Check if the staff record already exists in the database
-            $existingStaff = Staff::where('staff_id', $staffid)->first();
+            // $existingStaff = Staff::where('email', $email)->first();
+            $existingStaff = Staff::firstOrNew(['email' => $email]);
 
             if ($existingStaff) {
                 // Compare the attributes with the existing record
-                if (
-                    $existingStaff->staff_name != $fullname ||
-                    $existingStaff->email != $email ||
-                    $existingStaff->department != $deptname
-                ) {
-                    // Update the existing record with the new attributes
+                if ( $existingStaff->staff_name != $fullname ) {
                     $existingStaff->update([
                         'staff_name' => $fullname,
-                        'email' => $email,
-                        'department' => $deptname,
-                        'staff_id'=> $staffid,
                     ]);
                 }
+                if
+                ($existingStaff->department != $deptname) {
+                    $existingStaff->update([
+                        'department' => $deptname,
+                    ]);
+
+                }
+                if ($existingStaff->staff_id != $staffid) {
+                    $existingStaff->update([
+                        'staff_id' => $staffid,
+                    ]);
+                }
+
             } else {
                 // Create a new Staff model instance and set the attributes
                 Staff::create([
@@ -134,10 +133,17 @@ class SoapRequestJob implements ShouldQueue
                     'department' => $deptname
                 ]);
             }
+            if ($counter == 50) {
+                // Staff::whereNotIn('email', $emailsInXml)->delete();
+                $success_element = "Number of <sr> elements: $SR_count";
+                Log::info($counter);
+                return; // Break the loop
+            }
         }
-        $success_element= "Number of <sr> elements: $SR_count";
-        Log::info("Successful  ---- " . $success_element);
+        // Staff::whereNotIn('email', $emailsInXml)->delete();
+        Log::info("Successful");
+        // Log::info( $emailsInXml);
         // return 'Successful ' .$success_element ;
 
-     }
+    }
 }

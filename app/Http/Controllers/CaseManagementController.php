@@ -316,7 +316,6 @@ class CaseManagementController extends Controller
     //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
     public function query(Request $request)
     {
-
         $dsn = 'pgsql:host=139.59.186.114'  . ';dbname=icomply_database';
         $username = 'icomply_user';
         $password = 'icomply_p77ss1212';

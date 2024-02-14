@@ -27,8 +27,7 @@ class LogController extends Controller
 
     public function show($date) // Now accepts a date parameter
     {
-        $logFilePath = '/var/www/html/pcash_api/storage/logs';
-        //  storage_path('logs');
+        $logFilePath = storage_path('logs');
         $logFileName = "laravel-{$date}.log"; // Dynamically create log file name based on date
         $logFileFullPath = "$logFilePath/$logFileName";
 
