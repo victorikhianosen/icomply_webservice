@@ -963,7 +963,9 @@ class CaseManagementController extends Controller
 
                     $deptarr = [];
                     $allmail = [];
-                    $deptarr[] = $department->email;
+                    if (!empty($department->email) && isset($department->email)) {
+                        $deptarr[] = $department->email;
+                    }
 
                     $allmail = array_merge($allmail, $emails, $deptarr, $other_emails);
                     $allmail = Collection::make($allmail)->flatten()->unique()->values()->toArray();
@@ -1021,6 +1023,7 @@ class CaseManagementController extends Controller
                     $view = view('email.close_case_mail', compact('close_case'))->render();
 
                     $exceptions_logs = ExceptionsLogs::find($recipients->exception_log_id);
+                    // return $recipients->reason_for_close;
                     $exceptions_logs->update([
                         'status_id' => $this->setNullIfEmpty($recipients->case_status_id),
                         'updated_at' => $formattedDate,
