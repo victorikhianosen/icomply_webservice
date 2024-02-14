@@ -35,7 +35,6 @@ class ExceptionsLogs extends Model
         'direct_supervisor',
         'group_head',
         'divisional_head',
-        'closed_remarks',
         'cases_description',
         'exceptions_logs_id',
         'category_id',
