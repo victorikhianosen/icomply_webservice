@@ -2046,34 +2046,5 @@ class CaseManagementController extends Controller
         }
        
     }
-    public function bestman_(){
-        $client = new Client();
-
-        // API endpoint URL
-        $url = 'https://10.0.0.217/bankservice/ldap.asmx';
-
-        // Request headers
-        $headers = [
-                'Content-Type' => 'text/xml',
-            ];
-
-        // Request body
-        $body = '<?xml version="1.0" encoding="utf-8"?>
-<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <soap:Body>
-    <searchUsersAll xmlns="http://tempuri.org/">
-      <text>string</text>
-    </searchUsersAll>
-  </soap:Body>
-</soap:Envelope>';
-
-        // Send the POST request
-        $response = $client->post($url, [
-                'headers' => $headers,
-                'body' => $body,
-            ]);
-
-        // Get the response body
-        $responseBody = $response->getBody()->getContents();
-    }
+   
 }
