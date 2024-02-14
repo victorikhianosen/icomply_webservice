@@ -74,7 +74,6 @@
                     
                     // Replace matched dates and times with highlighted version
                     var highlightedText = logText.replace(regex, '<span class="highlight">$1</span>');
-                    
                     // Update the log content with highlighted dates and times
                     document.getElementById("logContent").innerHTML = highlightedText;
                 }
