@@ -27,6 +27,7 @@ Route::get('/download/{filename}/{userId}', [CaseManagementController::class, 'd
 // API ROUTE HANDLING EMAILS 
 Route::post('/send-mail', [CaseManagementController::class, 'sendMail']);
 
+
 Route::get('/case/allcase',  [CaseManagementController::class, 'showCase']);
 Route::post('/apex-auth',  [CaseManagementController::class, 'auth_user']);
 // Route::get('/sterling_user',  [CaseManagementController::class, 'sterling_user']);
