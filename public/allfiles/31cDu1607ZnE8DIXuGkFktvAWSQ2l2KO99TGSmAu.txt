@@ -1,0 +1,4 @@
+CASCADING dom_breed base on selected ANIMAL_CATEGORY
+
+select dom_breed as d, dom_breed_id as r from dom_breed_lookup where
+animal_category = :P5_CATEGORY order by 1
