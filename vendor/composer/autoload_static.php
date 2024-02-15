@@ -37,12 +37,17 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
         'a1cfe24d14977df6878b9bf804af2d1c' => __DIR__ . '/..' . '/nunomaduro/collision/src/Adapters/Phpunit/Autoload.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         '320163ac6b93aebe3dc25b60a0533d56' => __DIR__ . '/..' . '/spatie/laravel-ignition/src/helpers.php',
+        '8d3b2199cd129cab173c6d6470bfbcb5' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/helper.php',
     );
 
     public static $prefixLengthsPsr4 = array (
         'v' => 
         array (
             'voku\\' => 5,
+        ),
+        'Y' => 
+        array (
+            'Yajra\\' => 6,
         ),
         'W' => 
         array (
@@ -190,6 +195,11 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
         'voku\\' => 
         array (
             0 => __DIR__ . '/..' . '/voku/portable-ascii/src/voku',
+        ),
+        'Yajra\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/yajra/laravel-pdo-via-oci8/src',
+            1 => __DIR__ . '/..' . '/yajra/laravel-oci8/src',
         ),
         'Whoops\\' => 
         array (
@@ -570,8 +580,14 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
     public static $classMap = array (
         'App\\Console\\Commands\\CbnApi' => __DIR__ . '/../..' . '/app/Console/Commands/CbnApi.php',
         'App\\Console\\Commands\\DeleteExpiredFiles' => __DIR__ . '/../..' . '/app/Console/Commands/DeleteExpiredFiles.php',
-        'App\\Console\\Commands\\ExecuteScheduledQueries' => __DIR__ . '/../..' . '/app/Console/Commands/ExecuteScheduledQueries.php',
+        'App\\Console\\Commands\\ExecuteQueriesDaily' => __DIR__ . '/../..' . '/app/Console/Commands/ExecuteQueriesDaily.php',
+        'App\\Console\\Commands\\ExecuteQueriesHourly' => __DIR__ . '/../..' . '/app/Console/Commands/ExecuteQueriesHourly.php',
+        'App\\Console\\Commands\\ExecuteQueriesIn5Minutes' => __DIR__ . '/../..' . '/app/Console/Commands/ExecuteQueriesIn5Minutes.php',
+        'App\\Console\\Commands\\ExecuteQueriesMonthly' => __DIR__ . '/../..' . '/app/Console/Commands/ExecuteQueriesMonthly.php',
+        'App\\Console\\Commands\\ExecuteQueriesWeekly' => __DIR__ . '/../..' . '/app/Console/Commands/ExecuteQueriesWeekly.php',
+        'App\\Console\\Commands\\ExecuteQueriesYearly' => __DIR__ . '/../..' . '/app/Console/Commands/ExecuteQueriesYearly.php',
         'App\\Console\\Commands\\StartInsertListener' => __DIR__ . '/../..' . '/app/Console/Commands/StartInsertListener.php',
+        'App\\Console\\Commands\\UpdateStaffWeekly' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateStaffWeekly.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Events\\DatabaseInsertEvent' => __DIR__ . '/../..' . '/app/Events/DatabaseInsertEvent.php',
         'App\\Events\\MyEvent' => __DIR__ . '/../..' . '/app/Events/MyEvent.php',
@@ -585,6 +601,7 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
         'App\\Http\\Controllers\\CaseManagementController' => __DIR__ . '/../..' . '/app/Http/Controllers/CaseManagementController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
+        'App\\Http\\Controllers\\LogController' => __DIR__ . '/../..' . '/app/Http/Controllers/LogController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -604,6 +621,7 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
         'App\\Http\\Resources\\User' => __DIR__ . '/../..' . '/app/Http/Resources/User.php',
         'App\\Jobs\\DownloadDataJob' => __DIR__ . '/../..' . '/app/Jobs/DownloadDataJob.php',
         'App\\Jobs\\DownloadRecordsJob' => __DIR__ . '/../..' . '/app/Jobs/DownloadRecordsJob.php',
+        'App\\Jobs\\SoapRequestJob' => __DIR__ . '/../..' . '/app/Jobs/SoapRequestJob.php',
         'App\\Listeners\\DatabaseInsertListener' => __DIR__ . '/../..' . '/app/Listeners/DatabaseInsertListener.php',
         'App\\Listeners\\MyEventListener' => __DIR__ . '/../..' . '/app/Listeners/MyEventListener.php',
         'App\\Mail\\CaseMail' => __DIR__ . '/../..' . '/app/Mail/CaseMail.php',
@@ -629,6 +647,7 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
         'App\\Models\\DocumentType' => __DIR__ . '/../..' . '/app/Models/DocumentType.php',
         'App\\Models\\DownLoadNotifier' => __DIR__ . '/../..' . '/app/Models/DownLoadNotifier.php',
         'App\\Models\\ExceptionsLogs' => __DIR__ . '/../..' . '/app/Models/ExceptionsLogs.php',
+        'App\\Models\\Files' => __DIR__ . '/../..' . '/app/Models/Files.php',
         'App\\Models\\Nv_Download' => __DIR__ . '/../..' . '/app/Models/Nv_Download.php',
         'App\\Models\\Nv_DownloadStatus' => __DIR__ . '/../..' . '/app/Models/Nv_DownloadStatus.php',
         'App\\Models\\PriorityLevel' => __DIR__ . '/../..' . '/app/Models/PriorityLevel.php',
@@ -641,6 +660,7 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
         'App\\Models\\System' => __DIR__ . '/../..' . '/app/Models/System.php',
         'App\\Models\\SystemAllocation' => __DIR__ . '/../..' . '/app/Models/SystemAllocation.php',
         'App\\Models\\SystemCategory' => __DIR__ . '/../..' . '/app/Models/SystemCategory.php',
+        'App\\Models\\TestStaff' => __DIR__ . '/../..' . '/app/Models/TestStaff.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
@@ -6471,6 +6491,28 @@ class ComposerStaticInit4e4664c37611f6cd10bb052a3a2e215d
         'Whoops\\Util\\Misc' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/Misc.php',
         'Whoops\\Util\\SystemFacade' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/SystemFacade.php',
         'Whoops\\Util\\TemplateHelper' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Util/TemplateHelper.php',
+        'Yajra\\Oci8\\Auth\\OracleUserProvider' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Auth/OracleUserProvider.php',
+        'Yajra\\Oci8\\Connectors\\OracleConnector' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Connectors/OracleConnector.php',
+        'Yajra\\Oci8\\Eloquent\\OracleEloquent' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Eloquent/OracleEloquent.php',
+        'Yajra\\Oci8\\Oci8Connection' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Oci8Connection.php',
+        'Yajra\\Oci8\\Oci8ServiceProvider' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Oci8ServiceProvider.php',
+        'Yajra\\Oci8\\Oci8ValidationServiceProvider' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Oci8ValidationServiceProvider.php',
+        'Yajra\\Oci8\\OracleReservedWords' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/OracleReservedWords.php',
+        'Yajra\\Oci8\\PDO\\Oci8Driver' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/PDO/Oci8Driver.php',
+        'Yajra\\Oci8\\Query\\Grammars\\OracleGrammar' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Query/Grammars/OracleGrammar.php',
+        'Yajra\\Oci8\\Query\\OracleBuilder' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Query/OracleBuilder.php',
+        'Yajra\\Oci8\\Query\\Processors\\OracleProcessor' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Query/Processors/OracleProcessor.php',
+        'Yajra\\Oci8\\Schema\\Comment' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Schema/Comment.php',
+        'Yajra\\Oci8\\Schema\\Grammars\\OracleGrammar' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Schema/Grammars/OracleGrammar.php',
+        'Yajra\\Oci8\\Schema\\OracleAutoIncrementHelper' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Schema/OracleAutoIncrementHelper.php',
+        'Yajra\\Oci8\\Schema\\OracleBlueprint' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Schema/OracleBlueprint.php',
+        'Yajra\\Oci8\\Schema\\OracleBuilder' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Schema/OracleBuilder.php',
+        'Yajra\\Oci8\\Schema\\Sequence' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Schema/Sequence.php',
+        'Yajra\\Oci8\\Schema\\Trigger' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Schema/Trigger.php',
+        'Yajra\\Oci8\\Validation\\Oci8DatabasePresenceVerifier' => __DIR__ . '/..' . '/yajra/laravel-oci8/src/Oci8/Validation/Oci8DatabasePresenceVerifier.php',
+        'Yajra\\Pdo\\Oci8' => __DIR__ . '/..' . '/yajra/laravel-pdo-via-oci8/src/Pdo/Oci8.php',
+        'Yajra\\Pdo\\Oci8\\Exceptions\\Oci8Exception' => __DIR__ . '/..' . '/yajra/laravel-pdo-via-oci8/src/Pdo/Oci8/Exceptions/Oci8Exception.php',
+        'Yajra\\Pdo\\Oci8\\Statement' => __DIR__ . '/..' . '/yajra/laravel-pdo-via-oci8/src/Pdo/Oci8/Statement.php',
         'voku\\helper\\ASCII' => __DIR__ . '/..' . '/voku/portable-ascii/src/voku/helper/ASCII.php',
     );
 

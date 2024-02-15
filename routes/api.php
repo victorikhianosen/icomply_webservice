@@ -32,6 +32,9 @@ Route::post('/apex-auth',  [CaseManagementController::class, 'auth_user']);
 // Route::get('/sterling_user',  [CaseManagementController::class, 'sterling_user']);
 
 Route::post('/sterling_staffs',  [CaseManagementController::class, 'sterling_staffs']);
+
+Route::post('/fetch',  [CaseManagementController::class, 'fetch']);
+
 // log api
 // Route::get('/logs', [LogController::class, 'show'])->name('logs.show');
 
