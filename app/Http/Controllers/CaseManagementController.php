@@ -1968,12 +1968,6 @@ class CaseManagementController extends Controller
         return $response;
     }
 
-    public function seems()
-    {
-        return "kjfefew";
-    }
-
-
     function handleFileUpload($file)
     {
         $path = [];
