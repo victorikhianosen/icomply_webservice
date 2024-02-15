@@ -16,7 +16,8 @@
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.2",
         "livewire/livewire": "*",
-        "nunomaduro/collision": "^7.10"
+        "nunomaduro/collision": "^7.10",
+        "yajra/laravel-oci8": "^9.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

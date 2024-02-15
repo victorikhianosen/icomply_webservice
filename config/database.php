@@ -34,6 +34,48 @@ return [
     */
 
     'connections' => [
+        'oracle132' => [
+            'driver' => 'oracle',
+            'host' => env('ORACE132_HOST', '132.226.133.55'),
+            'port' => env('ORACE132_PORT', '1522'),
+            'database' => env('ORACE132_DATABASE', 'xepdb1'), 
+            'username' => env('ORACE132_USERNAME', 'icomply'),
+            'password' => env('ORACE132_PASSWORD', 'Ma33771peS22_'),
+            'service_name' => env('ORACE132_SERVICE_NAME', 'xepdb1'),
+            'charset' => 'AL32UTF8',
+            'prefix' => '',
+        ],
+
+        't24' => [
+            'driver' => 'oracle',
+            'host' => env('T24_HOST', '10.0.42.154'),
+            'port' => env('T24_PORT', '1521'),
+            'database' => env('T24_DATABASE', 'STERDBDR'),
+            'username' => env('T24_USERNAME', 'icomply_user'),
+            'password' => env('T24_PASSWORD', 'Sterling12345'),
+            'service_name' => env('T24_SERVICE_NAME', 'STERDBDR'),
+            'charset' => 'AL32UTF8',
+            'prefix' => '',
+            'options' => [
+                'ora_connect_with_dbname' => 'true',
+                'skip_expired_password' => 'true',
+            ],
+        ],
+
+        'imal' => [
+            'driver' => 'oracle',
+            'host' => env('IMAL_HOST', '10.0.41.193'),
+            'port' => env('IMAL_PORT', '1521'),
+            'database' => env('IMAL_DATABASE', 'imal2'),
+            'username' => env('IMAL_USERNAME', 'icomply_user'),
+            'password' => env('IMAL_PASSWORD', 'Sterling#12345'),
+            'service_name' => env('IMAL_SERVICE_NAME', 'imal2'),
+            'charset' => 'AL32UTF8',
+            'prefix' => '',
+            'options' => [
+                'skip_expired_password' => 'true',
+            ],
+        ],
 
         'sqlite' => [
             'driver' => 'sqlite',

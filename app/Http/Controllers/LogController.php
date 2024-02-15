@@ -50,7 +50,18 @@ class LogController extends Controller
             return substr($file->getFilename(), 8, 10); // Extracts date part
         })->toArray();
 
-        return view('log', ['dates' => $dates]); // Make sure your view is named 'logViewer.blade.php'
+        $http = "http://";
+        $http_host = $_SERVER['HTTP_HOST'];
+        if ($http_host !== "127.0.0.1:8000") {
+
+            $script_name = $_SERVER['SCRIPT_NAME'];
+            $link = $http . $http_host . "/" . $script_name . "/";
+        } else {
+            $script_name = '';
+            $link = $http . $http_host;
+        }
+
+        return view('log', ['dates' => $dates,'link'=>$link]); // Make sure your view is named 'logViewer.blade.php'
     }
 
 }

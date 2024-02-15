@@ -309,8 +309,28 @@ class CaseManagementController extends Controller
 
     public function fetch()
     {
-        $data = DB::connection('pgsql2')->select('select * from am_staff');
-        return $data;
+        // $sql = "select * from stafj.v_fsbn_currency";
+        // $results = DB::connection('t24')->select(DB::raw($sql));
+
+        $sql = "select * from imal.currencies";
+        $results = DB::connection('imal')->select(DB::raw($sql));
+
+
+        return $results;
+        // $data = DB::connection('oracle132')->find(1);
+        // DB::connection('oracle132')
+        // ->table('your_table_name')
+        //     ->where('id', 1)
+        //     ->update([
+        //         'column1' => 'new value 1',
+        //         'column2' => 'new value 2',
+        //     ]);
+        // DB::connection('oracle132')
+        // ->table('your_table_name')
+        //     ->where('id', 1) // Delete the record with the primary key value of 1
+        //     ->delete();
+        $data = DB::connection('oracle132')->table('users')->find(11);
+        ($data)->delete();
     }
 
     //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
@@ -834,7 +854,7 @@ class CaseManagementController extends Controller
                     'supervisor_3' => $recipients->supervisor_3,
                     'mail_cc' => $commaSeparatedEmail,
                     'staff_dept' => $recipients->staff_dept,
-                    'case_id'=> $recipients->id
+                    'case_id' => $recipients->id
                     // $allmail
 
                 ]);
@@ -2046,10 +2066,10 @@ class CaseManagementController extends Controller
             $srElements = $xml->xpath('//sr');
             $SR_count = ('Number of <sr> elements: ' . count($srElements));
 
-            $values=[];
+            $values = [];
             foreach ($srElements as $sr) {
                 $rowOrder = (string) $sr->attributes('urn:schemas-microsoft-com:xml-msdata')->rowOrder;
-                $values[]= $rowOrder;
+                $values[] = $rowOrder;
             }
             return $values;
 

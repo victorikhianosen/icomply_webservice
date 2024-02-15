@@ -32,6 +32,9 @@
         }
     </style>
 </head>
+@php
+
+@endphp
 
 <body>
     <div class="content-center">
@@ -45,38 +48,43 @@
     </div>
     <div id="logContent" style="width: 100%; overflow: auto;"></div>
     <script>
-        function loadLog() {
-                    var date = document.getElementById("logDate").value;
-                    if (!date) {
-                        document.getElementById("logContent").innerHTML = "";
-                        return;
-                    }
-                    
-                    fetch(`/api/logs/${date}`)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.text();
-                        })
-                        .then(text => {
-                            highlightAndDisplayLog(text);
-                        })
-                        .catch(error => {
-                            console.error("Failed to fetch log:", error);
-                            document.getElementById("logContent").innerHTML = "<p>Error loading log content.</p>";
-                        });
-                }
-                
-                function highlightAndDisplayLog(logText) {
-                    // Regular expression to match dates and times in the format [YYYY-MM-DD HH:MM:SS]
-                    var regex = /(\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\])/g;
-                    
-                    // Replace matched dates and times with highlighted version
-                    var highlightedText = logText.replace(regex, '<span class="highlight">$1</span>');
-                    // Update the log content with highlighted dates and times
-                    document.getElementById("logContent").innerHTML = highlightedText;
-                }
+        var link = "<?php echo $link; ?>";
+    
+      function loadLog() {
+        var date = document.getElementById("logDate").value;
+        if (!date) {
+          document.getElementById("logContent").innerHTML = "";
+          return;
+        }
+        
+        var fetchUrl = link + "/api/logs/" + date; // Add a forward slash before "api/logs"
+        
+        fetch(fetchUrl)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            console.log(fetchUrl)
+            return response.text();
+          })
+          .then(text => {
+            highlightAndDisplayLog(text);
+          })
+          .catch(error => {
+            console.error("Failed to fetch log:", error);
+            document.getElementById("logContent").innerHTML = "<p>Error loading log content.</p>";
+          });
+      }
+      
+      function highlightAndDisplayLog(logText) {
+        // Regular expression to match dates and times in the format [YYYY-MM-DD HH:MM:SS]
+        var regex = /(\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\])/g;
+    
+        // Replace matched dates and times with highlighted version
+        var highlightedText = logText.replace(regex, '<span class="highlight">$1</span>');
+        // Update the log content with highlighted dates and times
+        document.getElementById("logContent").innerHTML = highlightedText;
+      }
     </script>
 </body>
 
