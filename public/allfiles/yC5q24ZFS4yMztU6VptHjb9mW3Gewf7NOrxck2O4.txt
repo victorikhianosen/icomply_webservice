@@ -1,0 +1,132 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Documentation For Credit Direct",
+        "version": "1.0",
+        "description": "Api Documentation for credit direct.",
+        "termsOfService": "",
+        "license": null,
+        "contact": [],
+        "x-logo": {
+            "url":"https://drive.google.com/file/d/1SlbLO-lm9XicKYsbQfFknTcdtfSTdJ_o/view",
+            "altText": "API Reference",
+            "backgroundColor": ""
+        }
+    },
+    "servers": [
+        {
+            "url": "http://localhost",
+            "description": "Documentation generator server."
+        }
+    ],
+
+    
+  "paths": {
+    "/api/all-request/icomply/creditDirect": {
+        "post": {
+            "tags": ["general"],
+            "operationId": "",
+            "description": "POC",
+            "requestBody": {
+                "description": "Sample request body",
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "Api Request1": {
+                                    "type": "string",
+                                    "example": "this is an example of check_for_insert request body"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "request_type": {
+                                            "type": "string",
+                                            "example": "check_for_insert"
+                                        },
+                                        "client_id": {
+                                            "type": "integer",
+                                            "example": 12
+                                        },
+
+                                        "table_name": {
+                                            "type": "string",
+                                            "example": "M_loan"
+                                        },
+                                        "column_names": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "mixed"
+                                            },
+                                            "example": [
+                                                "product_id",
+                                                "rateid",
+                                                "score_id",
+                                                "help_id"
+                                            ]
+                                        },
+                                        "column_data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "mixed"
+                                            },
+                                            "example": [50, 10, 2, 5]
+                                        },
+
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "example": "2023-10-19 20:05:32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            "parameters": [],
+            
+            "responses": {
+                "200": {
+                    "description": "success",
+                    "content": {
+                        "application/json": {
+                           
+                            "schema": {
+                               
+                                "type": "object",
+                                "example": {
+                                    "message": "A new record was added on m_loan table"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+
+            "x-code-samples": [
+                {
+                    "lang": "Bash",
+                    "source": "curl -X POST \"http://localhost/api/all-request/icomply/creditDirect\" \n"
+                },
+                {
+                    "lang": "Javascript",
+                    "source": "const url = new URL(\"http://localhost/api/all-request/icomply/creditDirect\");\n\nlet headers = {\n    \"Accept\": \"application/json\",\n    \"Content-Type\": \"application/json\",\n}\n\nfetch(url, {\n    method: \"POST\",\n    headers: headers,\n})\n    .then(response => response.json())\n    .then(json => console.log(json));\n"
+                },
+                {
+                    "lang": "PHP",
+                    "source": "$headers = [\n    \"Accept\" => \"application/json\",\n    \"Content-Type\" => \"application/json\",\n];\n\n\n$ch = curl_init(\"http://localhost/api/all-request/icomply/creditDirect\");\ncurl_setopt($ch, CURLOPT_CUSTOMREQUEST, \"POST\");\ncurl_setopt($ch, CURLOPT_HTTPHEADER, $headers);\ncurl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\n\n$result = curl_exec($ch);\n$err = curl_error($ch);\ncurl_close($ch);\n\nif ($err) {\n  throw \\Exception($err);\n} else {\n  return $response;\n}\n"
+                }
+            ]
+        }
+    }
+},
+
+
+
+    "x-tagGroups": []
+}
