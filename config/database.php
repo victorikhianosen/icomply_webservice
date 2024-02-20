@@ -108,7 +108,7 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '139.59.186.114'),
+            'host' => env('DB_HOST', '132.145.56.134'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE'),
             'username' => env('DB_USERNAME'),
@@ -122,7 +122,7 @@ return [
         'pgsql2' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('POSTGRES_DB_HOST', '139.59.186.114'),
+            'host' => env('POSTGRES_DB_HOST', '132.145.56.134'),
             'port' => env('POSTGRES_DB_PORT', '5432'),
             'database' => env('POSTGRES_DB_DATABASE', 'icomply_database'),
             'username' => env('POSTGRES_DB_USERNAME', 'icomply_user'),
