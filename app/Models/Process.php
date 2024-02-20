@@ -22,7 +22,9 @@ class Process extends Model
         'branch_code',
         'alert_group_id',
         'narration',
-        'approver_id'
+        'approver_id',
+        'sql_text',
+        'type_id'
     ];
 
    
