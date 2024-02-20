@@ -51,15 +51,22 @@ class LogController extends Controller
         })->toArray();
 
         $http = "http://";
-        $http_host = $_SERVER['HTTP_HOST'];
-        if ($http_host !== "127.0.0.1:8000") {
+        if (isset($_SERVER['HTTP_HOST'])) {
+            # code...
+            $http_host = $_SERVER['HTTP_HOST'];
 
-            $script_name = $_SERVER['SCRIPT_NAME'];
-            $link = $http.$http_host.$script_name;
-        } else {
-            $script_name = '';
-            $link = $http . $http_host;
+            if ($http_host !== "127.0.0.1:8000") {
+
+                $script_name = $_SERVER['SCRIPT_NAME'];
+                $link = $http . $http_host . $script_name;
+            } else {
+                $script_name = '';
+                $link = $http ."/". $http_host;
+            }
+        }else {
+            $link= $http. "127.0.0.1:8001";
         }
+       
 
         return view('log', ['dates' => $dates,'link'=>$link]); // Make sure your view is named 'logViewer.blade.php'
     }

@@ -42,7 +42,7 @@ class ExecuteQueriesHourly extends Command
             // Extract the SQL query from the row
             if (isset($row->data_source)) {
                 // Check if the 'data_source' is 'T24/Imal' (using postgres database for now)
-                if (($row->data_source == 'oracle132')) {
+                if (strtolower($row->data_source) == 'oracle132') {
                     $results = DB::connection('oracle132')->select(DB::raw($sql));
                 }
                 // Check if the 'data_source' is 'T24/Imal' (using postgres database for now)

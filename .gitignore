@@ -19,3 +19,5 @@ yarn-error.log
 /.vscode
 .github
 .scripts
+.rr.yaml
+rr.exe
