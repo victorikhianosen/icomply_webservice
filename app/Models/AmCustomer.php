@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-class AmCustomer extends Model
-{
+// class AmCustomer extends Model
+// {
     
-    protected $table = 'am_customer';
-}
+//     protected $table = 'am_customer';
+// }

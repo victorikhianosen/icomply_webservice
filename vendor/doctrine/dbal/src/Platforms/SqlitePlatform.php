@@ -14,6 +14,8 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\SqliteSchemaManager;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\TableDiff;
+use Doctrine\DBAL\SQL\Builder\DefaultSelectSQLBuilder;
+use Doctrine\DBAL\SQL\Builder\SelectSQLBuilder;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use Doctrine\DBAL\Types;
 use Doctrine\DBAL\Types\IntegerType;
@@ -157,13 +159,13 @@ class SqlitePlatform extends AbstractPlatform
 
         switch ($unit) {
             case DateIntervalUnit::WEEK:
-                $interval *= 7;
-                $unit      = DateIntervalUnit::DAY;
+                $interval = $this->multiplyInterval((string) $interval, 7);
+                $unit     = DateIntervalUnit::DAY;
                 break;
 
             case DateIntervalUnit::QUARTER:
-                $interval *= 3;
-                $unit      = DateIntervalUnit::MONTH;
+                $interval = $this->multiplyInterval((string) $interval, 3);
+                $unit     = DateIntervalUnit::MONTH;
                 break;
         }
 
@@ -194,6 +196,12 @@ class SqlitePlatform extends AbstractPlatform
     public function getCurrentDatabaseExpression(): string
     {
         return "'main'";
+    }
+
+    /** @link https://www2.sqlite.org/cvstrac/wiki?p=UnsupportedSql */
+    public function createSelectSQLBuilder(): SelectSQLBuilder
+    {
+        return new DefaultSelectSQLBuilder($this, null, null);
     }
 
     /**
@@ -737,6 +745,8 @@ class SqlitePlatform extends AbstractPlatform
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated This API is not portable.
      */
     public function getForUpdateSQL()
     {
