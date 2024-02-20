@@ -35,12 +35,10 @@ class Kernel extends ConsoleKernel
         // $now = Carbon::now();
         // $nextDue = $now->addMonths(11)->addWeeks(2);
         //  $schedule->command('pgsql:listen')->everyMinute();
-        // $schedule->command('sterling:update-weekly')->everyTenMinutes();
-        // $schedule->command('sterling:update-weekly')->at('16:22');
-        // $schedule->command('sterling:update-weekly')->dailyAt('14:32')->withoutOverlapping();
         // $schedule->command('queries:execute-daily')->dailyAt('14:18')->withoutOverlapping();
         // $schedule->command('files:delete-expired')->everyMinute();
-        $schedule->command('queries:execute-in-5minutes')->everyFiveMinutes();
+        $schedule->command('queries:execute-in-5minutes')->everyMinute();
+        // $schedule->command('queries:execute-in-5minutes')->everyFiveMinutes();
         // $schedule->command('queries:execute-hourly')->hourly();
         // $schedule->command('queries:execute-daily')->daily();
         // $schedule->command('queries:execute-weekly')->weekly();

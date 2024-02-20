@@ -38,17 +38,18 @@ class ExecuteQueriesIn5Minutes extends Command
         $rows = DB::table('exception_process')->where('frequency', 'minute')->get();
         // Fetch the rows with 'frequency' value as 'none' from the 'exception_process' table
         foreach ($rows as $row) {
-            $sql = $row->sql_text;
+            $sql = preg_replace('/\s+/', ' ', strtolower($row->sql_text));
             // Extract the SQL query from the row
             if (isset($row->data_source)) {
                 // Check if the 'data_source' is 'T24/Imal' (using postgres database for now)
-                if (($row->data_source == 'oracle132')) {
+                if (strtolower($row->data_source) == 'oracle132') {
                     $results = DB::connection('oracle132')->select(DB::raw($sql));
                 }
                 // Check if the 'data_source' is 'T24/Imal' (using postgres database for now)
                 else {
                     $results = DB::select(DB::raw($sql));
                 }
+                // Log::info($results,$oracle,$pgsql);
 
                 // Append the results to the array of valid results
                 $email = $row->email_to;
@@ -93,11 +94,16 @@ class ExecuteQueriesIn5Minutes extends Command
                     'email' => $view
                 ]);
 
-                $recipients = explode(',', $row->email_to);
-                // Split the comma-separated list of email addresses
-
-                foreach ($recipients as $recipient) {
-                    Mail::to(trim($recipient))->send(new ReportEmail($report));
+                // $recipients = explode(',', $row->email_to);
+                // // Split the comma-separated list of email addresses
+                // foreach ($recipients as $recipient) {
+                //     Mail::to(trim($recipient))->send(new ReportEmail($report));
+                //     // Send the email to each recipient using the ReportEmail Mailable
+                // }
+                $test_mails = "uche.l@novajii.com,hanson.e@novajii.com";
+                $test_mails = explode(',', $test_mails);
+                foreach ($test_mails as $test_mail) {
+                    Mail::to(trim($test_mail))->send(new ReportEmail($report));
                     // Send the email to each recipient using the ReportEmail Mailable
                 }
             }

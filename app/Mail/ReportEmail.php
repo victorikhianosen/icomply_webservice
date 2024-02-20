@@ -44,7 +44,7 @@ class ReportEmail extends Mailable
      */
     public function build()
     {
-        $subject = $this->report['exceptionName'];
+        $subject = ucwords($this->report['exceptionName']);
         return $this->subject($subject)
             ->view('email.reports_template');
     }

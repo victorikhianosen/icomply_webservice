@@ -3,9 +3,10 @@
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
+/vendor/
 .env
 composer.lock
+
 .env.backup
 .env.production
 .phpunit.result.cache
@@ -19,3 +20,5 @@ yarn-error.log
 /.vscode
 .github
 .scripts
+.rr.yaml
+rr.exe
