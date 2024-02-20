@@ -39,7 +39,7 @@ class ExecuteQueriesYearly extends Command
         $rows = DB::table('exception_process')->where('frequency', 'year')->get();
         // Fetch the rows with 'frequency' value as 'none' from the 'exception_process' table
         foreach ($rows as $row) {
-            $sql = $row->sql_text;
+            $sql = preg_replace('/\s+/', ' ', strtolower($row->sql_text));
             // Extract the SQL query from the row
             if (isset($row->data_source)) {
                 // Check if the 'data_source' is 'Oracle132'
