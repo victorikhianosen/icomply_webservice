@@ -88,7 +88,6 @@ class ExecuteQueriesIn5Minutes extends Command
 
             $view = view('email.reports_template', ['report' => $report])->render();
             // Render the email template view with the report data
-
             $exceptions_logs->update([
                 'alert_id' => $alertid->id,
                 'email' => $view
@@ -108,6 +107,5 @@ class ExecuteQueriesIn5Minutes extends Command
             }
         }
         Log::info('Scheduled queries executed successfully (every 5 minutes).');
-        // Return a success message
     }
 }

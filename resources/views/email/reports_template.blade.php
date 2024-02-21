@@ -65,9 +65,16 @@
                                 @php
                                 if (in_array($key, ['amount_lcy', 'amt_lcy',]) && is_numeric($value)) {
                                 $formattedValue = number_format((float) $value, 2);
-                                } elseif (preg_match('/^\d{8}$/', $value)) {
+                                }
+                                //  elseif (preg_match('/^\d{8}$/', ['date_time','timestamp'])) {
+                                // $date = DateTime::createFromFormat('Ymd', $value);
+                                // $formattedValue = $date->format('d-M-Y');
+                                // }
+                                elseif (in_array($key, ['opening_date', 'date_last_updated']) && preg_match('/^\d{8}$/', $value)) {
                                 $date = DateTime::createFromFormat('Ymd', $value);
+                                if ($date) { // Ensure $date creation was successful
                                 $formattedValue = $date->format('d-M-Y');
+                                }
                                 }
                                 elseif (in_array($key, ['date_time', ]) && is_numeric($value)) {
                                 $formattedValue = date('d-M-Y H:i:s', $value);
