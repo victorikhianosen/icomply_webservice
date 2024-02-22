@@ -55,6 +55,19 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        // 'allfiles' => [
+        //     'driver' => 'local',
+        //     'root' => storage_path('app/public/allfiles'),
+        //     'url' => env('APP_URL') . '/storage/app/allfiles',
+        //     'visibility' => 'public',
+        // ],
+
+        'allfiles' => [
+            'driver' => 'local',
+            'root' => public_path('allfiles'),
+            'url' => env('APP_URL') . '/allfiles',
+            'visibility' => 'public',
+        ],
 
     ],
 

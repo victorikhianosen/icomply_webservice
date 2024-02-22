@@ -37,7 +37,7 @@ class Kernel extends ConsoleKernel
         //  $schedule->command('pgsql:listen')->everyMinute();
         // $schedule->command('queries:execute-daily')->dailyAt('14:18')->withoutOverlapping();
         // $schedule->command('files:delete-expired')->everyMinute();
-        $schedule->command('queries:execute-in-5minutes')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('queries:execute-in-5minutes')->everyMinute();
         // $schedule->command('queries:execute-in-5minutes')->everyFiveMinutes();
         // $schedule->command('queries:execute-hourly')->hourly();
         // $schedule->command('queries:execute-daily')->daily();

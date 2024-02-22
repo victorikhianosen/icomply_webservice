@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CaseManagementController;
 use App\Http\Controllers\LogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/laravel-log', [LogController::class, 'index'])->name('log.viewer');
 
+Route::get('/exception-download/{filePath}/{filename}', [CaseManagementController::class, 'exception_download']);
 
 Route::get('/', function () {
     return view('welcome');

@@ -35,7 +35,8 @@ class Alert extends Model
         'supervisor_2',
         'supervisor_3',
         'staff_dept'   ,
-        'case_id'    
+        'case_id' ,
+        'email_download_link'
 
     ];
 

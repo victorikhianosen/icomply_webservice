@@ -50,6 +50,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Rules\UniqueArray;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Carbon\PHPStan\Macro;
 use DateTime;
@@ -69,6 +70,7 @@ use ZipArchive;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 use PhpParser\Node\Expr\Isset_;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -333,9 +335,19 @@ class CaseManagementController extends Controller
         ($data)->delete();
     }
 
+    public function exception_download($filePath, $filename)
+    {
+        response()->download($filePath, $filename);
+    }
+
     //THIS IS THE METHOD HANDLING THE QUERY TO DATABASE
     public function query(Request $request)
     {
+    //     // urldecode()
+    //     $filename = 'report_' . time() . '_' . rand() . '.html';
+    //     $filePath = public_path('allfiles/' . $filename);
+    //    return url("/exception-download/$filePath/$filename");
+
         $dsn = 'pgsql:host=139.59.186.114'  . ';dbname=icomply_database';
         $username = 'icomply_user';
         $password = 'icomply_p77ss1212';

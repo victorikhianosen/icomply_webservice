@@ -7,10 +7,15 @@ use App\Models\Alert;
 use App\Models\ExceptionsLogs;
 use App\Models\Process;
 use Illuminate\Console\Command;
+use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\View;
 
 class ExecuteQueriesIn5Minutes extends Command
 {
@@ -78,20 +83,52 @@ class ExecuteQueriesIn5Minutes extends Command
                 // 'alert_name' => $exception_process->name . ' - ALERT' . random_int(5, 10000000000000),
                 'user_id' => $row->user_id,
             ]);
-            $alert_name= $exception_process->name . ' - ALERT' . random_int(5, 10000000000000);
+            $alert_name = $exception_process->name . ' - ALERT' . random_int(5, 10000000000000);
 
+
+
+            // Render the email template view with the report data
+
+
+            $filename = 'report_' . time() . '_' . rand() . '.html';
+            $filePath = public_path('allfiles/' . $filename);
+            $link = null;
+            return logger(["filename"=>$filename,"filepath"=>$filePath]);
+            if ($_SERVER['APP_URL']) {
+                # code...
+                $http_host = $_SERVER['APP_URL'];
+                if ($http_host !== "127.0.0.1:8000") {
+
+                    $script_name = $_SERVER['SCRIPT_NAME'];
+                    $link = $http_host . "/" . $script_name . "/exception-download/$filePath/$filename";
+                } else {
+                    $script_name = '';
+                    $link = $http_host . "/exception-download/$filePath/$filename";
+                }
+            }
+            // $report['link'] = $link;
             $report = [
                 'validResults' => [$results],
                 'exceptionName' => $alert_name,
-                'Narration' => $row->narration
+                'Narration' => $row->narration,
+                'link' => $link
             ];
 
             $view = view('email.reports_template', ['report' => $report])->render();
-            // Render the email template view with the report data
+
             $exceptions_logs->update([
                 'alert_id' => $alertid->id,
-                'email' => $view
+                'email_download_link' => $link
             ]);
+            $alertid->update([
+                'email_download_link'=> $link,
+                'email' => $view,
+            ]);
+            unset($report['link']);
+            $html_view = View::make('email.reports_template', ['report' => $report]);
+            $html = $html_view->render();
+            File::put($filePath, $html);
+            Log::alert($link);
 
             // $recipients = explode(',', $row->email_to);
             // // Split the comma-separated list of email addresses
@@ -99,6 +136,7 @@ class ExecuteQueriesIn5Minutes extends Command
             //     Mail::to(trim($recipient))->send(new ReportEmail($report));
             //     // Send the email to each recipient using the ReportEmail Mailable
             // }
+            $report['link']=$link;
             $test_mails = "uche.l@novajii.com,hanson.e@novajii.com";
             $test_mails = explode(',', $test_mails);
             foreach ($test_mails as $test_mail) {
